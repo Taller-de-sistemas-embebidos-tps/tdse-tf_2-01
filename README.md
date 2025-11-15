@@ -3,21 +3,23 @@
 
 Trabajo Final - Taller de Sistemas Embebidos - FIUBA
 
-| Alumno | Padron |
-| :--- | :--- |
-| Tomás Musso Carboni | 111548 |
-| Santiago Archetti | xxx xxx |
-| Alan Romero | xxx xxx |
-
+|Alumno|Padron|
+|------|-------|
+|Tomás Musso Carboni|111548|
+|Santiago Archetti|xxx xxx|
+|Alan Romero|108316|
 </div>
+
+### Entrega
+Se establece el plazo para entregar el proyecto finalizado para el periodo febrero-marzo.
 
 ## 1.1 Justificación de la elección del proyecto
 Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea<sup>[1]</sup>, son muy comunes y muchas veces no se detectan a tiempo. La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno durante la noche resulta una herramienta útil y accesible para identificar posibles alteraciones.
-Desde el punto de vista tecnológico, el proyecto es adecuado para el área de sistemas embebidos porque integra sensores reales, procesamiento digital, comunicación inalámbrica y manejo de bajo consumo. Además, el hardware seleccionado (MAX30102 y STM32F302R8) es económico, fácil de conseguir y cuenta con buena documentación, lo que facilita el desarrollo y permite enfocarse en el funcionamiento del sistema sin una complejidad excesiva. En conjunto, esto hace que el proyecto sea realizable, educativo y al mismo tiempo relevante desde lo biomédico.
+Desde el punto de vista tecnológico, el proyecto es adecuado para el área de sistemas embebidos porque integra sensores reales, procesamiento digital, comunicación inalámbrica y manejo de bajo consumo. Además, el hardware seleccionado (MAX30102 y STM32F103RB) es económico, fácil de conseguir y cuenta con buena documentación, lo que facilita el desarrollo y permite enfocarse en el funcionamiento del sistema sin una complejidad excesiva. En conjunto, esto hace que el proyecto sea realizable, educativo y al mismo tiempo relevante desde lo biomédico.
 Para la elección del proyecto, se realiza un análisis profundo de los distintos criterios que lo componen, asignando un peso a cada uno de ellos para luego hacer un análisis total.
 |Criterio|Descripción|Puntuación|Peso final|
 |----------|-------------|------------|------------|
-|Tiempo y facilidad de implementación. Peso (7) |El uso del sensor MAX30102 y el microcontrolador STM32F302R8 presenta una complejidad moderada, debido a la necesidad de configurar correctamente la comunicación I²C, filtrar la señal PPG y aplicar algoritmos de cálculo de SpO₂ y frecuencia respiratoria. Sin embargo, existe amplia documentación y librerías disponibles, lo que reduce las dificultades de implementación. En conjunto, se considera que la complejidad técnica es manejable dentro del marco de un proyecto de sistemas embebidos.| <p align="center">7</p> | 49 |
+|Tiempo y facilidad de implementación. Peso (7) |El uso del sensor MAX30102 y el microcontrolador STM32F103RB presenta una complejidad moderada, debido a la necesidad de configurar correctamente la comunicación I²C, filtrar la señal PPG y aplicar algoritmos de cálculo de SpO₂ y frecuencia respiratoria. Sin embargo, existe amplia documentación y librerías disponibles, lo que reduce las dificultades de implementación. En conjunto, se considera que la complejidad técnica es manejable dentro del marco de un proyecto de sistemas embebidos.| <p align="center">7</p> | 49 |
 |Disponibilidad y costo de hardware. Peso (8) | Los componentes principales —sensor óptico MAX30102, microcontrolador STM32, módulo Bluetooth y un buzzer/LED para alarmas— son económicos, fáciles de conseguir y ampliamente utilizados en proyectos biomédicos educativos. Esto permite realizar pruebas sin un costo elevado y garantiza buena disponibilidad de reemplazos. |<p align="center">9</p>|72|
 |Facilidad de realización de pruebas. Peso (5)|La verificación del funcionamiento del sistema puede realizarse mediante lectura directa de las señales PPG, monitoreo en tiempo real por UART/Bluetooth y observación de la activación de alarmas locales. Además, se pueden usar herramientas básicas como un multímetro o un osciloscopio para validar etapas eléctricas, lo que facilita enormemente el proceso de pruebas y depuración.| <p align="center">7</p>| 35 |
 |Utilidad e interés personal en el proyecto. Peso (9)| El proyecto presenta un alto interés personal debido a su relación con aplicaciones biomédicas reales, la posibilidad de detectar apneas y desaturaciones durante el sueño, y su potencial mejora en versiones futuras. Además, permite aplicar conocimientos de sensores ópticos, filtrado digital y diseño embebido, lo que resulta atractivo tanto desde el punto de vista académico como práctico.|<p align="center"> 9</p>| 81 |
@@ -26,7 +28,7 @@ Para la elección del proyecto, se realiza un análisis profundo de los distinto
 
 
 ## 2.1 Objetivo del Proyecto
-Diseñar y desarrollar un dispositivo portátil no invasivo capaz de medir en tiempo real la saturación de oxígeno (SpO₂) y la frecuencia respiratoria mediante técnicas de fotopletismografía. El objetivo es obtener señales fisiológicas confiables, procesarlas de forma local a través del microcontrolador STM32F302R8 y generar alertas inmediatas ante condiciones anómalas, garantizando un monitoreo continuo y seguro
+Diseñar y desarrollar un dispositivo portátil no invasivo capaz de medir en tiempo real la saturación de oxígeno (SpO₂) y la frecuencia respiratoria mediante técnicas de fotopletismografía. El objetivo es obtener señales fisiológicas confiables, procesarlas de forma local a través del microcontrolador STM32F103RB y generar alertas inmediatas ante condiciones anómalas, garantizando un monitoreo continuo y seguro
 
 ## 2.2 Propósito del Proyecto
 El propósito es brindar una herramienta accesible y de bajo consumo para el seguimiento básico de parámetros respiratorios y de oxigenación, destinada a aplicaciones clínicas simples, monitoreo domiciliario y apoyo en la detección temprana de eventos como apnea o desaturación. Se busca complementar el trabajo de profesionales de la salud y ofrecer al usuario información clara y oportuna sobre su estado fisiológico.
@@ -45,7 +47,7 @@ El diseño se estructura en cuatro bloques funcionales:
 
 ## 3.2 Diseño de Hardware
 -	Sensor MAX30102: Módulo integrado de oximetría y ritmo cardíaco. Se comunica vía I²C y opera a 3.3V. Provee las lecturas crudas de absorción de luz roja e infrarroja necesarias para calcular la saturación y derivar la respiración. 
--	Microcontrolador STM32F302R8: Seleccionado por su núcleo ARM Cortex-M4F (con unidad de punto flotante), esencial para ejecutar filtros digitales eficientes. Gestiona los buses I²C (sensor, EEPROM) y UART (Bluetooth). 
+-	Microcontrolador STM32F103RB: Seleccionado por su núcleo ARM Cortex-M4F (con unidad de punto flotante), esencial para ejecutar filtros digitales eficientes. Gestiona los buses I²C (sensor, EEPROM) y UART (Bluetooth). 
 -	Módulo Bluetooth HM-10: Interfaz UART transparente para enviar datos seriales a dispositivos móviles (Smartphone/PC). 
 -	Almacenamiento: Memoria EEPROM externa (serie 24C0x) para guardar configuraciones de usuario, como umbrales de alarma o logs de eventos. 
 -	Gestión de Energía: Alimentación mediante batería Li-ion con regulación LDO a 3.3V. Implementa modos de bajo consumo (STOP) durante la inactividad. 
@@ -92,7 +94,6 @@ En la siguiente figura se dennota el diagrama de bloques funcional del proyecto.
   <img src="diagrama_de_bloques.jpg" alt="Diagrama del sistema">
   <p><b>Figura 1. Diagrama de bloques</b></p>
 </div>
-
 
 ## 5.1 Modos de uso
 
