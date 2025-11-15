@@ -7,6 +7,8 @@ Trabajo Final - Taller de Sistemas Embebidos - FIUBA
 |Santiago Archetti|xxx xxx|
 |Alan Romero|108316|
 
+### Entrega
+Se establece el plazo para entregar el proyecto finalizado para el periodo febrero-marzo.
 
 ## 1.1 Justificación de la elección del proyecto
 Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea<sup>[1]</sup>, son muy comunes y muchas veces no se detectan a tiempo. La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno durante la noche resulta una herramienta útil y accesible para identificar posibles alteraciones.
