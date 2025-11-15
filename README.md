@@ -1,12 +1,15 @@
 # Sistema de detección de apneas y variaciones de oxigenación durante el sueño
+<div align="center">
+
 Trabajo Final - Taller de Sistemas Embebidos - FIUBA
 
-|Alumno|Padron|
-|------|-------|
-|Tomás Musso Carboni|111548|
-|Santiago Archetti|xxx xxx|
-|Alan Romero|xxx xxx|
+| Alumno | Padron |
+| :--- | :--- |
+| Tomás Musso Carboni | 111548 |
+| Santiago Archetti | xxx xxx |
+| Alan Romero | xxx xxx |
 
+</div>
 
 ## 1.1 Justificación de la elección del proyecto
 Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea<sup>[1]</sup>, son muy comunes y muchas veces no se detectan a tiempo. La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno durante la noche resulta una herramienta útil y accesible para identificar posibles alteraciones.
@@ -83,7 +86,13 @@ El firmware, desarrollado en C con librerías HAL, ejecuta el siguiente flujo c�
 <p align="center"><b>Tabla 2: Requerimentos funcionales</b></p>
 
 ## 4.2 Diagrama de bloques
-[Diagrama del sistema](diagrama de bloques.jpg)
+En la siguiente figura se dennota el diagrama de bloques funcional del proyecto.
+
+<div align="center">
+  <img src="diagrama_de_bloques.jpg" alt="Diagrama del sistema">
+  <p><b>Figura 1. Diagrama de bloques</b></p>
+</div>
+
 
 ## 5.1 Modos de uso
 
