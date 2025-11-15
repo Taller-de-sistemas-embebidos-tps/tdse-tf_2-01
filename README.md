@@ -5,7 +5,7 @@ Trabajo Final - Taller de Sistemas Embebidos - FIUBA
 |------|-------|
 |Tomás Musso Carboni|111548|
 |Santiago Archetti|xxx xxx|
-|Alan Romero|xxx xxx|
+|Alan Romero|108316|
 
 
 ## 1.1 Justificación de la elección del proyecto
