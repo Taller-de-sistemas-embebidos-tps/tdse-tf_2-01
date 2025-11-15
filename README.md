@@ -6,7 +6,7 @@ Trabajo Final - Taller de Sistemas Embebidos - FIUBA
 |Alumno|Padron|
 |------|-------|
 |Tomás Musso Carboni|111548|
-|Santiago Archetti|xxx xxx|
+|Santiago Archetti|110707|
 |Alan Romero|108316|
 </div>
 
