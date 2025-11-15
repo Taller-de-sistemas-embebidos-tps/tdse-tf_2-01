@@ -82,6 +82,9 @@ El firmware, desarrollado en C con librerías HAL, ejecuta el siguiente flujo c�
 |   | 6.3  | Reactivación               | Retomar actividad ante movimiento o comando.                                  |
 <p align="center"><b>Tabla 2: Requerimentos funcionales</b></p>
 
+## 4.2 Diagrama de bloques
+[Diagrama del sistema](diagrama de bloques.jpg)
+
 ## 5.1 Modos de uso
 
 | **Modo** | **Descripción** | **Cotas / Umbrales** | **Comportamiento Especial** |
