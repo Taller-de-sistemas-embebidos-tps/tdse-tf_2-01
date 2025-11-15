@@ -83,7 +83,7 @@ El firmware, desarrollado en C con librer√≠as HAL, ejecuta el siguiente flujo c√
 <p align="center"><b>Tabla 2: Requerimentos funcionales</b></p>
 
 ## 4.2 Diagrama de bloques
-[Diagrama del sistema](diagrama de bloques.jpg)
+![Diagrama del sistema](diagrama_de_bloques.jpg)
 
 ## 5.1 Modos de uso
 
