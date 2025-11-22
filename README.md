@@ -40,30 +40,30 @@ Se establece la primer mesa de feberero como fecha para finalizar el proyecto.
 
 ## 3.1 Arquitectura del sistema
 El diseño se estructura en cuatro bloques funcionales: 
-1.	Adquisición: Captura de la señal de flujo sanguíneo del dedo<sup>[2]</sup> del paciente mediante fotodiodos y LEDs (Rojo/IR). 
-2.	Procesamiento: Filtrado digital y cálculo de algoritmos en el microcontrolador. 
-3.	Interfaz: Indicadores visuales y sonoros para el usuario. 
-4.	Comunicación: Transmisión inalámbrica de telemetría y almacenamiento de parámetros. 
+1.	Adquisición: captura de la señal de flujo sanguíneo del dedo<sup>[2]</sup> del paciente mediante fotodiodos y LEDs (Rojo/IR). 
+2.	Procesamiento: filtrado digital y cálculo de algoritmos en el microcontrolador. 
+3.	Interfaz: indicadores visuales y sonoros para el usuario. 
+4.	Comunicación: transmisión inalámbrica de telemetría y almacenamiento de parámetros. 
 
 ## 3.2 Diseño de Hardware
--	Sensor MAX30102: Módulo integrado de oximetría y ritmo cardíaco. Se comunica vía I²C y opera a 3.3V. Provee las lecturas crudas de absorción de luz roja e infrarroja necesarias para calcular la saturación y derivar la respiración. 
--	Microcontrolador STM32F103RB: Seleccionado por su núcleo ARM Cortex-M4F (con unidad de punto flotante), esencial para ejecutar filtros digitales eficientes. Gestiona los buses I²C (sensor, EEPROM) y UART (Bluetooth). 
--	Módulo Bluetooth HM-10: Interfaz UART transparente para enviar datos seriales a dispositivos móviles (Smartphone/PC). 
--	Almacenamiento: Memoria EEPROM externa (serie 24C0x) para guardar configuraciones de usuario, como umbrales de alarma o logs de eventos. 
--	Gestión de Energía: Alimentación mediante batería Li-ion con regulación LDO a 3.3V. Implementa modos de bajo consumo (STOP) durante la inactividad. 
+-	Sensor MAX30102: módulo integrado de oximetría y ritmo cardíaco. Se comunica vía I²C y opera a 3,3V. Provee las lecturas crudas de absorción de luz roja e infrarroja necesarias para calcular la saturación y derivar la respiración. 
+-	Microcontrolador STM32F103RB: seleccionado por su núcleo ARM Cortex-M4F (con unidad de punto flotante), esencial para ejecutar filtros digitales eficientes. Gestiona los buses I²C (sensor, EEPROM) y UART (Bluetooth). 
+-	Módulo Bluetooth HM-10: interfaz UART transparente para enviar datos seriales a dispositivos móviles (Smartphone/PC). 
+-	Almacenamiento: memoria EEPROM externa (serie 24C0x) para guardar configuraciones de usuario, como umbrales de alarma o logs de eventos. 
+-	Gestión de Energía: alimentación mediante batería Li-ion con regulación LDO a 3,3V. Implementa modos de bajo consumo (STOP) durante la inactividad. 
 
 ## 3.3 Procesamiento de la señal
 El firmware, desarrollado en C con librerías HAL, ejecuta el siguiente flujo cíclico: 
-1.	Adquisición de Datos: Lectura de la FIFO del MAX30102 para obtener muestras de los canales Rojo e Infrarrojo (IR). 
-2.	Pre-procesamiento: Aplicación de un filtro para eliminar el componente de continua (DC) y ruido de alta frecuencia.<sup>[3]</sup> 
-3.	Cálculo de SpO₂: Se basa en la relación de ratios ($R$) entre las componentes AC y DC de ambas longitudes de onda<sup>[4]</sup>:
+1.	Adquisición de Datos: lectura de la FIFO del MAX30102 para obtener muestras de los canales Rojo e Infrarrojo (IR). 
+2.	Pre-procesamiento: aplicación de un filtro para eliminar el componente de continua (DC) y ruido de alta frecuencia.<sup>[3]</sup> 
+3.	Cálculo de SpO₂: se basa en la relación de ratios ($R$) entre las componentes AC y DC de ambas longitudes de onda<sup>[4]</sup>:
     
 $$ R = \frac{AC_{red}\cdot AC_{ir}}{DC_{red} \cdot Dc_{ir}} $$
 
 $$ SpO_2 = 110 - 25 \cdot R $$
 
-4.	Estimación de Frecuencia Respiratoria: Se realiza mediante el análisis de la variabilidad de la línea base o la modulación de amplitud (envolvente) de la señal PPG, extrayendo componentes de baja frecuencia (0.2 – 0.3 Hz). 
-5.	Lógica de Control: Si el SpO₂ cae por debajo del 90%, se activa la alarma sonora. Finalmente, se empaquetan los datos y se envían por UART. 
+4.	Estimación de Frecuencia Respiratoria: se realiza mediante el análisis de la variabilidad de la línea base o la modulación de amplitud (envolvente) de la señal PPG, extrayendo componentes de baja frecuencia (0,2 – 0,3 Hz). 
+5.	Lógica de Control: si el SpO₂ cae por debajo del 90%, se activa la alarma sonora. Finalmente, se empaquetan los datos y se envían por UART. 
 
 # 4.1 Requerimientos funcionales
 
