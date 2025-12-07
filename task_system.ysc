@@ -19,7 +19,7 @@
           <vertices xsi:type="sgraph:State" xmi:id="_ZrwhENMTEfCwHK4Nl4Kqhw" specification="entry /&#xA;last_mode = ID_MODE_ADULT;&#xA;set_parameters(ID_MODE_ADULT)" name="ST_ADULT" incomingTransitions="_fStigNMTEfCwHK4Nl4Kqhw">
             <outgoingTransitions xmi:id="_jIorMNMTEfCwHK4Nl4Kqhw" specification="EV_MODE_BTN_PRESSED" target="_Rs3X4NMTEfCwHK4Nl4Kqhw"/>
           </vertices>
-          <vertices xsi:type="sgraph:Entry" xmi:id="_7RAZYNMTEfCwHK4Nl4Kqhw">
+          <vertices xsi:type="sgraph:Entry" xmi:id="_7RAZYNMTEfCwHK4Nl4Kqhw" kind="SHALLOW_HISTORY">
             <outgoingTransitions xmi:id="__BUpUNMTEfCwHK4Nl4Kqhw" specification="" target="_Rs3X4NMTEfCwHK4Nl4Kqhw"/>
           </vertices>
         </regions>
