@@ -47,6 +47,7 @@
 #include "board.h"
 #include "app.h"
 #include "task_sensor_attribute.h"
+#include "task_system_attribute.h"
 #include "task_menu_attribute.h"
 #include "task_menu_interface.h"
 
@@ -60,12 +61,12 @@
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg_list[] = {
-	{ID_BTN_ENT,  BTN_ENT_PORT,  BTN_ENT_PIN,  BTN_ENT_PRESSED, DEL_BTN_XX_MAX,
-	 EV_MEN_ENT_IDLE,  EV_MEN_ENT_ACTIVE},
-	{ID_BTN_NEX,  BTN_NEX_PORT,  BTN_NEX_PIN,  BTN_NEX_PRESSED, DEL_BTN_XX_MAX,
-	 EV_MEN_NEX_IDLE,  EV_MEN_NEX_ACTIVE},
-	{ID_BTN_ESC,  BTN_ESC_PORT,  BTN_ESC_PIN,  BTN_ESC_PRESSED, DEL_BTN_XX_MAX,
-	 EV_MEN_ESC_IDLE,  EV_MEN_ESC_ACTIVE}
+	{ID_BTN_MODE,  BTN_MODE_PORT,  BTN_MODE_PIN,  BTN_MODE_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_MODE_IDLE,  EV_SYS_BTN_MODE_ACTIVE},
+	{ID_BTN_PAIRING,  BTN_PAIRING_PORT,  BTN_PAIRING_PIN,  BTN_PAIRING_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_PAIRING_IDLE,  EV_SYS_BTN_PAIRING_ACTIVE},
+	{ID_BTN_ALARM,  BTN_ALARM_PORT,  BTN_ALARM_PIN,  BTN_ALARM_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_ALARM_IDLE,  EV_SYS_BTN_ALARM_ACTIVE}
 };
 
 #define SENSOR_CFG_QTY	(sizeof(task_sensor_cfg_list)/sizeof(task_sensor_cfg_t))
