@@ -39,12 +39,10 @@ A continuacion, detallamos, en funcion de los distintas funcionalid### Estado de
 |  | 4.4 | Recepción de configuración | Recibir umbrales y parámetros desde la aplicación. |🟡  |
 | Memoria | 5.1 | Guardar configuración | Almacenar umbrales y parámetros en EEPROM. | 🔴 |
 |  | 5.2 | Restaurar valores | Recuperar valores predeterminados si hay error de memoria. | 🔴 |
-| Alimentación | 6.1 | Alimentación | Funcionamiento con batería Li-Ion y regulación a 3.3V. | 🔴 |
+| Alimentación | 6.1 | Alimentación | Funcionamiento con batería Li-Ion y regulación a 5V / 3.3V. | 🟡 |
 |  | 6.2 | Bajo consumo | Entrar en modo STOP cuando no hay actividad. | 🟢 |
 |  | 6.3 | Reactivación | Retomar actividad ante movimiento o comando. | 🟢 |
 
 <p align="center"><b>Tabla 1: Requerimientos funcionales</b></p>
 
 Las tareas no realizadas vinculadas a la memoria se deben a una optimización en el almacenamiento de datos. Por ende, no será necesario el uso de una memoria externa, ya que la memoria interna del microcontrolador resulta suficiente para cubrir los requerimientos del sistema. A su vez, utilizaremos un display en el que mostraremos los datos en tiempo real.
-
-En cuanto a la alimentación, por limitaciones de tiempo, el dispositivo será alimentado directamente desde la computadora durante las pruebas.
