@@ -29,7 +29,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file   : app.c
+ * @file   : task_test.c
  * @date   : Set 26, 2023
  * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
  * @version	v1.0.0
@@ -44,139 +44,93 @@
 #include "dwt.h"
 
 /* Application & Tasks includes */
-#include "board.h"
-#include "task_sensor.h"
-#include "task_system.h"
-#include "task_test.h"
+#include "app.h"
 
 /********************** macros and definitions *******************************/
-#define G_APP_CNT_INI		0ul
-#define G_APP_TICK_CNT_INI	0ul
+#define G_TASK_TEST_CNT_INIT			0ul
+#define G_TASK_TEST_TICK_CNT_INI		0ul
 
-#define TASK_X_WCET_INI		0ul
-#define TASK_X_DELAY_MIN	0ul
-
-typedef struct {
-	void (*task_init)(void *);		// Pointer to task (must be a
-									// 'void (void *)' function)
-	void (*task_update)(void *);	// Pointer to task (must be a
-									// 'void (void *)' function)
-	void *parameters;				// Pointer to parameters
-} task_cfg_t;
-
-typedef struct {
-    uint32_t WCET;			// Worst-case execution time (microseconds)
-} task_dta_t;
 
 /********************** internal data declaration ****************************/
-const task_cfg_t task_cfg_list[]	= {
-		{task_sensor_init,	task_sensor_update, 	NULL},
-		{task_system_init,	task_system_update, 		NULL}
+/*
+ * const task_test_cfg_t task_test_cfg_list[] = {
+	{ID_BTN_MODE,  BTN_MODE_PORT,  BTN_MODE_PIN,  BTN_MODE_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_MODE_IDLE,  EV_SYS_BTN_MODE_ACTIVE},
+	{ID_BTN_PAIRING,  BTN_PAIRING_PORT,  BTN_PAIRING_PIN,  BTN_PAIRING_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_PAIRING_IDLE,  EV_SYS_BTN_PAIRING_ACTIVE},
+	{ID_BTN_ALARM,  BTN_ALARM_PORT,  BTN_ALARM_PIN,  BTN_ALARM_PRESSED, DEL_BTN_XX_MAX,
+	 EV_SYS_BTN_ALARM_IDLE,  EV_SYS_BTN_ALARM_ACTIVE}
 };
 
-#define TASK_QTY	(sizeof(task_cfg_list)/sizeof(task_cfg_t))
+#define SENSOR_CFG_QTY	(sizeof(task_test_cfg_list)/sizeof(task_test_cfg_t))
+
+task_test_dta_t task_test_dta_list[] = {
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP}
+};
+
+#define SENSOR_DTA_QTY	(sizeof(task_test_dta_list)/sizeof(task_test_dta_t))
+*/
 
 /********************** internal functions declaration ***********************/
+void task_test_statechart(void);
 
 /********************** internal data definition *****************************/
-const char *p_sys	= " Bare Metal - Event-Triggered Systems (ETS)";
-const char *p_app	= " App - Interactive system";
+const char *p_task_test 		= "Task Test (Test Statechart)";
+const char *p_task_test_ 		= "Non-Blocking & Update By Time Code";
 
 /********************** external data declaration ****************************/
-uint32_t g_app_cnt;
-uint32_t g_app_runtime_us;
-
-volatile uint32_t g_app_tick_cnt;
-
-task_dta_t task_dta_list[TASK_QTY];
+uint32_t g_task_test_cnt;
+volatile uint32_t g_task_test_tick_cnt;
 
 /********************** external functions definition ************************/
-void app_init(void)
+void task_test_init(void *parameters)
 {
-	uint32_t index;
-
-	/* Print out: Application Initialized */
+	/* Print out: Task Initialized */
 	LOGGER_INFO(" ");
-	LOGGER_INFO("%s is running - Tick [mS] = %lu", GET_NAME(app_init), HAL_GetTick());
+	LOGGER_INFO("  %s is running - %s", GET_NAME(task_test_init), p_task_test);
+	LOGGER_INFO("  %s is a %s", GET_NAME(task_test), p_task_test_);
 
-	LOGGER_INFO(p_sys);
-	LOGGER_INFO(p_app);
+	/* Init & Print out: Task execution counter */
+	g_task_test_cnt = G_TASK_TEST_CNT_INIT;
+	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_test_cnt), g_task_test_cnt);
 
-	/* Init & Print out: Application execution counter */
-	g_app_cnt = G_APP_CNT_INI;
-	LOGGER_INFO(" %s = %lu", GET_NAME(g_app_cnt), g_app_cnt);
-
-	/* Init Cycle Counter */
-	cycle_counter_init();
-
-    /* Go through the task arrays */
-	for (index = 0; TASK_QTY > index; index++)
-	{
-		/* Run task_x_init */
-		(*task_cfg_list[index].task_init)(task_cfg_list[index].parameters);
-
-		/* Init variables */
-		task_dta_list[index].WCET = TASK_X_WCET_INI;
-	}
-
-	/* Protect shared resource */
-	__asm("CPSID i");	/* disable interrupts */
-	/* Init Tick Counter */
-	g_app_tick_cnt = G_APP_TICK_CNT_INI;
-
-	g_task_sensor_tick_cnt = G_APP_TICK_CNT_INI;
-	g_task_system_tick_cnt = G_APP_TICK_CNT_INI;
-    __asm("CPSIE i");	/* enable interrupts */
+	// LOGGER_INFO(" ");
+	// LOGGER_INFO("   %s = %lu   %s = %lu   %s = %lu",
+	// 			GET_NAME(index), index,
+	// 			GET_NAME(state), (uint32_t)state,
+	// 			GET_NAME(event), (uint32_t)event);
 }
 
-void app_update(void)
+void task_test_update(void *parameters)
 {
-	uint32_t index;
 	bool b_time_update_required = false;
-	uint32_t cycle_counter_time_us;
 
 	/* Protect shared resource */
 	__asm("CPSID i");	/* disable interrupts */
-    if (G_APP_TICK_CNT_INI < g_app_tick_cnt)
+    if (G_TASK_TEST_TICK_CNT_INI < g_task_test_tick_cnt)
     {
 		/* Update Tick Counter */
-    	g_app_tick_cnt--;
+    	g_task_test_tick_cnt--;
     	b_time_update_required = true;
     }
     __asm("CPSIE i");	/* enable interrupts */
 
-	/* Check if it's time to run tasks */
     while (b_time_update_required)
     {
-    	/* Update App Counter */
-    	g_app_cnt++;
-    	g_app_runtime_us = 0;
+		/* Update Task Counter */
+		g_task_test_cnt++;
 
-		/* Go through the task arrays */
-		for (index = 0; TASK_QTY > index; index++)
-		{
-			cycle_counter_reset();
+		/* Run Task Sensor Statechart */
+    	task_test_statechart();
 
-    		/* Run task_x_update */
-			(*task_cfg_list[index].task_update)(task_cfg_list[index].parameters);
-
-			cycle_counter_time_us = cycle_counter_get_time_us();
-
-			/* Update variables */
-			g_app_runtime_us += cycle_counter_time_us;
-
-			if (task_dta_list[index].WCET < cycle_counter_time_us)
-			{
-				task_dta_list[index].WCET = cycle_counter_time_us;
-			}
-		}
-
-		/* Protect shared resource */
+    	/* Protect shared resource */
 		__asm("CPSID i");	/* disable interrupts */
-		if (G_APP_TICK_CNT_INI < g_app_tick_cnt)
+		if (G_TASK_TEST_TICK_CNT_INI < g_task_test_tick_cnt)
 		{
 			/* Update Tick Counter */
-			g_app_tick_cnt--;
+			g_task_test_tick_cnt--;
 			b_time_update_required = true;
 		}
 		else
@@ -184,16 +138,13 @@ void app_update(void)
 			b_time_update_required = false;
 		}
 		__asm("CPSIE i");	/* enable interrupts */
-	}
+    }
 }
 
-void HAL_SYSTICK_Callback(void)
+void task_test_statechart(void)
 {
-	/* Update Tick Counter */
-	g_app_tick_cnt++;
-
-	g_task_sensor_tick_cnt++;
-	g_task_system_tick_cnt++;
+	// uint32_t index;
+	// const task_test_cfg_t *p_task_test_cfg;
+	// task_test_dta_t *p_task_test_dta;
 }
-
 /********************** end of file ******************************************/

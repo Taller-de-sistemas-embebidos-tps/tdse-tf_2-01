@@ -37,6 +37,7 @@
 
 /********************** inclusions *******************************************/
 /* Project includes */
+#include <task_system_interface.h>
 #include "main.h"
 
 /* Demo includes */
@@ -49,7 +50,6 @@
 #include "task_sensor_attribute.h"
 #include "task_system_attribute.h"
 #include "task_menu_attribute.h"
-#include "task_menu_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul
@@ -205,7 +205,7 @@ void task_sensor_statechart(void)
 				{
 					if (EV_BTN_XX_DOWN == p_task_sensor_dta->event)
 					{
-						put_event_task_menu(p_task_sensor_cfg->signal_down);
+						put_event_task_system(p_task_sensor_cfg->signal_down);
 						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
 					}
 					else
@@ -233,7 +233,7 @@ void task_sensor_statechart(void)
 				{
 					if (EV_BTN_XX_UP == p_task_sensor_dta->event)
 					{
-						put_event_task_menu(p_task_sensor_cfg->signal_up);
+						put_event_task_system(p_task_sensor_cfg->signal_up);
 						p_task_sensor_dta->state = ST_BTN_XX_UP;
 					}
 					else
