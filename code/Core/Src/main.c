@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "task_system_attribute.h"
@@ -240,10 +239,12 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LD2_Pin|DISPLAY_E_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_KID_Pin|LED_ADULT_Pin|LED_ALARM_Pin|LED_BL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_KID_Pin|LED_ADULT_Pin|LED_ALARM_Pin|LED_BL_Pin
+                          |DISPLAY_RS_Pin|DISPLAY_D6_Pin|DISPLAY_D7_Pin|DISPLAY_D5_Pin
+                          |DISPLAY_D4_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_RESET);
@@ -254,15 +255,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LD2_Pin DISPLAY_E_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin|DISPLAY_E_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_KID_Pin LED_ADULT_Pin LED_ALARM_Pin LED_BL_Pin */
-  GPIO_InitStruct.Pin = LED_KID_Pin|LED_ADULT_Pin|LED_ALARM_Pin|LED_BL_Pin;
+  /*Configure GPIO pins : LED_KID_Pin LED_ADULT_Pin LED_ALARM_Pin LED_BL_Pin
+                           DISPLAY_RS_Pin DISPLAY_D6_Pin DISPLAY_D7_Pin DISPLAY_D5_Pin
+                           DISPLAY_D4_Pin */
+  GPIO_InitStruct.Pin = LED_KID_Pin|LED_ADULT_Pin|LED_ALARM_Pin|LED_BL_Pin
+                          |DISPLAY_RS_Pin|DISPLAY_D6_Pin|DISPLAY_D7_Pin|DISPLAY_D5_Pin
+                          |DISPLAY_D4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -290,7 +295,6 @@ static void MX_GPIO_Init(void)
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
-
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -316,7 +320,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 
 /* USER CODE END 4 */
-
 
 /**
   * @brief  This function is executed in case of error occurrence.
