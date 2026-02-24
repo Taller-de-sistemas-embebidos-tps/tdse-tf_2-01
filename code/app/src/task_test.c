@@ -101,6 +101,8 @@ void task_test_init(void *parameters)
 	// 			GET_NAME(index), index,
 	// 			GET_NAME(state), (uint32_t)state,
 	// 			GET_NAME(event), (uint32_t)event);
+	LOGGER_INFO(" ");
+	LOGGER_INFO("Corriendo TEST");
 }
 
 void task_test_update(void *parameters)
