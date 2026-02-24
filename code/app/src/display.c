@@ -267,13 +267,13 @@ static void displayPinWrite( uint8_t pinName, int value )
 
         case DISPLAY_CONNECTION_GPIO_4BITS:
             switch( pinName ) {
-    //         	case DISPLAY_PIN_D4: HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, value);   break;
-				// case DISPLAY_PIN_D5: HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, value);   break;
-				// case DISPLAY_PIN_D6: HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, value);   break;
-				// case DISPLAY_PIN_D7: HAL_GPIO_WritePin(D7_GPIO_Port, D7_Pin, value);   break;
-				// case DISPLAY_PIN_RS: HAL_GPIO_WritePin(D8_GPIO_Port, D8_Pin, value);   break;
-				// case DISPLAY_PIN_EN: HAL_GPIO_WritePin(D9_GPIO_Port, D9_Pin, value);   break;
-    //             case DISPLAY_PIN_RW: break;
+            	case DISPLAY_PIN_D4: HAL_GPIO_WritePin(DISPLAY_D4_GPIO_Port, DISPLAY_D4_Pin, value);   break;
+				case DISPLAY_PIN_D5: HAL_GPIO_WritePin(DISPLAY_D5_GPIO_Port, DISPLAY_D5_Pin, value);   break;
+				case DISPLAY_PIN_D6: HAL_GPIO_WritePin(DISPLAY_D6_GPIO_Port, DISPLAY_D6_Pin, value);   break;
+				case DISPLAY_PIN_D7: HAL_GPIO_WritePin(DISPLAY_D7_GPIO_Port, DISPLAY_D7_Pin, value);   break;
+				case DISPLAY_PIN_RS: HAL_GPIO_WritePin(DISPLAY_RS_GPIO_Port, DISPLAY_RS_Pin, value);   break;
+				case DISPLAY_PIN_EN: HAL_GPIO_WritePin(DISPLAY_E_GPIO_Port, DISPLAY_E_Pin, value);   break;
+                case DISPLAY_PIN_RW: break;
                 default: break;
             }
             break;
