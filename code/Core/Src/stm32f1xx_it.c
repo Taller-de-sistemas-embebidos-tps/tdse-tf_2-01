@@ -41,7 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern volatile uint32_t g_task_sensor_tick_cnt;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -187,7 +187,13 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  static uint8_t tick_divider = 0;
+  tick_divider++;
+    if (tick_divider >= 10) // Cuenta hasta 10 milisegundos
+    {
+        g_task_sensor_tick_cnt++;
+        tick_divider = 0;
+    }
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -206,6 +212,8 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
   /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(BTN_MODO_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BTN_ALARM_Pin);
   HAL_GPIO_EXTI_IRQHandler(B1_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 

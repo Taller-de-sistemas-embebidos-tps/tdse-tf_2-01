@@ -36,7 +36,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+extern I2C_HandleTypeDef hi2c1;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -66,16 +66,26 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
-#define BTN_ALARM_Pin GPIO_PIN_7
-#define BTN_ALARM_GPIO_Port GPIOC
-#define BTN_MODE_Pin GPIO_PIN_8
-#define BTN_MODE_GPIO_Port GPIOA
-#define BTN_PAIRING_Pin GPIO_PIN_9
-#define BTN_PAIRING_GPIO_Port GPIOA
+#define LED_KID_Pin GPIO_PIN_1
+#define LED_KID_GPIO_Port GPIOB
+#define LED_ADULT_Pin GPIO_PIN_2
+#define LED_ADULT_GPIO_Port GPIOB
+#define LED_ALARM_Pin GPIO_PIN_10
+#define LED_ALARM_GPIO_Port GPIOB
+#define LED_BL_Pin GPIO_PIN_11
+#define LED_BL_GPIO_Port GPIOB
+#define BUZZER_Pin GPIO_PIN_7
+#define BUZZER_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define BTN_MODO_Pin GPIO_PIN_10
+#define BTN_MODO_GPIO_Port GPIOC
+#define BTN_MODO_EXTI_IRQn EXTI15_10_IRQn
+#define BTN_ALARM_Pin GPIO_PIN_11
+#define BTN_ALARM_GPIO_Port GPIOC
+#define BTN_ALARM_EXTI_IRQn EXTI15_10_IRQn
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 
