@@ -1,67 +1,58 @@
-/*
- * Copyright (c) 2023 Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * @file   : task_sensor.h
- * @date   : Set 26, 2023
- * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
- * @version	v1.0.0
- */
+#ifndef TASK_SENSOR_H
+#define TASK_SENSOR_H
 
-#ifndef TASK_INC_TASK_SENSOR_H_
-#define TASK_INC_TASK_SENSOR_H_
-
-/********************** CPP guard ********************************************/
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/********************** inclusions *******************************************/
+/********************** inclusions *******************************/
+#include <stdint.h>
+#include "ppg_processing.h"
+#include "task_system.h"
 
-/********************** macros ***********************************************/
+/********************** public macros ****************************/
+/* (por ahora no hay macros públicas del sensor) */
 
-/********************** typedef **********************************************/
+/********************** public types *****************************/
+/* NOTA:
+ * Estados, eventos y estructuras del sensor
+ * se definen en task_sensor_attribute.h
+ */
 
-/********************** external data declaration ****************************/
+/********************** public variables *************************/
+/* Contador de ejecuciones de la tarea sensor */
 extern uint32_t g_task_sensor_cnt;
+
+/* Contador de ticks pendientes (actualizado desde ISR) */
 extern volatile uint32_t g_task_sensor_tick_cnt;
 
-/********************** external functions declaration ***********************/
-extern void task_sensor_init(void *parameters);
-extern void task_sensor_update(void *parameters);
+/********************** public functions *************************/
 
-/********************** End of CPP guard *************************************/
+/**
+ * @brief Inicialización de la tarea Sensor
+ *
+ * Se encarga de:
+ *  - Inicializar estados y eventos
+ *  - Inicializar ticks
+ *  - Mostrar información de debug
+ *
+ * @param parameters Parámetros genéricos de inicialización (no usados)
+ */
+void task_sensor_init(void *parameters);
+
+/**
+ * @brief Actualización periódica de la tarea Sensor
+ *
+ * Debe llamarse desde el scheduler principal.
+ * Consume ticks y ejecuta la máquina de estados del sensor
+ * de forma no bloqueante.
+ *
+ * @param parameters Parámetros genéricos de ejecución (no usados)
+ */
+void task_sensor_update(void *parameters);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TASK_INC_TASK_SENSOR_H_ */
-
-/********************** end of file ******************************************/
+#endif /* TASK_SENSOR_H */

@@ -1,257 +1,207 @@
-/*
- * Copyright (c) 2023 Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * @file   : task_sensor.c
- * @date   : Set 26, 2023
- * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
- * @version	v1.0.0
- */
-
-/********************** inclusions *******************************************/
-/* Project includes */
 #include "main.h"
-
-/* Demo includes */
 #include "logger.h"
 #include "dwt.h"
-
-/* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
 #include "task_sensor_attribute.h"
 #include "task_system_attribute.h"
 #include "task_menu_attribute.h"
 #include "task_menu_interface.h"
+#include "task_comm.h"
+#include "task_system.h"
+#include "task_sensor.h"
+
+#include "max30102.h"
+#include "ppg_processing.h"
 
 /********************** macros and definitions *******************************/
-#define G_TASK_SEN_CNT_INIT			0ul
-#define G_TASK_SEN_TICK_CNT_INI		0ul
+#define G_TASK_SEN_CNT_INIT         0ul
+#define G_TASK_SEN_TICK_CNT_INI     0ul
 
-#define DEL_BTN_XX_MIN				0ul
-#define DEL_BTN_XX_MED				25ul
-#define DEL_BTN_XX_MAX				50ul
+#define MAX_IDLE_TICK               50ul
+#define MAX_READ_TICK               100ul
+
+#define IR_THRESHOLD                50000ul
 
 /********************** internal data declaration ****************************/
+
 const task_sensor_cfg_t task_sensor_cfg_list[] = {
-	{ID_BTN_MODE,  BTN_MODE_PORT,  BTN_MODE_PIN,  BTN_MODE_PRESSED, DEL_BTN_XX_MAX,
-	 EV_SYS_BTN_MODE_IDLE,  EV_SYS_BTN_MODE_ACTIVE},
-	{ID_BTN_PAIRING,  BTN_PAIRING_PORT,  BTN_PAIRING_PIN,  BTN_PAIRING_PRESSED, DEL_BTN_XX_MAX,
-	 EV_SYS_BTN_PAIRING_IDLE,  EV_SYS_BTN_PAIRING_ACTIVE},
-	{ID_BTN_ALARM,  BTN_ALARM_PORT,  BTN_ALARM_PIN,  BTN_ALARM_PRESSED, DEL_BTN_XX_MAX,
-	 EV_SYS_BTN_ALARM_IDLE,  EV_SYS_BTN_ALARM_ACTIVE}
+    { MAX_IDLE_TICK, MAX_READ_TICK, EV_SAVE_DATA }
 };
 
-#define SENSOR_CFG_QTY	(sizeof(task_sensor_cfg_list)/sizeof(task_sensor_cfg_t))
+#define SENSOR_CFG_QTY  (sizeof(task_sensor_cfg_list)/sizeof(task_sensor_cfg_t))
 
 task_sensor_dta_t task_sensor_dta_list[] = {
-	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
-	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
-	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP}
+    { MAX_IDLE_TICK, ST_IDLE, EV_SEN_FINGER_OUT }
 };
 
-#define SENSOR_DTA_QTY	(sizeof(task_sensor_dta_list)/sizeof(task_sensor_dta_t))
+#define SENSOR_DTA_QTY  (sizeof(task_sensor_dta_list)/sizeof(task_sensor_dta_t))
 
 /********************** internal functions declaration ***********************/
-void task_sensor_statechart(void);
+static void task_sensor_statechart(void);
 
 /********************** internal data definition *****************************/
-const char *p_task_sensor 		= "Task Sensor (Sensor Statechart)";
-const char *p_task_sensor_ 		= "Non-Blocking & Update By Time Code";
+const char *p_task_sensor  = "Task Sensor";
+const char *p_task_sensor_ = "Non-Blocking & Update By Time Code";
 
 /********************** external data declaration ****************************/
 uint32_t g_task_sensor_cnt;
 volatile uint32_t g_task_sensor_tick_cnt;
 
+extern I2C_HandleTypeDef hi2c1;
+
+/********************** sensor driver instance ******************************/
+static max30102_t max30102;
+
 /********************** external functions definition ************************/
+
 void task_sensor_init(void *parameters)
 {
-	uint32_t index;
-	task_sensor_dta_t *p_task_sensor_dta;
-	task_sensor_st_t state;
-	task_sensor_ev_t event;
+    uint32_t index;
+    task_sensor_dta_t *p_task_sensor_dta;
 
-	/* Print out: Task Initialized */
-	LOGGER_INFO(" ");
-	LOGGER_INFO("  %s is running - %s", GET_NAME(task_sensor_init), p_task_sensor);
-	LOGGER_INFO("  %s is a %s", GET_NAME(task_sensor), p_task_sensor_);
+    LOGGER_INFO(" ");
+    LOGGER_INFO("  %s is running - %s", GET_NAME(task_sensor_init), p_task_sensor);
+    LOGGER_INFO("  %s is a %s", GET_NAME(task_sensor), p_task_sensor_);
 
-	/* Init & Print out: Task execution counter */
-	g_task_sensor_cnt = G_TASK_SEN_CNT_INIT;
-	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_cnt), g_task_sensor_cnt);
+    /* Init processing */
+    ppg_init();
 
-	for (index = 0; SENSOR_DTA_QTY > index; index++)
-	{
-		/* Update Task Sensor Data Pointer */
-		p_task_sensor_dta = &task_sensor_dta_list[index];
+    /* Init sensor */
+    MAX30102_Init(&max30102, &hi2c1);
 
-		/* Init & Print out: Index & Task execution FSM */
-		state = ST_BTN_XX_UP;
-		p_task_sensor_dta->state = state;
+    /* Init counters */
+    g_task_sensor_cnt = G_TASK_SEN_CNT_INIT;
+    LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_cnt), g_task_sensor_cnt);
 
-		event = EV_BTN_XX_UP;
-		p_task_sensor_dta->event = event;
+    for (index = 0; index < SENSOR_DTA_QTY; index++)
+    {
+        p_task_sensor_dta = &task_sensor_dta_list[index];
 
-		LOGGER_INFO(" ");
-		LOGGER_INFO("   %s = %lu   %s = %lu   %s = %lu",
-				    GET_NAME(index), index,
-					GET_NAME(state), (uint32_t)state,
-					GET_NAME(event), (uint32_t)event);
-	}
+        p_task_sensor_dta->state = ST_IDLE;
+        p_task_sensor_dta->event = EV_SEN_FINGER_OUT;
+        p_task_sensor_dta->tick  = MAX_IDLE_TICK;
+
+        LOGGER_INFO("   Sensor[%lu] State=%lu Event=%lu",
+                    index,
+                    (uint32_t)p_task_sensor_dta->state,
+                    (uint32_t)p_task_sensor_dta->event);
+    }
 }
 
 void task_sensor_update(void *parameters)
 {
-	bool b_time_update_required = false;
+    bool b_time_update_required = false;
 
-	/* Protect shared resource */
-	__asm("CPSID i");	/* disable interrupts */
+    __asm("CPSID i");
     if (G_TASK_SEN_TICK_CNT_INI < g_task_sensor_tick_cnt)
     {
-		/* Update Tick Counter */
-    	g_task_sensor_tick_cnt--;
-    	b_time_update_required = true;
+        g_task_sensor_tick_cnt--;
+        b_time_update_required = true;
     }
-    __asm("CPSIE i");	/* enable interrupts */
+    __asm("CPSIE i");
 
     while (b_time_update_required)
     {
-		/* Update Task Counter */
-		g_task_sensor_cnt++;
+        g_task_sensor_cnt++;
+        task_sensor_statechart();
 
-		/* Run Task Sensor Statechart */
-    	task_sensor_statechart();
-
-    	/* Protect shared resource */
-		__asm("CPSID i");	/* disable interrupts */
-		if (G_TASK_SEN_TICK_CNT_INI < g_task_sensor_tick_cnt)
-		{
-			/* Update Tick Counter */
-			g_task_sensor_tick_cnt--;
-			b_time_update_required = true;
-		}
-		else
-		{
-			b_time_update_required = false;
-		}
-		__asm("CPSIE i");	/* enable interrupts */
+        __asm("CPSID i");
+        if (G_TASK_SEN_TICK_CNT_INI < g_task_sensor_tick_cnt)
+        {
+            g_task_sensor_tick_cnt--;
+            b_time_update_required = true;
+        }
+        else
+        {
+            b_time_update_required = false;
+        }
+        __asm("CPSIE i");
     }
 }
 
-void task_sensor_statechart(void)
+static void task_sensor_statechart(void)
 {
-	uint32_t index;
-	const task_sensor_cfg_t *p_task_sensor_cfg;
-	task_sensor_dta_t *p_task_sensor_dta;
+    uint32_t index;
+    uint32_t ir_sample  = 0;
+    uint32_t red_sample = 0;
 
-	for (index = 0; SENSOR_DTA_QTY > index; index++)
-	{
-		/* Update Task Sensor Configuration & Data Pointer */
-		p_task_sensor_cfg = &task_sensor_cfg_list[index];
-		p_task_sensor_dta = &task_sensor_dta_list[index];
+    for (index = 0; index < SENSOR_DTA_QTY; index++)
+    {
+        const task_sensor_cfg_t *cfg = &task_sensor_cfg_list[index];
+        task_sensor_dta_t *dta = &task_sensor_dta_list[index];
 
-		if (p_task_sensor_cfg->pressed == HAL_GPIO_ReadPin(p_task_sensor_cfg->gpio_port, p_task_sensor_cfg->pin))
-		{
-			p_task_sensor_dta->event =	EV_BTN_XX_DOWN;
-		}
-		else
-		{
-			p_task_sensor_dta->event =	EV_BTN_XX_UP;
-		}
+        /* Leer sensor real */
+        MAX30102_ReadIR(&max30102,&ir_sample);
 
-		switch (p_task_sensor_dta->state)
-		{
-			case ST_BTN_XX_UP:
+        /* Detectar dedo */
+        dta->event = (ir_sample > IR_THRESHOLD)
+                     ? EV_SEN_FINGER_IN
+                     : EV_SEN_FINGER_OUT;
 
-				if (EV_BTN_XX_DOWN == p_task_sensor_dta->event)
-				{
-					p_task_sensor_dta->tick = p_task_sensor_cfg->tick_max;
-					p_task_sensor_dta->state = ST_BTN_XX_FALLING;
-				}
+        switch (dta->state)
+        {
+            case ST_IDLE:
 
-				break;
+                if (EV_SEN_FINGER_IN == dta->event)
+                {
+                    if (0 == dta->tick)
+                    {
+                        dta->tick  = cfg->max_read_tick;
+                        dta->state = ST_READING;
+                    }
+                    else
+                    {
+                        dta->tick--;
+                    }
+                }
+                else
+                {
+                    dta->tick = cfg->max_idle_tick;
+                }
+                break;
 
-			case ST_BTN_XX_FALLING:
+            case ST_READING:
 
-				p_task_sensor_dta->tick--;
-				if (DEL_BTN_XX_MIN == p_task_sensor_dta->tick)
-				{
-					if (EV_BTN_XX_DOWN == p_task_sensor_dta->event)
-					{
-						put_event_task_menu(p_task_sensor_cfg->signal_down);
-						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
-					}
-					else
-					{
-						p_task_sensor_dta->state = ST_BTN_XX_UP;
-					}
-				}
+                if (EV_SEN_FINGER_OUT == dta->event)
+                {
+                    if (0 == dta->tick)
+                    {
+                        dta->tick  = cfg->max_idle_tick;
+                        dta->state = ST_IDLE;
+                    }
+                    else
+                    {
+                        dta->tick--;
+                    }
+                }
+                else
+                {
+                    dta->tick = cfg->max_read_tick;
+                }
 
-				break;
+                /* Toma de muestra */
+                if (cfg->max_read_tick == dta->tick)
+                {
+                    ppg_add_sample(ir_sample, red_sample);
 
-			case ST_BTN_XX_DOWN:
+                    ppg_results_t res;
+                    if (ppg_compute(&res))
+                    {
+                        task_system_post_ppg(&res);
+                    }
 
-				if (EV_BTN_XX_UP == p_task_sensor_dta->event)
-				{
-					p_task_sensor_dta->state = ST_BTN_XX_RISING;
-					p_task_sensor_dta->tick = p_task_sensor_cfg->tick_max;
-				}
+                    //put_event_task_menu(cfg->signal_read_data);
+                }
+                break;
 
-				break;
-
-			case ST_BTN_XX_RISING:
-
-				p_task_sensor_dta->tick--;
-				if (DEL_BTN_XX_MIN == p_task_sensor_dta->tick)
-				{
-					if (EV_BTN_XX_UP == p_task_sensor_dta->event)
-					{
-						put_event_task_menu(p_task_sensor_cfg->signal_up);
-						p_task_sensor_dta->state = ST_BTN_XX_UP;
-					}
-					else
-					{
-						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
-					}
-				}
-
-				break;
-
-			default:
-
-				p_task_sensor_dta->tick  = DEL_BTN_XX_MIN;
-				p_task_sensor_dta->state = ST_BTN_XX_UP;
-				p_task_sensor_dta->event = EV_BTN_XX_UP;
-
-				break;
-		}
-	}
+            default:
+                dta->tick  = cfg->max_idle_tick;
+                dta->state = ST_IDLE;
+                dta->event = EV_SEN_FINGER_OUT;
+                break;
+        }
+    }
 }
+
 /********************** end of file ******************************************/
