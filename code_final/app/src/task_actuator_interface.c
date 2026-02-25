@@ -67,7 +67,7 @@ void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identi
 	p_task_actuator_dta = &task_actuator_dta_list[identifier];
 
 	p_task_actuator_dta->event = event;
-	p_task_actuator_dta->flag = true;
+	// p_task_actuator_dta->flag = true;
 }
 
 /********************** end of file ******************************************/
