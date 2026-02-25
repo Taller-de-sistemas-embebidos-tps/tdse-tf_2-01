@@ -66,6 +66,8 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define BTN_PAIRING_Pin GPIO_PIN_5
+#define BTN_PAIRING_GPIO_Port GPIOC
 #define LED_KID_Pin GPIO_PIN_1
 #define LED_KID_GPIO_Port GPIOB
 #define LED_ADULT_Pin GPIO_PIN_2
@@ -88,9 +90,9 @@ void Error_Handler(void);
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
-#define BTN_MODO_Pin GPIO_PIN_10
-#define BTN_MODO_GPIO_Port GPIOC
-#define BTN_MODO_EXTI_IRQn EXTI15_10_IRQn
+#define BTN_MODE_Pin GPIO_PIN_10
+#define BTN_MODE_GPIO_Port GPIOC
+#define BTN_MODE_EXTI_IRQn EXTI15_10_IRQn
 #define BTN_ALARM_Pin GPIO_PIN_11
 #define BTN_ALARM_GPIO_Port GPIOC
 #define BTN_ALARM_EXTI_IRQn EXTI15_10_IRQn
