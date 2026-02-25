@@ -49,29 +49,33 @@ extern "C" {
 
 /********************** typedef **********************************************/
 /* Events to excite Task System */
-typedef enum task_system_ev {EV_SYS_IDLE,
-							 EV_SYS_LOOP_DET,
-							 EV_SYS_NOT_LOOP_DET,
-							 EV_SYS_MANUAL_BTN,
-							 EV_SYS_NOT_MANUAL_BTN,
-							 EV_SYS_IR_PHO_CELL,
-							 EV_SYS_NOT_IR_PHO_CELL} task_system_ev_t;
+typedef enum task_system_ev {
+	EV_SYS_IDLE,
+    EV_SYS_BTN_MODE_PRESSED,
+    EV_SYS_BTN_MODE_RELEASED,
+    EV_SYS_BTN_PAIRING_PRESSED,
+    EV_SYS_BTN_PAIRING_RELEASED,
+    EV_SYS_BTN_ALARM_PRESSED,
+    EV_SYS_BTN_ALARM_RELEASED,
+} task_system_ev_t;
 
 /* State of Task System */
-typedef enum task_system_st {ST_SYS_IDLE,
-							 ST_SYS_ACTIVE_01,
-							 ST_SYS_ACTIVE_02,
-							 ST_SYS_ACTIVE_03,
-							 ST_SYS_ACTIVE_04,
-							 ST_SYS_ACTIVE_05,
-							 ST_SYS_ACTIVE_06} task_system_st_t;
+typedef enum task_system_st {
+    ST_SYS_INIT,
+    ST_SYS_MAIN,
+} task_system_st_t;
 
-typedef struct
-{
-	uint32_t			tick;
-	task_system_st_t	state;
-	task_system_ev_t	event;
-	bool				flag;
+typedef enum task_system_mode_id {
+    ID_KID,
+    ID_ADULT
+} task_system_mode_id_t;
+
+typedef struct task_system_dta {
+    task_system_st_t state;
+    task_system_ev_t event;
+    task_system_mode_id_t mode;
+    bool bluetooth_connected;
+    uint32_t parameter;
 } task_system_dta_t;
 
 /********************** external data declaration ****************************/
