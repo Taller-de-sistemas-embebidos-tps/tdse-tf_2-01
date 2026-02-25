@@ -75,8 +75,8 @@ const task_cfg_t task_cfg_list[]	= {
 		{task_sensor_init,	task_sensor_update, 	NULL},
 		{task_system_init,	task_system_update,		NULL},
 		{task_actuator_init, task_actuator_update,	NULL},
-		{task_comm_init, task_comm_update, 			NULL},
-		{task_test_init,	task_test_update,		NULL}
+		// {task_comm_init, task_comm_update, 			NULL},
+		// {task_test_init,	task_test_update,		NULL}
 };
 
 #define TASK_QTY	(sizeof(task_cfg_list)/sizeof(task_cfg_t))
@@ -131,6 +131,7 @@ void app_init(void)
 
 	g_task_sensor_tick_cnt = G_APP_TICK_CNT_INI;
 	g_task_system_tick_cnt = G_APP_TICK_CNT_INI;
+	g_task_actuator_tick_cnt = G_APP_TICK_CNT_INI;
     __asm("CPSIE i");	/* enable interrupts */
 }
 
@@ -199,6 +200,7 @@ void HAL_SYSTICK_Callback(void)
 
 	g_task_sensor_tick_cnt++;
 	g_task_system_tick_cnt++;
+	g_task_actuator_tick_cnt++;
 }
 
 /********************** end of file ******************************************/

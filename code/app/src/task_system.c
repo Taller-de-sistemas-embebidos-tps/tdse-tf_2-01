@@ -37,7 +37,8 @@
 
 /********************** inclusions *******************************************/
 /* Project includes */
-#include <task_system_interface.h>
+#include "task_system_interface.h"
+#include "task_actuator_interface.h"
 #include "main.h"
 
 /* Demo includes */
@@ -59,16 +60,20 @@
 #define DEL_SYS_XX_MAX				500ul
 
 /********************** internal data declaration ****************************/
-task_system_dta_t task_system_dta =
-	{DEL_SYS_XX_MIN, ST_KID, ST_SYS_MAIN};
+task_system_dta_t task_system_dta =	{
+	EV_SYS_BTN_PAIRING_PRESSED,
+	ID_KID,
+	ST_SYS_MAIN,
+	false
+};
 
-#define system_DTA_QTY	(sizeof(task_system_dta)/sizeof(task_system_dta_t))
+task_system_cfg_t task_system_cfg = { 100, 200 };
 
 /********************** internal functions declaration ***********************/
 void task_system_statechart(void);
 
 /********************** internal data definition *****************************/
-const char *p_task_system 		= "Task system (Interactive system)";
+const char *p_task_system 		= "Task System (App System)";
 const char *p_task_system_ 		= "Non-Blocking & Update By Time Code";
 
 /********************** external data declaration ****************************/
@@ -101,7 +106,7 @@ void task_system_init(void *parameters)
 	state = ST_SYS_MAIN;
 	p_task_system_dta->state = state;
 
-	event = EV_SYS_BTN_MODE_IDLE;
+	event = EV_SYS_BTN_MODE_RELEASED;
 	p_task_system_dta->event = event;
 
 	b_event = false;
@@ -118,9 +123,9 @@ void task_system_init(void *parameters)
 
     displayCharPositionWrite(0, 0);
 	displayStringWrite("TdSE Bienvenidos");
-
-	displayCharPositionWrite(0, 1);
-	displayStringWrite("Test Nro: ");
+	//
+	// displayCharPositionWrite(0, 1);
+	// displayStringWrite("Test Nro: ");
 }
 
 void task_system_update(void *parameters)
@@ -164,22 +169,59 @@ void task_system_update(void *parameters)
 void task_system_statechart(void)
 {
 	task_system_dta_t *p_task_system_dta;
-	// char system_str[8];
-	// char system_title;
-	// char system_body;
+	task_system_cfg_t *p_task_system_cfg;
 
     /* Update Task system Data Pointer */
 	p_task_system_dta = &task_system_dta;
+	p_task_system_cfg = &task_system_cfg;
 
-	if (true == any_event_task_system())
-	{
+	if (true == any_event_task_system()) {
 		// p_task_system_dta->flag = true;
 		p_task_system_dta->event = get_event_task_system();
 	}
 
 	switch (p_task_system_dta->state)
 	{
+		case ST_SYS_MAIN:
+
+			switch (p_task_system_dta->event) {
+				case EV_SYS_BTN_MODE_PRESSED:
+					if (p_task_system_dta->mode == ID_KID) {
+						p_task_system_dta->mode = ID_ADULT;
+						p_task_system_dta->parameter = p_task_system_cfg->adult_parameter;
+						put_event_task_actuator(EV_ACT_OFF, ID_LED_KID);
+						put_event_task_actuator(EV_ACT_ON, ID_LED_ADULT);
+					} else {
+						p_task_system_dta->mode = ID_KID;
+						p_task_system_dta->parameter = p_task_system_cfg->kid_parameter;
+						put_event_task_actuator(EV_ACT_OFF, ID_LED_ADULT);
+						put_event_task_actuator(EV_ACT_ON, ID_LED_KID);
+					}
+					displayCharPositionWrite(0, 1);
+					displayStringWrite("MODO");
+					break;
+
+				case EV_SYS_BTN_ALARM_PRESSED:
+					put_event_task_actuator(EV_ACT_OFF, ID_LED_ALARM);
+					put_event_task_actuator(EV_ACT_OFF, ID_BUZZER);
+					displayCharPositionWrite(0, 1);
+					displayStringWrite("ALARMA");
+					break;
+
+				case EV_SYS_BTN_PAIRING_PRESSED:
+					put_event_task_actuator(EV_ACT_BLINK, ID_LED_BLUETOOTH);
+					displayStringWrite("PAIR");
+					break;
+
+				default:
+					LOGGER_INFO("NO ESTOY EN NINGUN CASO DEL MAIN");
+					displayStringWrite("NONE");
+					break;
+			}
+			break;
+
 		default:
+			LOGGER_INFO("NO ESTOY EN MAIN");
 			break;
 	}
 }

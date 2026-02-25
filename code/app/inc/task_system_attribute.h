@@ -5,30 +5,40 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+#include <stdint.h>
+
 typedef enum task_system_ev {
-    EV_SYS_BTN_MODE_ACTIVE,
-    EV_SYS_BTN_MODE_IDLE,
-    EV_SYS_BTN_PAIRING_ACTIVE,
-    EV_SYS_BTN_PAIRING_IDLE,
-    EV_SYS_BTN_ALARM_ACTIVE,
-    EV_SYS_BTN_ALARM_IDLE,
+    EV_SYS_BTN_MODE_PRESSED,
+    EV_SYS_BTN_MODE_RELEASED,
+    EV_SYS_BTN_PAIRING_PRESSED,
+    EV_SYS_BTN_PAIRING_RELEASED,
+    EV_SYS_BTN_ALARM_PRESSED,
+    EV_SYS_BTN_ALARM_RELEASED,
 } task_system_ev_t;
 
 typedef enum task_system_st {
+    ST_SYS_INIT,
     ST_SYS_MAIN,
-    ST_SYS_SLEEP,
 } task_system_st_t;
 
-typedef enum task_system_inner_st {
-    ST_KID,
-    ST_ADULT
-} task_system_inner_st_t;
+typedef enum task_system_mode_id {
+    ID_KID,
+    ID_ADULT
+} task_system_mode_id_t;
 
 typedef struct task_system_dta {
     task_system_ev_t event;
-    task_system_inner_st_t current_mode;
+    task_system_mode_id_t mode;
     task_system_st_t state;
+    bool bluetooth_connected;
+    uint32_t parameter;
 } task_system_dta_t;
+
+typedef struct {
+    uint32_t kid_parameter;
+    uint32_t adult_parameter;
+} task_system_cfg_t;
 
 extern task_system_dta_t task_system_dta;
 

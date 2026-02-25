@@ -21,6 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "logger.h"
 #include "app.h"
 /* USER CODE END Includes */
 
@@ -70,7 +71,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  #if (1 == LOGGER_CONFIG_USE_SEMIHOSTING)
 
+    extern void initialise_monitor_handles(void);
+
+  #endif
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,7 +107,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    app_update();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

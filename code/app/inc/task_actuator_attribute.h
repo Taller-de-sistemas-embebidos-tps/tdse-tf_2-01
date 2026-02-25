@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include "main.h"
+
 typedef enum {
     ID_LED_BLUETOOTH,
     ID_LED_KID,
