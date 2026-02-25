@@ -61,31 +61,26 @@
 
 /********************** internal data declaration ****************************/
 const task_comm_cfg_t task_comm_cfg_list[] = {
-// 	{ID_BTN_MODE,  BTN_MODE_PORT,  BTN_MODE_PIN,  BTN_MODE_PRESSED, DEL_BTN_XX_MAX,
-// 	 EV_SYS_BTN_MODE_IDLE,  EV_SYS_BTN_MODE_ACTIVE},
-// 	{ID_BTN_PAIRING,  BTN_PAIRING_PORT,  BTN_PAIRING_PIN,  BTN_PAIRING_PRESSED, DEL_BTN_XX_MAX,
-// 	 EV_SYS_BTN_PAIRING_IDLE,  EV_SYS_BTN_PAIRING_ACTIVE},
-// 	{ID_BTN_ALARM,  BTN_ALARM_PORT,  BTN_ALARM_PIN,  BTN_ALARM_PRESSED, DEL_BTN_XX_MAX,
-// 	 EV_SYS_BTN_ALARM_IDLE,  EV_SYS_BTN_ALARM_ACTIVE}
+	{
+		USART_TX_GPIO_Port, USART_TX_Pin,
+		USART_RX_GPIO_Port, USART_RX_Pin,
+		1, 0 // TODO Revisar que valores poner ahí
+	}
 };
 
-// #define COMM_CFG_QTY	(sizeof(task_comm_cfg_list)/sizeof(task_comm_cfg_t))
-#define COMM_CFG_QTY 1
+#define COMM_CFG_QTY	(sizeof(task_comm_cfg_list)/sizeof(task_comm_cfg_t))
 
 task_comm_dta_t task_comm_dta_list[] = {
-	// {DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
-	// {DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
-	// {DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP}
+	{ST_COMM_DISCONNECTED, EV_COMM_SEND_DATA, 0}
 };
 
-// #define COMM_DTA_QTY	(sizeof(task_comm_dta_list)/sizeof(task_comm_dta_t))
-#define COMM_DTA_QTY 1
+#define COMM_DTA_QTY	(sizeof(task_comm_dta_list)/sizeof(task_comm_dta_t))
 
 /********************** internal functions declaration ***********************/
 void task_comm_statechart(void);
 
 /********************** internal data definition *****************************/
-const char *p_task_comm 		= "Task comm (comm Statechart)";
+const char *p_task_comm 		= "Task Comm (Comm Statechart)";
 const char *p_task_comm_ 		= "Non-Blocking & Update By Time Code";
 
 /********************** external data declaration ****************************/
@@ -115,7 +110,7 @@ void task_comm_init(void *parameters)
 		p_task_comm_dta = &task_comm_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
-		state = 0; // TODO cambiar luego
+		state = ST_COMM_DISCONNECTED;
 		p_task_comm_dta->state = state;
 
 		event = 0; // TODO cambiar luego;
@@ -172,5 +167,11 @@ void task_comm_statechart(void)
 	// uint32_t index;
 	// const task_comm_cfg_t *p_task_comm_cfg;
 	// task_comm_dta_t *p_task_comm_dta;
+	//
+	switch (task_comm_dta_list[0].event) {
+		case EV_COMM_SEND_DATA:
+			HAL_UART_Transmit(&huart1, (uint8_t*)tx_2, size2, 1000);
+			break;
+	}
 }
 /********************** end of file ******************************************/
