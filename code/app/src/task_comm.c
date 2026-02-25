@@ -170,7 +170,7 @@ void task_comm_statechart(void)
 	//
 	switch (task_comm_dta_list[0].event) {
 		case EV_COMM_SEND_DATA:
-			HAL_UART_Transmit(&huart1, (uint8_t*)tx_2, size2, 1000);
+			// HAL_UART_Transmit(&huart1, (uint8_t*)tx_2, size2, 1000);
 			break;
 	}
 }
