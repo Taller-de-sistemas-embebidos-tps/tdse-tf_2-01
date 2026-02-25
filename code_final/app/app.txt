@@ -1,0 +1,209 @@
+  app.c (app.h)
+   Endless loops, which execute tasks with fixed computing time. This 
+   sequential execution is only deviated from when an interrupt event occurs.
+   Cyclic Executive (Update by Time Code, period = 1mS)
+
+...
+
+// descripcion de main.c 
+ Se definen tres funciones,void SystemClock_Config(void) se encarga de configurar el clock del sistema
+ , static void MX_GPIO_Init(void) tiene el proposito de inicializar los pines de entrada y salida y por ultimo 
+ MX_USART2_UART_Init(void) se encarga de inicializar la periferia USART2 para usarlo como UART.
+ Luego, si la funcion del pre procesador LOGGER_CONFIG_USE_SEMIHOSTING está en 1, entonces declara la 
+ función initialise_monitor_handles().
+ Ahora dentro del main, si el semihosting está habilitado, se inicializa para poder usar printf vía debugger.
+ HAL_Init() inicializa la Hardware Abstraction Layer. 
+ SystemClock_Config() configura el reloj del sistema. 
+ Mientras que MX_GPIO_Init() activa el reloj de los puertos GPIO,  MX_USART2_UART_Init()
+ inicializa UART2.
+ Con appp_init() inicializo la aplicación y luego dentro del bucle infinito donde se ejecuta continuamente app_update() 
+ la cual actualiza la lógica. 
+ Se utilizan funciones auxiliares, ustilizando estructuras RCC_OscInitTypeDef y RCC_ClkInitTypeDef para configurar PLL y relojes internos.
+ Si hay error,llama a Error_Handler().
+ MX_USART2_UART_Init() configura el periférico USART2 con parámetros de la estructura huart2.Init. 
+ MX_GPIO_Init() configura relojes de puertos GPIO, Configura botón como entrada con interrupción,
+ Configura LED como salida digital,Habilita interrupción EXTI15_10.
+ Error_Handler() deshabilita interrupciones y se queda en un bucle infinito si ocurre error. 
+ 
+ //descripcion de app.c
+ #define G_APP_CNT_INI		0ul
+Valor inicial del contador global de ciclos de la aplicación.
+#define G_APP_TICK_CNT_INI	0ul
+Valor inicial del contador de ticks de la aplicación
+#define TASK_X_WCET_INI		0ul
+Valor inicial del WCET (Worst Case Execution Time)
+#define TASK_X_DELAY_MIN	0ul
+Valor inicial para un posible retardo mínimo de la tarea
+
+la estructura 
+typedef struct {
+	void (*task_init)(void *);		// Pointer to task (must be a
+									// 'void (void *)' function)
+	void (*task_update)(void *);	// Pointer to task (must be a
+									// 'void (void *)' function)
+	void *parameters;				// Pointer to parameters
+} task_cfg_t;
+
+Funciona como descripción estática de cada tarea registrada en el sistema.
+
+ la estructura 
+ 
+ typedef struct {
+    uint32_t WCET;  // Worst-case execution time en microsegundos
+} task_dta_t;
+
+Funciona como estructura dinámica de métricas de cada tarea.
+
+const task_cfg_t task_cfg_list[] = {
+    {task_sensor_init,   task_sensor_update,   NULL},
+    {task_system_init,   task_system_update,   NULL},
+    {task_actuator_init, task_actuator_update, NULL}
+};
+
+Es el catálogo de tareas del sistema. Cada elemento describe una tarea con su función de inicialización y de actualización.
+
+uint32_t es un tipo de dato entero entero sin signo de 32 bits
+
+Las siguientes constantes se definen como
+g_app_cnt
+Contador global de ciclos completos de aplicación.
+
+g_app_runtime_us
+Tiempo total de ejecución de todas las tareas en un ciclo (en microsegundos).
+
+g_app_tick_cnt
+Contador de ticks pendientes para ejecución (controlado por SysTick).
+
+La funcion 
+
+void app_init(void)
+{
+	uint32_t index;
+
+	/* Print out: Application Initialized */
+	LOGGER_INFO(" ");
+	LOGGER_INFO("%s is running - Tick [mS] = %lu", GET_NAME(app_init), HAL_GetTick());
+
+	LOGGER_INFO(p_sys);
+	LOGGER_INFO(p_app);
+
+	/* Init & Print out: Application execution counter */
+	g_app_cnt = G_APP_CNT_INI;
+	LOGGER_INFO(" %s = %lu", GET_NAME(g_app_cnt), g_app_cnt);
+
+	/* Init Cycle Counter */
+	cycle_counter_init();
+
+    /* Go through the task arrays */
+	for (index = 0; TASK_QTY > index; index++)
+	{
+		/* Run task_x_init */
+		(*task_cfg_list[index].task_init)(task_cfg_list[index].parameters);
+
+		/* Init variables */
+		task_dta_list[index].WCET = TASK_X_WCET_INI;
+	}
+
+	/* Protect shared resource */
+	__asm("CPSID i");	/* disable interrupts */
+	/* Init Tick Counter */
+	g_app_tick_cnt = G_APP_TICK_CNT_INI;
+
+	g_task_sensor_tick_cnt = G_APP_TICK_CNT_INI;
+	g_task_system_tick_cnt = G_APP_TICK_CNT_INI;
+	g_task_actuator_tick_cnt = G_APP_TICK_CNT_INI;
+    __asm("CPSIE i");	/* enable interrupts */
+    
+ Inicializa variables globales (g_app_cnt, g_app_tick_cnt).
+
+Inicializa el contador de ciclos (cycle_counter_init).
+
+Recorre task_cfg_list[] e invoca task_init de cada tarea.
+
+Inicializa WCET en cero para cada tarea.
+
+Protege el acceso a variables compartidas usando instrucciones ensamblador (CPSID i, CPSIE i) para deshabilitar/habilitar interrupciones.
+}
+Luego la funcion void app_update(void)
+{
+	uint32_t index;
+	bool b_time_update_required = false;
+	uint32_t cycle_counter_time_us;
+
+	/* Protect shared resource */
+	__asm("CPSID i");	/* disable interrupts */
+    if (G_APP_TICK_CNT_INI < g_app_tick_cnt)
+    {
+		/* Update Tick Counter */
+    	g_app_tick_cnt--;
+    	b_time_update_required = true;
+    }
+    __asm("CPSIE i");	/* enable interrupts */
+
+	/* Check if it's time to run tasks */
+    while (b_time_update_required)
+    {
+    	/* Update App Counter */
+    	g_app_cnt++;
+    	g_app_runtime_us = 0;
+
+		/* Go through the task arrays */
+		for (index = 0; TASK_QTY > index; index++)
+		{
+			cycle_counter_reset();
+
+    		/* Run task_x_update */
+			(*task_cfg_list[index].task_update)(task_cfg_list[index].parameters);
+
+			cycle_counter_time_us = cycle_counter_get_time_us();
+
+			/* Update variables */
+			g_app_runtime_us += cycle_counter_time_us;
+
+			if (task_dta_list[index].WCET < cycle_counter_time_us)
+			{
+				task_dta_list[index].WCET = cycle_counter_time_us;
+			}
+		}
+
+		/* Protect shared resource */
+		__asm("CPSID i");	/* disable interrupts */
+		if (G_APP_TICK_CNT_INI < g_app_tick_cnt)
+		{
+			/* Update Tick Counter */
+			g_app_tick_cnt--;
+			b_time_update_required = true;
+		}
+		else
+		{
+			b_time_update_required = false;
+		}
+		__asm("CPSIE i");	/* enable interrupts */
+	}
+}
+Verifica si existen ticks pendientes (g_app_tick_cnt > 0).
+
+Mientras los haya:
+
+Incrementa g_app_cnt
+Resetea g_app_runtime_us
+Para cada tarea en task_cfg_list[]
+Resetea contador de ciclos (cycle_counter_reset)
+Ejecuta task_update
+Obtiene tiempo consumido (cycle_counter_get_time_us)
+Acumula en g_app_runtime_us
+Actualiza WCET si el tiempo fue mayor al máximo previo.
+
+HAL_SYSTICK_Callback(void)
+
+Se ejecuta en interrupción de SysTick.
+Incrementa g_app_tick_cnt y los contadores de cada tarea.
+Señaliza que hay “trabajo pendiente”
+
+Patrones de diseño de software identificados
+-Scheduler cooperativo bare-metal → bucle de actualización basado en ticks.
+-Separación de configuración y métricas:
+	task_cfg_t (qué debe hacerse).
+	task_dta_t (cómo se comporta en tiempo de ejecución).
+-Uso de callbacks/punteros a funciones
+-Medición y logging de tiempos

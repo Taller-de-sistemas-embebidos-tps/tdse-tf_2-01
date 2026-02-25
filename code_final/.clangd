@@ -1,0 +1,17 @@
+CompileFlags:
+  Remove: [-fcyclomatic-complexity]
+  Add:
+    - --target=arm-none-eabi
+    - --sysroot=/usr/arm-none-eabi
+    - -mcpu=cortex-m3
+    - -mthumb
+    - -I${project_root}/Core/Inc
+    - -I${project_root}/app/inc
+    - -I${project_root}/Drivers/STM32F1xx_HAL_Driver/Inc
+    - -I${project_root}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+    - -I${project_root}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
+    - -I${project_root}/Drivers/CMSIS/Include
+
+# Opcional: ignora los warnings de headers no encontrados de newlib/ARM
+Diagnostics:
+  Ignore: [clang-diagnostic-include-not-found]
