@@ -31,6 +31,7 @@ typedef enum {
 typedef struct task_actuator_dta {
     task_actuator_ev_t event;
     task_actuator_st_t state;
+    task_actuator_st_t prev_state;
     uint32_t tick;
 } task_actuator_dta_t;
 

@@ -80,11 +80,11 @@ task_actuator_cfg_t task_actuator_cfg_list[] = {
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_cfg)/sizeof(task_actuator_cfg_t))
 
 task_actuator_dta_t task_actuator_dta_list[] = {
-	{EV_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
 };
 
 #define ACTUATOR_DTA_QTY	(sizeof(task_actuator_dta)/sizeof(task_actuator_dta_t))
@@ -128,6 +128,7 @@ void task_actuator_init(void *parameters)
 		/* Init & Print out: Index & Task execution FSM */
 		state = ST_ACT_OFF;
 		p_task_actuator_dta->state = state;
+		p_task_actuator_dta->prev_state = state;
 
 		event = EV_ACT_OFF;
 		p_task_actuator_dta->event = event;
@@ -194,9 +195,14 @@ void task_actuator_statechart(void)
 	task_actuator_dta_t *p_task_actuator_dta;
 
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++) {
+
 		/* Update Task Actuator Configuration & Data Pointer */
 		p_task_actuator_cfg = &task_actuator_cfg_list[index];
 		p_task_actuator_dta = &task_actuator_dta_list[index];
+
+		// if(p_task_actuator_dta->state != p_task_actuator_dta->prev_state) 
+		//  	TODO optimizacion para no evaluar si es que estoy en el mismo caso
+		// }
 
 		switch (p_task_actuator_dta->state) {
 			case ST_ACT_OFF:
