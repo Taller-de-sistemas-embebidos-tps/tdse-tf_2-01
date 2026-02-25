@@ -179,7 +179,6 @@ void task_system_statechart(void)
 		// p_task_system_dta->flag = true;
 		p_task_system_dta->event = get_event_task_system();
 	}
-
 	switch (p_task_system_dta->state)
 	{
 		case ST_SYS_MAIN:

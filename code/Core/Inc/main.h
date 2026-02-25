@@ -92,10 +92,8 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 #define BTN_MODE_Pin GPIO_PIN_10
 #define BTN_MODE_GPIO_Port GPIOC
-#define BTN_MODE_EXTI_IRQn EXTI15_10_IRQn
 #define BTN_ALARM_Pin GPIO_PIN_11
 #define BTN_ALARM_GPIO_Port GPIOC
-#define BTN_ALARM_EXTI_IRQn EXTI15_10_IRQn
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #define DISPLAY_D5_Pin GPIO_PIN_4

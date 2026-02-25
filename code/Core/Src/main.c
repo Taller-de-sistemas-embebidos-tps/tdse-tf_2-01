@@ -260,11 +260,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BTN_PAIRING_Pin */
-  GPIO_InitStruct.Pin = BTN_PAIRING_Pin;
+  /*Configure GPIO pins : BTN_PAIRING_Pin BTN_MODE_Pin BTN_ALARM_Pin */
+  GPIO_InitStruct.Pin = BTN_PAIRING_Pin|BTN_MODE_Pin|BTN_ALARM_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BTN_PAIRING_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_KID_Pin LED_ADULT_Pin LED_ALARM_Pin LED_BL_Pin
                            DISPLAY_RS_Pin DISPLAY_D6_Pin DISPLAY_D7_Pin DISPLAY_D5_Pin
@@ -283,12 +283,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BUZZER_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : BTN_MODE_Pin BTN_ALARM_Pin */
-  GPIO_InitStruct.Pin = BTN_MODE_Pin|BTN_ALARM_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
