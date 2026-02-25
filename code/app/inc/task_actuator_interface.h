@@ -45,7 +45,6 @@ extern "C" {
 
 /********************** inclusions *******************************************/
 #include "task_actuator_attribute.h"
-#include <stdbool.h>
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
@@ -53,10 +52,7 @@ extern "C" {
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-extern void init_queue_event_task_actuator(void);
-extern void put_event_task_actuator(task_actuator_ev_t event);
-extern task_actuator_ev_t get_event_task_actuator(void);
-extern bool any_event_task_actuator(void);
+extern void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identifier);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

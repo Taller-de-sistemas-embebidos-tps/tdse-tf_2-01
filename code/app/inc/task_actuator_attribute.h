@@ -35,7 +35,7 @@ typedef struct task_actuator_dta {
     uint32_t tick;
 } task_actuator_dta_t;
 
-extern task_actuator_dta_t task_actuator_dta;
+extern task_actuator_dta_t task_actuator_dta_list[];
 
 typedef struct task_actuator_cfg {
 	task_actuator_id_t	identifier;

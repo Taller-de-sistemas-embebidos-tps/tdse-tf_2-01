@@ -77,7 +77,7 @@ task_actuator_cfg_t task_actuator_cfg_list[] = {
 		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
 };
 
-#define ACTUATOR_CFG_QTY	(sizeof(task_actuator_cfg)/sizeof(task_actuator_cfg_t))
+#define ACTUATOR_CFG_QTY	(sizeof(task_actuator_cfg_list)/sizeof(task_actuator_cfg_t))
 
 task_actuator_dta_t task_actuator_dta_list[] = {
 	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
@@ -87,7 +87,7 @@ task_actuator_dta_t task_actuator_dta_list[] = {
 	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
 };
 
-#define ACTUATOR_DTA_QTY	(sizeof(task_actuator_dta)/sizeof(task_actuator_dta_t))
+#define ACTUATOR_DTA_QTY	(sizeof(task_actuator_dta_list)/sizeof(task_actuator_dta_t))
 
 /********************** internal functions declaration ***********************/
 void task_actuator_statechart(void);

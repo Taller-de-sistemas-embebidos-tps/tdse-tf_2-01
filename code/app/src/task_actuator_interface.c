@@ -50,63 +50,24 @@
 #include "task_actuator_attribute.h"
 
 /********************** macros and definitions *******************************/
-#define EVENT_UNDEFINED	(255)
-#define MAX_EVENTS		(16)
 
 /********************** internal data declaration ****************************/
 
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
-struct
-{
-	uint32_t	head;
-	uint32_t	tail;
-	uint32_t	count;
-	task_actuator_ev_t	queue[MAX_EVENTS];
-} queue_task_b;
 
 /********************** external data declaration ****************************/
 
 /********************** external functions definition ************************/
-void init_queue_event_task_actuator(void)
+void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identifier)
 {
-	uint32_t i;
+	task_actuator_dta_t *p_task_actuator_dta;
 
-	queue_task_b.head = 0;
-	queue_task_b.tail = 0;
-	queue_task_b.count = 0;
+	p_task_actuator_dta = &task_actuator_dta_list[identifier];
 
-	for (i = 0; i < MAX_EVENTS; i++)
-		queue_task_b.queue[i] = EVENT_UNDEFINED;
-}
-
-void put_event_task_actuator(task_actuator_ev_t event)
-{
-	queue_task_b.count++;
-	queue_task_b.queue[queue_task_b.head++] = event;
-
-	if (MAX_EVENTS == queue_task_b.head)
-		queue_task_b.head = 0;
-}
-
-task_actuator_ev_t get_event_task_actuator(void)
-{
-	task_actuator_ev_t event;
-
-	queue_task_b.count--;
-	event = queue_task_b.queue[queue_task_b.tail];
-	queue_task_b.queue[queue_task_b.tail++] = EVENT_UNDEFINED;
-
-	if (MAX_EVENTS == queue_task_b.tail)
-		queue_task_b.tail = 0;
-
-	return event;
-}
-
-bool any_event_task_actuator(void)
-{
-  return (queue_task_b.head != queue_task_b.tail);
+	p_task_actuator_dta->event = event;
+	// p_task_actuator_dta->flag = true;
 }
 
 /********************** end of file ******************************************/
