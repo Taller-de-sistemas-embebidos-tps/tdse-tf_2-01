@@ -54,6 +54,14 @@ HAL_StatusTypeDef hm10_send_string(const char *str) {
     return HAL_UART_Transmit(hm10.huart, (uint8_t *)str, strlen(str), 100);
 }
 
+HAL_StatusTypeDef hm10_receive_byte(uint8_t *byte, uint32_t timeout) {
+    return HAL_UART_Receive(hm10.huart, byte, 1, timeout);
+}
+
+HAL_StatusTypeDef hm10_receive_buffer(uint8_t *buffer, uint16_t len, uint32_t timeout) {
+    return HAL_UART_Receive(hm10.huart, buffer, len, timeout);
+}
+
 /*
 uint8_t hm10_available() {
     return ((hm10.uart)->SR & USART_SR_RXNE);

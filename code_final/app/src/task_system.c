@@ -51,6 +51,7 @@
 #include "task_actuator_attribute.h"
 #include "task_actuator_interface.h"
 #include "display.h"
+#include "comm.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
@@ -126,6 +127,17 @@ void task_system_init(void *parameters)
 
     displayCharPositionWrite(0, 0);
 	displayStringWrite("TdSE Bienvenidos");
+
+	hm10_init(&huart2);
+	uint8_t buffer[10];
+	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK)
+	{
+	    LOGGER_INFO("HM10 responde: %s", buffer);
+	}
+	else
+	{
+	    LOGGER_INFO("HM10 no responde");
+	}
 
 }
 
