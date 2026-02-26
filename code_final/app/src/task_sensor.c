@@ -191,8 +191,6 @@ void task_sensor_statechart(void)
 
 				if (EV_BTN_XX_DOWN == p_task_sensor_dta->event)
 				{
-					//put_event_task_system(p_task_sensor_cfg->signal_down);
-					//p_task_sensor_dta->state = ST_BTN_XX_DOWN;
 					p_task_sensor_dta->state = ST_BTN_XX_FALLING;
 					p_task_sensor_dta->tick = DEL_BTN_XX_MAX;
 				} else {
@@ -218,7 +216,7 @@ void task_sensor_statechart(void)
 					}
 					else { // for tick==0
 						put_event_task_system(p_task_sensor_cfg->signal_down);
-						LOGGER_INFO("EVENTO");
+						LOGGER_INFO("BOTON ABAJO");
 						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
 					}
 				}
@@ -229,8 +227,6 @@ void task_sensor_statechart(void)
 
 				if (EV_BTN_XX_UP == p_task_sensor_dta->event)
 				{
-					/*put_event_task_system(p_task_sensor_cfg->signal_up);
-					p_task_sensor_dta->state = ST_BTN_XX_UP;*/
 					p_task_sensor_dta->state = ST_BTN_XX_RISING;
 					p_task_sensor_dta->tick = DEL_BTN_XX_MAX;
 				}
