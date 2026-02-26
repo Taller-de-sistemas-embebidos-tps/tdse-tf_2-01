@@ -110,7 +110,8 @@ typedef enum task_actuator_ev {EV_ACT_OFF,
 /* States of Task Actuator */
 typedef enum task_actuator_st {ST_ACT_OFF,
 							   ST_ACT_ON,
-							   ST_ACT_BLINK,
+							   ST_ACT_BLINK_ON,
+							   ST_ACT_BLINK_OFF,
 							   ST_ACT_PULSE} task_actuator_st_t;
 
 /* Identifier of Task Actuator */

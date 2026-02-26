@@ -46,6 +46,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
+#include "stm32f1xx_hal_gpio.h"
 #include "task_actuator_attribute.h"
 #include "task_actuator_interface.h"
 
@@ -198,61 +199,96 @@ void task_actuator_statechart(void)
 		{
 			case ST_ACT_OFF:
 
-				if (EV_ACT_ON == p_task_actuator_dta->event) {
-					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->on);
-					p_task_actuator_dta->state = ST_ACT_ON;
-				} else if (EV_ACT_BLINK == p_task_actuator_dta->event) {
-					p_task_actuator_dta->state = ST_ACT_BLINK;
-					handle_led(p_task_actuator_cfg, true);
-					p_task_actuator_dta->tick = DEL_ACT_BLI;
-				} else if (EV_ACT_PULSE == p_task_actuator_dta->event) {
-					p_task_actuator_dta->state = ST_ACT_PULSE;
-					handle_led(p_task_actuator_cfg, true);
-					p_task_actuator_dta->tick = DEL_ACT_PUL;
+				switch (p_task_actuator_dta->event) {
+					case EV_ACT_ON:
+						p_task_actuator_dta->state = ST_ACT_ON;
+						handle_led(p_task_actuator_cfg, true);
+						break;
+
+					case EV_ACT_BLINK:
+						p_task_actuator_dta->tick = DEL_ACT_BLI;
+						p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
+						handle_led(p_task_actuator_cfg, false);
+						break;
+
+					case EV_ACT_PULSE:
+						// p_task_actuator_dta->state = ST_ACT_PULSE;
+						// handle_led(p_task_actuator_cfg, true);
+						// p_task_actuator_dta->tick = DEL_ACT_PUL;
+						break;
+
 				}
 				break;
 
 			case ST_ACT_ON:
+				switch (p_task_actuator_dta->event) {
+					case EV_ACT_OFF:
+						p_task_actuator_dta->state = ST_ACT_OFF;
+						handle_led(p_task_actuator_cfg, false);
+						break;
 
-				if (EV_ACT_OFF == p_task_actuator_dta->event)
-				{
-					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->off);
-					p_task_actuator_dta->state = ST_ACT_OFF;
+					case EV_ACT_BLINK:
+						p_task_actuator_dta->tick = DEL_ACT_BLI;
+						p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
+						handle_led(p_task_actuator_cfg, false);
+						break;
+
+					case EV_ACT_PULSE:
+						// p_task_actuator_dta->state = ST_ACT_PULSE;
+						// handle_led(p_task_actuator_cfg, true);
+						// p_task_actuator_dta->tick = DEL_ACT_PUL;
+						break;
+
 				}
-
 				break;
 
-			// case ST_ACT_BLINK_ON:
-			// 	if (EV_ACT_OFF == p_task_actuator_dta->event) {
-			// 		p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
-			// 		handle_led(p_task_actuator_cfg, false);
-			// 	} else if (EV_ACT_ON == p_task_actuator_dta->event) {
-			// 		p_task_actuator_dta->state = ST_ACT_BLINK_ON;
-			// 		handle_led(p_task_actuator_cfg, true);
-			// 	} else if (p_task_actuator_dta->tick == 0) {
-			// 		p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
-			// 		handle_led(p_task_actuator_cfg, false);
-			// 		p_task_actuator_dta->tick = DEL_ACT_BLI;
-			// 	} else {
-			// 		(p_task_actuator_dta->tick)--;
-			// 	}
-			// 	break;
-			//
-			// case ST_ACT_BLINK_OFF:
-			// 	if (EV_ACT_OFF == p_task_actuator_dta->event) {
-			// 		p_task_actuator_dta->state = ST_ACT_OFF;
-			// 		handle_led(p_task_actuator_cfg, false);
-			// 	} else if (EV_ACT_ON == p_task_actuator_dta->event) {
-			// 		p_task_actuator_dta->state = ST_ACT_ON;
-			// 		handle_led(p_task_actuator_cfg, true);
-			// 	} else if (p_task_actuator_dta->tick == 0) {
-			// 		p_task_actuator_dta->state = ST_ACT_BLINK_ON;
-			// 		handle_led(p_task_actuator_cfg, true);
-			// 		p_task_actuator_dta->tick = DEL_ACT_BLI;
-			// 	} else {
-			// 		(p_task_actuator_dta->tick)--;
-			// 	}
-			// 	break;
+			case ST_ACT_BLINK_ON:
+				switch (p_task_actuator_dta->event) {
+					case EV_ACT_OFF:
+						p_task_actuator_dta->state = ST_ACT_OFF;
+						handle_led(p_task_actuator_cfg, false);
+						break;
+
+					case EV_ACT_ON:
+						p_task_actuator_dta->state = ST_ACT_ON;
+						handle_led(p_task_actuator_cfg, true);
+						break;
+
+					case EV_ACT_BLINK:
+						if (p_task_actuator_dta->tick == 0) {
+							p_task_actuator_dta->tick = DEL_ACT_BLI;
+							p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
+							handle_led(p_task_actuator_cfg, false);
+						} else {
+							(p_task_actuator_dta->tick)--;
+						}
+						break;
+				}
+				break;
+
+			case ST_ACT_BLINK_OFF:
+				switch (p_task_actuator_dta->event) {
+					case EV_ACT_OFF:
+						p_task_actuator_dta->state = ST_ACT_OFF;
+						handle_led(p_task_actuator_cfg, false);
+						break;
+
+					case EV_ACT_ON:
+						p_task_actuator_dta->state = ST_ACT_ON;
+						handle_led(p_task_actuator_cfg, true);
+						break;
+
+					case EV_ACT_BLINK:
+						if (p_task_actuator_dta->tick == 0) {
+							p_task_actuator_dta->tick = DEL_ACT_BLI;
+							p_task_actuator_dta->state = ST_ACT_BLINK_ON;
+							handle_led(p_task_actuator_cfg, true);
+						} else {
+							(p_task_actuator_dta->tick)--;
+						}
+						break;
+				}
+				break;
 
 			case ST_ACT_PULSE:
 				if (p_task_actuator_dta->tick == 0) {
