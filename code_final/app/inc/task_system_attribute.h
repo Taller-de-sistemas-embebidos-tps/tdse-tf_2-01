@@ -44,7 +44,8 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include <stdint.h>
+#include <stdbool.h>
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
@@ -81,6 +82,7 @@ typedef struct task_system_dta {
     task_system_ev_t event;
     task_system_mode_id_t mode;
     bool bluetooth_connected;
+    uint32_t tick;
     uint32_t parameter;
 } task_system_dta_t;
 

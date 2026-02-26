@@ -67,6 +67,7 @@ task_system_dta_t task_system_dta =	{
 	EV_SYS_BTN_PAIRING_PRESSED,
 	ID_KID,
 	false,
+	800,
 	0
 };
 
