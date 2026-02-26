@@ -214,7 +214,7 @@ void task_system_statechart(void)
 						break;
 
 					case EV_SYS_BTN_PAIRING_PRESSED:
-						// put_event_task_actuator(EV_ACT_BLINK, ID_LED_BLUETOOTH);
+						put_event_task_actuator(EV_ACT_BLINK, ID_LED_BLUETOOTH);
 						// displayStringWrite("PAIR");
 						break;
 
