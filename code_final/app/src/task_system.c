@@ -50,6 +50,7 @@
 #include "task_system_interface.h"
 #include "task_actuator_attribute.h"
 #include "task_actuator_interface.h"
+#include "display.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
@@ -120,6 +121,12 @@ void task_system_init(void *parameters)
 				 GET_NAME(state), (uint32_t)state,
 				 GET_NAME(event), (uint32_t)event,
 				 GET_NAME(b_event), (b_event ? "true" : "false"));
+
+	displayInit( DISPLAY_CONNECTION_GPIO_4BITS );
+
+    displayCharPositionWrite(0, 0);
+	displayStringWrite("TdSE Bienvenidos");
+
 }
 
 void task_system_update(void *parameters)
@@ -162,6 +169,7 @@ void task_system_update(void *parameters)
 
 void task_system_statechart(void)
 {
+	char text[8] = "        ";
 	task_system_dta_t *p_task_system_dta;
 	task_system_cfg_t *p_task_system_cfg;
 
@@ -169,6 +177,9 @@ void task_system_statechart(void)
 	p_task_system_dta = &task_system_dta;
 	p_task_system_cfg = &task_system_cfg;
 
+	displayCharPositionWrite(0, 1);
+	snprintf(text, sizeof(text), "%lu", (g_task_system_cnt/1000ul));
+	displayStringWrite(text);
 	if (true == any_event_task_system())
 	{
 		// p_task_system_dta->flag = true;

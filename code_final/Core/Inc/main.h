@@ -74,8 +74,16 @@ void Error_Handler(void);
 #define LED_ALARM_GPIO_Port GPIOB
 #define LED_BL_Pin GPIO_PIN_11
 #define LED_BL_GPIO_Port GPIOB
+#define DISPLAY_RS_Pin GPIO_PIN_12
+#define DISPLAY_RS_GPIO_Port GPIOB
+#define DISPLAY_D6_Pin GPIO_PIN_13
+#define DISPLAY_D6_GPIO_Port GPIOB
+#define DISPLAY_D7_Pin GPIO_PIN_14
+#define DISPLAY_D7_GPIO_Port GPIOB
 #define BUZZER_Pin GPIO_PIN_7
 #define BUZZER_GPIO_Port GPIOC
+#define DISPLAY_EN_Pin GPIO_PIN_11
+#define DISPLAY_EN_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
@@ -88,6 +96,10 @@ void Error_Handler(void);
 #define BTN_PAIRING_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
+#define DISPLAY_D5_Pin GPIO_PIN_4
+#define DISPLAY_D5_GPIO_Port GPIOB
+#define DISPLAY_D4_Pin GPIO_PIN_5
+#define DISPLAY_D4_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
