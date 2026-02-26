@@ -70,6 +70,12 @@ typedef enum task_system_mode_id {
     ID_ADULT
 } task_system_mode_id_t;
 
+
+typedef struct {
+    uint32_t kid_parameter;
+    uint32_t adult_parameter;
+} task_system_cfg_t;
+
 typedef struct task_system_dta {
     task_system_st_t state;
     task_system_ev_t event;

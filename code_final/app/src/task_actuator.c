@@ -198,8 +198,7 @@ void task_actuator_statechart(void)
 		{
 			case ST_ACT_OFF:
 
-				if (EV_ACT_ON == p_task_actuator_dta->event)
-				{
+				if (EV_ACT_ON == p_task_actuator_dta->event) {
 					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->on);
 					p_task_actuator_dta->state = ST_ACT_ON;
 				} else if (EV_ACT_BLINK == p_task_actuator_dta->event) {
