@@ -193,6 +193,14 @@ void task_system_statechart(void)
 	displayCharPositionWrite(0, 1);
 	snprintf(text, sizeof(text), "%lu", (g_task_system_cnt/1000ul));
 	displayStringWrite(text);
+
+	if (p_task_system_dta->tick == 0) {
+		p_task_system_dta->tick = 500;
+		hm10_send_string("Hola desde STM32\n");
+	} else {
+		(p_task_system_dta->tick)--;
+	}
+
 	if (true == any_event_task_system())
 	{
 		// p_task_system_dta->flag = true;
