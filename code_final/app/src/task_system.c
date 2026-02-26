@@ -130,14 +130,11 @@ void task_system_init(void *parameters)
 	displayStringWrite("TdSE Bienvenidos");
 
 	hm10_init(&huart2);
-	uint8_t buffer[10];
-	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK)
-	{
+	uint8_t buffer[10] = {0};
+	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK) {
 	    LOGGER_INFO("HM10 responde: %s", buffer);
-	}
-	else
-	{
-	    LOGGER_INFO("HM10 no responde");
+	} else {
+	    LOGGER_INFO("HM10 no responde: %s", buffer);
 	}
 
 }
@@ -182,7 +179,7 @@ void task_system_update(void *parameters)
 
 void task_system_statechart(void)
 {
-	char text[8] = "        ";
+	char text[32] = {0};
 	task_system_dta_t *p_task_system_dta;
 	task_system_cfg_t *p_task_system_cfg;
 
@@ -190,13 +187,17 @@ void task_system_statechart(void)
 	p_task_system_dta = &task_system_dta;
 	p_task_system_cfg = &task_system_cfg;
 
-	displayCharPositionWrite(0, 1);
-	snprintf(text, sizeof(text), "%lu", (g_task_system_cnt/1000ul));
-	displayStringWrite(text);
+
 
 	if (p_task_system_dta->tick == 0) {
-		p_task_system_dta->tick = 500;
-		hm10_send_string("Hola desde STM32\n");
+		uint32_t count = g_task_system_cnt/1000ul;
+		p_task_system_dta->tick = 1000;
+		snprintf(text, sizeof(text), "%lu", count);
+		hm10_send_string("\n\rHola desde STM32 ");
+		hm10_send_string(text);
+		displayCharPositionWrite(0, 1);
+		displayStringWrite(text);
+		LOGGER_INFO("ENVIO DATA AL HM10: %lu", count);
 	} else {
 		(p_task_system_dta->tick)--;
 	}
