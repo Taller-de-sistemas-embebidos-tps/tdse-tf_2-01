@@ -33,25 +33,25 @@ void hm10_init(UART_HandleTypeDef *huart) {
     hm10.huart = huart;
 
     // Test básico AT (opcional)
-    hm10_send_string("AT\r\n");
-    HAL_Delay(100);
+    //hm10_send_string("AT\r\n");
+    //HAL_Delay(100);
 
-    hm10_send_string("AT+RESET\r\n");
-    HAL_Delay(200);
+    //hm10_send_string("AT+RESET\r\n");
+    //HAL_Delay(200);
 
-    hm10_send_string("AT+NAMEActuator\r\n");
-    HAL_Delay(100);
+    //hm10_send_string("AT+NAMEActuator\r\n");
+    //HAL_Delay(100);
 
-    hm10_send_string("AT+ROLE0\r\n");
-    HAL_Delay(100);
+    //hm10_send_string("AT+ROLE0\r\n");
+    //HAL_Delay(100);
 }
 
 HAL_StatusTypeDef hm10_send_data(uint8_t *data, uint16_t len) {
-    return HAL_UART_Transmit(hm10.huart, data, len, 100);
+    return HAL_UART_Transmit(hm10.huart, data, len, 90);
 }
 
 HAL_StatusTypeDef hm10_send_string(const char *str) {
-    return HAL_UART_Transmit(hm10.huart, (uint8_t *)str, strlen(str), 100);
+    return HAL_UART_Transmit(hm10.huart, (uint8_t *)str, strlen(str), 90);
 }
 
 HAL_StatusTypeDef hm10_receive_byte(uint8_t *byte, uint32_t timeout) {

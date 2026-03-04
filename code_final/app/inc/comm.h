@@ -26,7 +26,7 @@ HAL_StatusTypeDef hm10_receive_byte(uint8_t *byte, uint32_t timeout);
 
 HAL_StatusTypeDef hm10_receive_buffer(uint8_t *buffer, uint16_t len, uint32_t timeout);
 
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
 
 //=====[#include guards - end]=================================================
 

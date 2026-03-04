@@ -53,6 +53,8 @@
 #include "display.h"
 #include "comm.h"
 
+extern UART_HandleTypeDef huart2;
+
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
 #define G_TASK_SYS_TICK_CNT_INI		0ul
@@ -129,13 +131,13 @@ void task_system_init(void *parameters)
     displayCharPositionWrite(0, 0);
 	displayStringWrite("TdSE Bienvenidos");
 
-	hm10_init(&huart2);
-	uint8_t buffer[10] = {0};
+	hm10_init(&huart1);
+	/*uint8_t buffer[10] = {0};
 	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK) {
 	    LOGGER_INFO("HM10 responde: %s", buffer);
 	} else {
 	    LOGGER_INFO("HM10 no responde: %s", buffer);
-	}
+	}*/
 
 }
 
@@ -179,7 +181,7 @@ void task_system_update(void *parameters)
 
 void task_system_statechart(void)
 {
-	char text[32] = {0};
+	char text[12] = "Alan 1\n";
 	task_system_dta_t *p_task_system_dta;
 	task_system_cfg_t *p_task_system_cfg;
 
@@ -192,9 +194,28 @@ void task_system_statechart(void)
 	if (p_task_system_dta->tick == 0) {
 		uint32_t count = g_task_system_cnt/1000ul;
 		p_task_system_dta->tick = 1000;
-		snprintf(text, sizeof(text), "%lu", count);
-		hm10_send_string("\n\rHola desde STM32 ");
-		hm10_send_string(text);
+		text[5]= text[5] + 1;
+		if(text[5]>='9') text[5] = '1';
+		snprintf(text, sizeof(text)-1, "Alan %d\r\n", count);
+		//hm10_send_string("\n\rHola desde STM32 ");
+		//hm10_send_string(text);
+		uint8_t aux = 0;
+		uint8_t msg[] = "HOLA\r\n";
+		char *info[] = {
+		  "HAL_OK", 
+		  "HAL_ERROR"  ,
+		  "HAL_BUSY"   ,
+		  "HAL_TIMEOUT" };
+	    LOGGER_INFO("%s", info[HAL_UART_Transmit(&huart1, text, sizeof(text)-1, 1000)]);
+	    //HAL_UART_Receive(&huart1, &aux, 1, 200);
+		//if (aux != 0 ) {
+		//	LOGGER_INFO("Recibi %c", aux);
+		//	HAL_UART_Transmit(&huart1, &aux, 1, 200);
+		//}
+		//char msg[] = "STM32 OK\r\n";
+		//HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, 100);
+		//HAL_Delay(1000);
+
 		displayCharPositionWrite(0, 1);
 		displayStringWrite(text);
 		LOGGER_INFO("ENVIO DATA AL HM10: %lu", count);
