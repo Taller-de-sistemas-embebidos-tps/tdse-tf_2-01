@@ -47,7 +47,7 @@
 #include "board.h"
 #include "task_system.h"
 #include "task_actuator.h"
-#include "task_sensor.h"
+#include "task_button.h"
 
 /********************** macros and definitions *******************************/
 #define G_APP_CNT_INI		0ul
@@ -70,7 +70,7 @@ typedef struct {
 
 /********************** internal data declaration ****************************/
 const task_cfg_t task_cfg_list[]	= {
-		{task_sensor_init, 		task_sensor_update, 	NULL},
+		{task_button_init, 		task_button_update, 	NULL},
 		{task_system_init, 		task_system_update, 	NULL},
 		{task_actuator_init,	task_actuator_update, 	NULL}
 };
@@ -125,7 +125,7 @@ void app_init(void)
 	/* Init Tick Counter */
 	g_app_tick_cnt = G_APP_TICK_CNT_INI;
 
-	g_task_sensor_tick_cnt = G_APP_TICK_CNT_INI;
+	g_task_button_tick_cnt = G_APP_TICK_CNT_INI;
 	g_task_system_tick_cnt = G_APP_TICK_CNT_INI;
 	g_task_actuator_tick_cnt = G_APP_TICK_CNT_INI;
     __asm("CPSIE i");	/* enable interrupts */
@@ -194,7 +194,7 @@ void HAL_SYSTICK_Callback(void)
 	/* Update Tick Counter */
 	g_app_tick_cnt++;
 
-	g_task_sensor_tick_cnt++;
+	g_task_button_tick_cnt++;
 	g_task_system_tick_cnt++;
 	g_task_actuator_tick_cnt++;
 }
