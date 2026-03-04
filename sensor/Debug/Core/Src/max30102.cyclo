@@ -1,0 +1,3 @@
+../Core/Src/max30102.c:3:6:MAX30102_Init	1
+../Core/Src/max30102.c:60:9:MAX30102_DataAvailable	1
+../Core/Src/max30102.c:83:6:MAX30102_Read	1

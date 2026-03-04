@@ -1,0 +1,10 @@
+../Core/Src/ppg_processing.c:40:14:bandpass	24	static
+../Core/Src/ppg_processing.c:60:14:respiratory_filter	24	static
+../Core/Src/ppg_processing.c:72:14:mean	24	static
+../Core/Src/ppg_processing.c:80:14:rms	24	static
+../Core/Src/ppg_processing.c:89:13:compute_hr	48	static
+../Core/Src/ppg_processing.c:133:13:compute_rr	64	static
+../Core/Src/ppg_processing.c:226:13:compute_spo2	64	static
+../Core/Src/ppg_processing.c:260:6:ppg_add_sample	24	static
+../Core/Src/ppg_processing.c:278:6:ppg_init	16	static
+../Core/Src/ppg_processing.c:301:6:ppg_compute	24	static
