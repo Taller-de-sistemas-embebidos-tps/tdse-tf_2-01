@@ -44,7 +44,8 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "task_system_attribute.h"
+#include "task_sensor_attribute.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
@@ -56,6 +57,7 @@ extern volatile uint32_t g_task_system_tick_cnt;
 /********************** external functions declaration ***********************/
 extern void task_system_init(void *parameters);
 extern void task_system_update(void *parameters);
+bool check_vitals(task_sensor_results_dta_t *res, task_system_mode_id_t mode);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

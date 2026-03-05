@@ -60,8 +60,8 @@ all: main-build
 main-build: sensor.elf secondary-outputs
 
 # Tool invocations
-sensor.elf sensor.map: $(OBJS) $(USER_OBJS) C:\Users\Administrador\Documents\Facultad\Taller_de_sistemas_embebidos\Prueba\sensor\STM32F103RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sensor.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Administrador\Documents\Facultad\Taller_de_sistemas_embebidos\Prueba\sensor\STM32F103RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sensor.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sensor.elf sensor.map: $(OBJS) $(USER_OBJS) C:\Users\Administrador\Documents\Facultad\Taller_de_sistemas_embebidos\oximetry-sleep-monitor\sensor\STM32F103RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sensor.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Administrador\Documents\Facultad\Taller_de_sistemas_embebidos\oximetry-sleep-monitor\sensor\STM32F103RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sensor.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

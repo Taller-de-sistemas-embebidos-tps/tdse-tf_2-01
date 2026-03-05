@@ -149,7 +149,7 @@ static bool compute_rr(uint16_t *rr_out, bool *apnea_flag)
     }
     float rms_val = sqrtf(rms_acc / PPG_WINDOW_SAMPLES);
 
-    /* 🔥 AJUSTE 2: Histéresis al 30% (0.3f).
+    /*  AJUSTE 2: Histéresis al 30% (0.3f).
        Más sensible para detectar respiraciones superficiales */
     float histeresis = 0.3f * rms_val;
     if (histeresis < 20.0f) histeresis = 20.0f;

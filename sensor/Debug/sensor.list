@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   0000bdb3  00000000  00000000  00028ab6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00084a35  00000000  00000000  00034869  2**0
+ 18 .debug_str    00084a45  00000000  00000000  00034869  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000b929e  2**0
+ 19 .comment      00000043  00000000  00000000  000b92ae  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002938  00000000  00000000  000b92e4  2**2
+ 20 .debug_frame  00002938  00000000  00000000  000b92f4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000083  00000000  00000000  000bbc1c  2**0
+ 21 .debug_line_str 00000093  00000000  00000000  000bbc2c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2009,7 +2009,7 @@ static bool compute_rr(uint16_t *rr_out, bool *apnea_flag)
  8000fbe:	f002 fdb3 	bl	8003b28 <sqrtf>
  8000fc2:	61f8      	str	r0, [r7, #28]
 
-    /* 🔥 AJUSTE 2: Histéresis al 30% (0.3f).
+    /*  AJUSTE 2: Histéresis al 30% (0.3f).
        Más sensible para detectar respiraciones superficiales */
     float histeresis = 0.3f * rms_val;
  8000fc4:	4976      	ldr	r1, [pc, #472]	@ (80011a0 <compute_rr+0x23c>)
