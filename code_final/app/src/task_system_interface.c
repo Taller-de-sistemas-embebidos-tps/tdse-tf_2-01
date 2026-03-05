@@ -48,6 +48,7 @@
 #include "board.h"
 #include "app.h"
 #include "task_system_attribute.h"
+#include "task_system_interface.h"
 
 /********************** macros and definitions *******************************/
 #define EVENT_UNDEFINED	(255)
@@ -64,6 +65,8 @@ struct
 	uint32_t	tail;
 	uint32_t	count;
 	task_system_ev_t	queue[MAX_EVENTS];
+	task_sensor_results_dta_t results;
+	bool available_results;
 } queue_task_a;
 
 /********************** external data declaration ****************************/
@@ -107,6 +110,10 @@ task_system_ev_t get_event_task_system(void)
 bool any_event_task_system(void)
 {
   return (queue_task_a.head != queue_task_a.tail);
+}
+
+void put_data_task_system(task_sensor_results_dta_t data) {
+	queue_task_a.results = data;
 }
 
 /********************** end of file ******************************************/

@@ -45,6 +45,7 @@ extern "C" {
 
 /********************** inclusions *******************************************/
 #include "task_system_attribute.h"
+#include "task_sensor_attribute.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
@@ -56,6 +57,7 @@ extern void init_queue_event_task_system(void);
 extern void put_event_task_system(task_system_ev_t event);
 extern task_system_ev_t get_event_task_system(void);
 extern bool any_event_task_system(void);
+extern void put_data_task_system(task_sensor_results_dta_t data);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

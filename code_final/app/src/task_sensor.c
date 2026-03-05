@@ -49,14 +49,13 @@
 #include "task_sensor_attribute.h"
 #include "task_system_attribute.h"
 #include "task_system_interface.h"
-
 	/********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul
 #define G_TASK_SEN_TICK_CNT_INI		0ul
 
 #define DEL_SEN_XX_MIN				0ul
 #define DEL_SEN_XX_MED				25ul
-#define DEL_SEN_XX_MAX				50ul
+#define DEL_SEN_XX_MAX				1000ul
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg = {};
@@ -65,6 +64,7 @@ task_sensor_dta_t task_sensor_dta = {
 	.state = ST_SEN_IDLE,
 	.event = EV_SEN_IDLE,
 	.results = {},
+	.tick = DEL_SEN_XX_MAX,
 };
 
 
@@ -104,7 +104,6 @@ void task_sensor_init(void *parameters)
 
 	event = EV_SEN_IDLE;
 	p_task_sensor_dta->event = event;
-
 	LOGGER_INFO(" ");
 	LOGGER_INFO("   %s = %lu   %s = %lu",
 				GET_NAME(state), (uint32_t)state,
@@ -157,7 +156,28 @@ void task_sensor_statechart(void)
 	p_task_sensor_cfg = &task_sensor_cfg;
 	p_task_sensor_dta = &task_sensor_dta;
 
-	LOGGER_INFO("ESTOY EN SENSOR");
+	switch (p_task_sensor_dta->state) {
+		default:
+			if (p_task_sensor_dta->tick == 0) {
+				task_sensor_results_dta_t data;
+				// uint32_t t = HAL_GetTick() / 1000;   // segundos
+				uint32_t t = 800;   // segundos
+
+				data.heart_rate = 70 + (t % 10);             // 70–79 bpm
+				data.respiratory_rate = 14 + (t % 4);              // 14–17 rpm
+				data.spo2 = 97 + (t % 3);            // 97–99 %
+				data.apnea = ((t % 30) == 0);        // apnea cada 30 s
+
+				// data.timestamp = HAL_GetTick();
+				put_data_task_system(data);
+				p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
+			} else {
+				(p_task_sensor_dta->tick)--;
+			}
+			break;
+	}
+
+	//LOGGER_INFO("ESTOY EN SENSOR");
 
 
 }

@@ -68,12 +68,14 @@ typedef struct {
     uint16_t respiratory_rate;
     uint16_t spo2;
     uint8_t apnea;
-} task_sensor_results_dta;
+    uint32_t timestamp;
+} task_sensor_results_dta_t;
 
 typedef struct task_sensor_dta {
     task_sensor_st_t state;
     task_sensor_ev_t event;
-    task_sensor_results_dta results;
+    task_sensor_results_dta_t results;
+    uint32_t tick;
 } task_sensor_dta_t;
 
 /********************** external data declaration ****************************/
