@@ -178,6 +178,7 @@ void task_system_update(void *parameters)
 		__asm("CPSIE i");	/* enable interrupts */
     }
 }
+void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data);
 
 void task_system_statechart(void)
 {
@@ -192,21 +193,22 @@ void task_system_statechart(void)
 
 
 	if (p_task_system_dta->tick == 0) {
-		uint32_t count = g_task_system_cnt/1000ul;
+		// uint32_t count = g_task_system_cnt/1000ul;
 		p_task_system_dta->tick = 1000;
 		text[5]= text[5] + 1;
 		if(text[5]>='9') text[5] = '1';
-		snprintf(text, sizeof(text)-1, "Alan %d\r\n", count);
+		// snprintf(text, sizeof(text)-1, "Alan %d\r\n", count);
 		//hm10_send_string("\n\rHola desde STM32 ");
 		//hm10_send_string(text);
-		uint8_t aux = 0;
-		uint8_t msg[] = "HOLA\r\n";
-		char *info[] = {
-		  "HAL_OK", 
-		  "HAL_ERROR"  ,
-		  "HAL_BUSY"   ,
-		  "HAL_TIMEOUT" };
-	    LOGGER_INFO("%s", info[HAL_UART_Transmit(&huart1, text, sizeof(text)-1, 1000)]);
+		// uint8_t aux = 0;
+		//uint8_t msg[] = "HOLA\r\n";
+		// char *info[] = {
+		//   "HAL_OK", 
+		//   "HAL_ERROR"  ,
+		//   "HAL_BUSY"   ,
+		//   "HAL_TIMEOUT" };
+		// HAL_UART_Transmit(&huart1, text, sizeof(text)-1, 1000);
+	    //LOGGER_INFO("%s", info[]);
 	    //HAL_UART_Receive(&huart1, &aux, 1, 200);
 		//if (aux != 0 ) {
 		//	LOGGER_INFO("Recibi %c", aux);
@@ -215,10 +217,20 @@ void task_system_statechart(void)
 		//char msg[] = "STM32 OK\r\n";
 		//HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, 100);
 		//HAL_Delay(1000);
+		if (any_sensor_results()) {
+			char lcd_text[2][17];
+			format_to_lcd_string(lcd_text, get_sensor_results());
 
-		displayCharPositionWrite(0, 1);
-		displayStringWrite(text);
-		LOGGER_INFO("ENVIO DATA AL HM10: %lu", count);
+			displayCharPositionWrite(0, 0);
+			displayStringWrite(lcd_text[0]);
+			displayCharPositionWrite(0, 1);
+			displayStringWrite(lcd_text[1]);
+			HAL_UART_Transmit(&huart1, (uint8_t *)lcd_text, 17*2, 500);
+		}
+
+
+
+		//LOGGER_INFO("ENVIO DATA AL HM10: %lu", count);
 	} else {
 		(p_task_system_dta->tick)--;
 	}
@@ -278,6 +290,60 @@ void task_system_statechart(void)
 				break;
 		}
 	}
+}
+
+void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data)
+{
+    // Línea 1
+    out[0][0] = 'a';
+    out[0][1] = 'p';
+    out[0][2] = 'n';
+    out[0][3] = 'e';
+    out[0][4] = 'a';
+    out[0][5] = ' ';
+
+    if(data.apnea) {
+        out[0][6] = 'S';
+        out[0][7] = 'I';
+    } else {
+        out[0][6] = 'N';
+        out[0][7] = 'O';
+    }
+
+    out[0][8]  = ' ';
+    out[0][9]  = ' ';
+    out[0][10] = 'h';
+    out[0][11] = 'r';
+    out[0][12] = ' ';
+
+    out[0][13] = '0' + (data.heart_rate / 100) % 10;
+    out[0][14] = '0' + (data.heart_rate / 10) % 10;
+    out[0][15] = '0' + (data.heart_rate % 10);
+
+    out[0][16] = '\0';
+
+    // Línea 2
+    out[1][0] = 's';
+    out[1][1] = 'p';
+    out[1][2] = 'o';
+    out[1][3] = '2';
+    out[1][4] = ' ';
+
+    out[1][5] = '0' + (data.spo2 / 100) % 10;
+    out[1][6] = '0' + (data.spo2 / 10) % 10;
+    out[1][7] = '0' + (data.spo2 % 10);
+
+    out[1][8]  = ' ';
+    out[1][9]  = ' ';
+    out[1][10] = 'r';
+    out[1][11] = 'r';
+    out[1][12] = ' ';
+
+    out[1][13] = '0' + (data.respiratory_rate / 100) % 10;
+    out[1][14] = '0' + (data.respiratory_rate / 10) % 10;
+    out[1][15] = '0' + (data.respiratory_rate % 10);
+
+    out[1][16] = '\0';
 }
 
 /********************** end of file ******************************************/
