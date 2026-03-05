@@ -63,6 +63,18 @@ extern UART_HandleTypeDef huart2;
 #define DEL_SYS_MED					25ul
 #define DEL_SYS_MAX					50ul
 
+#define SPO2_LOW_THRESHOLD		80
+
+#define HR_LOW_KID_THRESHOLD	90
+#define HR_HIGH_KID_THRESHOLD	120
+#define HR_LOW_ADULT_THRESHOLD	80
+#define HR_HIGH_ADULT_THRESHOLD	97
+
+#define RR_LOW_KID_THRESHOLD	90
+#define RR_HIGH_KID_THRESHOLD	120
+#define RR_LOW_ADULT_THRESHOLD	80
+#define RR_HIGH_ADULT_THRESHOLD	97
+
 /********************** internal data declaration ****************************/
 task_system_dta_t task_system_dta =	{
 	ST_SYS_MAIN,
@@ -192,47 +204,20 @@ void task_system_statechart(void)
 
 
 
-	if (p_task_system_dta->tick == 0) {
-		// uint32_t count = g_task_system_cnt/1000ul;
-		p_task_system_dta->tick = 1000;
-		text[5]= text[5] + 1;
-		if(text[5]>='9') text[5] = '1';
-		// snprintf(text, sizeof(text)-1, "Alan %d\r\n", count);
-		//hm10_send_string("\n\rHola desde STM32 ");
-		//hm10_send_string(text);
-		// uint8_t aux = 0;
-		//uint8_t msg[] = "HOLA\r\n";
-		// char *info[] = {
-		//   "HAL_OK", 
-		//   "HAL_ERROR"  ,
-		//   "HAL_BUSY"   ,
-		//   "HAL_TIMEOUT" };
-		// HAL_UART_Transmit(&huart1, text, sizeof(text)-1, 1000);
-	    //LOGGER_INFO("%s", info[]);
-	    //HAL_UART_Receive(&huart1, &aux, 1, 200);
-		//if (aux != 0 ) {
-		//	LOGGER_INFO("Recibi %c", aux);
-		//	HAL_UART_Transmit(&huart1, &aux, 1, 200);
-		//}
-		//char msg[] = "STM32 OK\r\n";
-		//HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, 100);
-		//HAL_Delay(1000);
-		if (any_sensor_results()) {
-			char lcd_text[2][17];
-			format_to_lcd_string(lcd_text, get_sensor_results());
+	if (any_sensor_results()) {
+		char lcd_text[2][17];
+		task_sensor_results_dta_t result = get_sensor_results();
+		format_to_lcd_string(lcd_text, result);
 
-			displayCharPositionWrite(0, 0);
-			displayStringWrite(lcd_text[0]);
-			displayCharPositionWrite(0, 1);
-			displayStringWrite(lcd_text[1]);
-			HAL_UART_Transmit(&huart1, (uint8_t *)lcd_text, 17*2, 500);
+		displayCharPositionWrite(0, 0);
+		displayStringWrite(lcd_text[0]);
+		displayCharPositionWrite(0, 1);
+		displayStringWrite(lcd_text[1]);
+		HAL_UART_Transmit(&huart1, (uint8_t *)lcd_text, 17*2, 500);
+
+		if (result.spo2 < SPO2_LOW_THRESHOLD) {
+			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
 		}
-
-
-
-		//LOGGER_INFO("ENVIO DATA AL HM10: %lu", count);
-	} else {
-		(p_task_system_dta->tick)--;
 	}
 
 	if (true == any_event_task_system())
@@ -262,8 +247,9 @@ void task_system_statechart(void)
 						break;
 
 					case EV_SYS_BTN_ALARM_PRESSED:
-						put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+						put_event_task_actuator(EV_ACT_OFF, ID_LED_ALARM);
 						put_event_task_actuator(EV_ACT_OFF, ID_BUZZER);
+						LOGGER_INFO("PRENDIENDO_LA_ALARMA");
 						// displayCharPositionWrite(0, 1);
 						// displayStringWrite("ALARMA");
 						break;
