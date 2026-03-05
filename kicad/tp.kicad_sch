@@ -1642,32 +1642,23 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "STM32 NUCLEO F103RB"
-				(at 0.254 -53.594 0)
+			(property "Reference" "STM32 NUCLEO F103RB1"
+				(at 0 52.07 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" ""
-				(at 0 0 0)
+			(property "Value" "NUCLEO F103RB"
+				(at 0 50.8 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
+			(property "Footprint" "STM32:NUCLEO F103RB"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1676,7 +1667,16 @@
 					(hide yes)
 				)
 			)
-			(property "Description" ""
+			(property "Datasheet" "https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "STM32 NUCLEO F103RB Board"
 				(at 0 0 0)
 				(effects
 					(font
@@ -5050,7 +5050,7 @@
 				)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "NUCLEO F103RB"
 			(at 137.16 45.72 0)
 			(effects
 				(font
@@ -5058,7 +5058,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "STM32:NUCLEO F103RB"
 			(at 137.16 96.52 0)
 			(effects
 				(font
@@ -5067,7 +5067,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf"
 			(at 137.16 96.52 0)
 			(effects
 				(font
@@ -5076,7 +5076,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "STM32 NUCLEO F103RB Board"
 			(at 137.16 96.52 0)
 			(effects
 				(font
