@@ -49,13 +49,16 @@
 #include "task_sensor_attribute.h"
 #include "task_system_attribute.h"
 #include "task_system_interface.h"
+#include "max30102.h"
+#include "ppg_processing.h"
+
 	/********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul
 #define G_TASK_SEN_TICK_CNT_INI		0ul
 
 #define DEL_SEN_XX_MIN				0ul
 #define DEL_SEN_XX_MED				25ul
-#define DEL_SEN_XX_MAX				1000ul
+#define DEL_SEN_XX_MAX				100ul
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg = {};
@@ -64,8 +67,10 @@ task_sensor_dta_t task_sensor_dta = {
 	.state = ST_SEN_IDLE,
 	.event = EV_SEN_IDLE,
 	.results = {},
+	.ppg = {},
 	.tick = DEL_SEN_XX_MAX,
 };
+
 
 
 /********************** internal functions declaration ***********************/
@@ -108,6 +113,9 @@ void task_sensor_init(void *parameters)
 	LOGGER_INFO("   %s = %lu   %s = %lu",
 				GET_NAME(state), (uint32_t)state,
 				GET_NAME(event), (uint32_t)event);
+
+	MAX30102_Init(&max30102, &hi2c1);
+	ppg_init();
 }
 
 void task_sensor_update(void *parameters)
@@ -156,6 +164,12 @@ void task_sensor_statechart(void)
 	p_task_sensor_cfg = &task_sensor_cfg;
 	p_task_sensor_dta = &task_sensor_dta;
 
+	uint32_t *red = &(p_task_sensor_dta->red);
+	uint32_t *ir = &(p_task_sensor_dta->ir);
+
+	MAX30102_Read(&max30102, red, ir);
+	ppg_add_sample(*ir, *red);
+
 	switch (p_task_sensor_dta->state) {
 		default:
 			if (p_task_sensor_dta->tick == 0) {
@@ -163,14 +177,24 @@ void task_sensor_statechart(void)
 				// uint32_t t = HAL_GetTick() / 1000;   // segundos
 				uint32_t t = 800;   // segundos
 
-				data.heart_rate = 70 + (t % 10);             // 70–79 bpm
-				data.respiratory_rate = 14 + (t % 4);              // 14–17 rpm
-				data.spo2 = 97 + (t % 3);            // 97–99 %
-				data.apnea = ((t % 30) == 0);        // apnea cada 30 s
+				//data.heart_rate = 70 + (t % 10);             // 70–79 bpm
+				//data.respiratory_rate = 14 + (t % 4);              // 14–17 rpm
+				//data.spo2 = 97 + (t % 3);            // 97–99 %
+				//data.apnea = ((t % 30) == 0);        // apnea cada 30 s
 
 				// data.timestamp = HAL_GetTick();
-				put_data_task_system(data);
 				p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
+				//LOGGER_INFO("red %lu , ir %lu", red, ir);
+				ppg_results_t *data2 = &(p_task_sensor_dta->ppg);
+				ppg_compute(data2);
+				data.heart_rate = data2->hr;
+				data.respiratory_rate = data2->rr;
+				data.spo2 = data2->spo2;
+				//data.timestamp = HAL_GetTick();
+				data.apnea = data2->apnea;
+				put_data_task_system(data);
+
+				//LOGGER_INFO("spo2 %lu, hr %lu, rr %lu, %s", data2.spo2, data2.hr, data2.rr, data2.valid ? "valid" : "not valid");
 			} else {
 				(p_task_sensor_dta->tick)--;
 			}

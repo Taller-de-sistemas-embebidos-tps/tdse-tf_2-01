@@ -23,6 +23,9 @@ typedef struct {
     I2C_HandleTypeDef *hi2c;
 } max30102_t;
 
+extern I2C_HandleTypeDef hi2c1;
+extern max30102_t max30102;
+
 /* Funciones */
 void MAX30102_Init(max30102_t *dev, I2C_HandleTypeDef *hi2c);
 void MAX30102_Read(max30102_t *dev, uint32_t *red, uint32_t *ir);

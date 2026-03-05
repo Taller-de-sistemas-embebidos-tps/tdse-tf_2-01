@@ -39,6 +39,7 @@
 #define TASK_INC_TASK_SENSOR_ATTRIBUTE_H_
 
 /********************** CPP guard ********************************************/
+#include "ppg_processing.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -64,9 +65,9 @@ typedef struct {
 } task_sensor_cfg_t;
 
 typedef struct {
-    uint16_t heart_rate;
-    uint16_t respiratory_rate;
-    uint16_t spo2;
+    uint8_t heart_rate;
+    uint8_t respiratory_rate;
+    uint8_t spo2;
     uint8_t apnea;
     uint32_t timestamp;
 } task_sensor_results_dta_t;
@@ -75,7 +76,11 @@ typedef struct task_sensor_dta {
     task_sensor_st_t state;
     task_sensor_ev_t event;
     task_sensor_results_dta_t results;
+    ppg_results_t ppg;
     uint32_t tick;
+    uint32_t ir;
+    uint32_t red;
+
 } task_sensor_dta_t;
 
 /********************** external data declaration ****************************/

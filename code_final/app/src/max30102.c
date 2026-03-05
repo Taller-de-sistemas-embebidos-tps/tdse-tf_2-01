@@ -1,5 +1,9 @@
 #include "max30102.h"
 
+max30102_t max30102 = {
+    &hi2c1,
+};
+
 void MAX30102_Init(max30102_t *dev, I2C_HandleTypeDef *hi2c)
 {
     dev->hi2c = hi2c;
