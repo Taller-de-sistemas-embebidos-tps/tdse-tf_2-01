@@ -63,7 +63,7 @@ $$ R = \frac{AC_{red}\cdot AC_{ir}}{DC_{red} \cdot Dc_{ir}} $$
 $$ SpO_2 = 110 - 25 \cdot R $$
 
 4.	Estimación de Frecuencia Respiratoria: se realiza mediante el análisis de la variabilidad de la línea base o la modulación de amplitud (envolvente) de la señal PPG, extrayendo componentes de baja frecuencia (0,2 – 0,3 Hz). 
-5.	Lógica de Control: si el SpO₂ cae por debajo del 90%, se activa la alarma sonora. Finalmente, se empaquetan los datos y se envían por UART. 
+5.	Lógica de Control: si el SpO₂ cae por debajo del 90%, o si hay variaciones de la freuencia respiratoria, se activa el led indicador. Si se detecta apena se activa la alarma. Finalmente, se empaquetan los datos y se envían por UART. 
 
 # 4.1 Requerimientos funcionales
 
@@ -76,7 +76,7 @@ $$ SpO_2 = 110 - 25 \cdot R $$
 |   | 2.2  | Cálculo de SpO₂            | Calcular SpO₂ mediante el ratio R (AC/DC Rojo y AC/DC IR).                    |
 |   | 2.3  | Cálculo de respiración     | Estimar frecuencia respiratoria mediante análisis de envolvente o línea base. |
 |   | 2.4  | Empaquetado de datos       | Generar paquete con SpO₂, respiración y estado.                               |
-|  Indicadores | 3.1  | Alarma crítica             | Activar alarma sonora cuando SpO₂ < umbral.                                   |
+|  Indicadores | 3.1  | Alarma crítica             | Activar alarma sonora cuando se detecta apnea.                                   |
 |   | 3.2  | Indicadores LED            | Mostrar estados (crítico, normal, error) mediante LEDs.                       |
 |  Comunicación | 4.1  | Comunicación Bluetooth     | Transmitir datos vía HM-10 por UART.                                          |
 |   | 4.2  | Envío de parámetros        | Enviar SpO₂, respiraciones y estado del paciente a la app.                    |
