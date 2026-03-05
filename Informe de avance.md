@@ -31,7 +31,7 @@ A continuacion, detallamos, en funcion de los distintas funcionalid### Estado de
 |  | 2.2 | Cálculo de SpO₂ | Calcular SpO₂ mediante el ratio R (AC/DC Rojo y AC/DC IR). | 🟢   |
 |  | 2.3 | Cálculo de respiración | Estimar frecuencia respiratoria mediante análisis de envolvente o línea base. | 🟢  |
 |  | 2.4 | Empaquetado de datos | Generar paquete con SpO₂, respiración y estado. |  🟢 |
-| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando SpO₂ < umbral. |  🟡|
+| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando se detecta apnea. |  🟡|
 |  | 3.2 | Indicadores LED | Mostrar estados (crítico, normal, error) mediante LEDs. | 🟡 |
 | Comunicación | 4.1 | Comunicación Bluetooth | Transmitir datos vía HM-10 por UART. |  🟡|
 |  | 4.2 | Envío de parámetros | Enviar SpO₂, respiraciones y estado del paciente a la app. | 🟡 |
