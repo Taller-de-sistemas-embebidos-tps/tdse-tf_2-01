@@ -4,3 +4,6 @@ Una lista de puequeños TODOs para organizar el desarrollo
 - [ ] Agregar footprint del stm32 a kicad para realizar las conexiones
 - [ ] Formatear los datos a enviar por bluetooth
 - [ ] Hacer uso del sensor real en task_sensor para enviar los datos al task_system
+- [ ] Eliminar comentarios en el codigo
+- [ ] Actualizar diagrama de bloques en el README y en el informe
+- [ ] Agregar lógica de transicion de finger in o out en task_sensor
