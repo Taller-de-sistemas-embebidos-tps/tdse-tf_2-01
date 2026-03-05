@@ -114,6 +114,16 @@ bool any_event_task_system(void)
 
 void put_data_task_system(task_sensor_results_dta_t data) {
 	queue_task_a.results = data;
+	queue_task_a.available_results = true;
+}
+
+bool any_sensor_results() {
+	return queue_task_a.available_results;
+}
+
+task_sensor_results_dta_t get_sensor_results()  {
+	queue_task_a.available_results = false;
+	return queue_task_a.results;
 }
 
 /********************** end of file ******************************************/
