@@ -52,13 +52,14 @@ extern "C" {
 /********************** typedef **********************************************/
 /* Events to excite Task Sensor */
 typedef enum task_sensor_ev {
-	EV_SEN_IDLE,
+	EV_SEN_FINGER_OUT,
+	EV_SEN_FINGER_IN
 } task_sensor_ev_t;
 
 /* State of Task sensor */
 typedef enum task_sensor_st {
     ST_SEN_IDLE,
-    ST_SEN_SENSING,
+    ST_SEN_ACTIVE,
 } task_sensor_st_t;
 
 typedef struct {

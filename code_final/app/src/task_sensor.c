@@ -58,14 +58,14 @@
 
 #define DEL_SEN_XX_MIN				0ul
 #define DEL_SEN_XX_MED				25ul
-#define DEL_SEN_XX_MAX				100ul
+#define DEL_SEN_XX_MAX				2500ul
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg = {};
 
 task_sensor_dta_t task_sensor_dta = {
 	.state = ST_SEN_IDLE,
-	.event = EV_SEN_IDLE,
+	.event = EV_SEN_FINGER_OUT,
 	.results = {},
 	.ppg = {},
 	.tick = DEL_SEN_XX_MAX,
@@ -107,7 +107,7 @@ void task_sensor_init(void *parameters)
 	state = ST_SEN_IDLE;
 	p_task_sensor_dta->state = state;
 
-	event = EV_SEN_IDLE;
+	event = EV_SEN_FINGER_OUT;
 	p_task_sensor_dta->event = event;
 	LOGGER_INFO(" ");
 	LOGGER_INFO("   %s = %lu   %s = %lu",
@@ -156,6 +156,8 @@ void task_sensor_update(void *parameters)
     }
 }
 
+#define NOT_FINGER_THRESHOLD (80000)
+
 void task_sensor_statechart(void)
 {
 	const task_sensor_cfg_t *p_task_sensor_cfg;
@@ -170,33 +172,42 @@ void task_sensor_statechart(void)
 	MAX30102_Read(&max30102, red, ir);
 	ppg_add_sample(*ir, *red);
 
+	if (*ir < NOT_FINGER_THRESHOLD && *red < NOT_FINGER_THRESHOLD) {
+		p_task_sensor_dta->event = EV_SEN_FINGER_OUT;
+	} else {
+		p_task_sensor_dta->event = EV_SEN_FINGER_IN;
+	}
+
 	switch (p_task_sensor_dta->state) {
-		default:
-			if (p_task_sensor_dta->tick == 0) {
-				task_sensor_results_dta_t data;
-				// uint32_t t = HAL_GetTick() / 1000;   // segundos
-				uint32_t t = 800;   // segundos
+		case ST_SEN_IDLE:
+			if(p_task_sensor_dta->event == EV_SEN_FINGER_IN)
+				p_task_sensor_dta->state = ST_SEN_ACTIVE;
+			break;
 
-				//data.heart_rate = 70 + (t % 10);             // 70–79 bpm
-				//data.respiratory_rate = 14 + (t % 4);              // 14–17 rpm
-				//data.spo2 = 97 + (t % 3);            // 97–99 %
-				//data.apnea = ((t % 30) == 0);        // apnea cada 30 s
 
-				// data.timestamp = HAL_GetTick();
-				p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
-				//LOGGER_INFO("red %lu , ir %lu", red, ir);
-				ppg_results_t *data2 = &(p_task_sensor_dta->ppg);
-				ppg_compute(data2);
-				data.heart_rate = data2->hr;
-				data.respiratory_rate = data2->rr;
-				data.spo2 = data2->spo2;
-				//data.timestamp = HAL_GetTick();
-				data.apnea = data2->apnea;
-				put_data_task_system(data);
-
-				//LOGGER_INFO("spo2 %lu, hr %lu, rr %lu, %s", data2.spo2, data2.hr, data2.rr, data2.valid ? "valid" : "not valid");
+		case ST_SEN_ACTIVE:
+			if (p_task_sensor_dta->event == EV_SEN_FINGER_OUT) {
+				p_task_sensor_dta->state = ST_SEN_IDLE;
 			} else {
-				(p_task_sensor_dta->tick)--;
+				if (p_task_sensor_dta->tick == 0) {
+					task_sensor_results_dta_t data;
+					// uint32_t t = HAL_GetTick() / 1000;   // segundos
+					uint32_t t = 800;   // segundos
+
+					p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
+					//LOGGER_INFO("red %lu , ir %lu", red, ir);
+					ppg_results_t *data2 = &(p_task_sensor_dta->ppg);
+					ppg_compute(data2);
+					data.heart_rate = data2->hr;
+					data.respiratory_rate = data2->rr;
+					data.spo2 = data2->spo2;
+					data.timestamp = g_task_sensor_tick_cnt;
+					data.apnea = data2->apnea;
+					put_data_task_system(data);
+
+				} else {
+					(p_task_sensor_dta->tick)--;
+				}
 			}
 			break;
 	}
