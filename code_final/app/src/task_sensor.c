@@ -58,7 +58,7 @@
 
 #define DEL_SEN_XX_MIN				0ul
 #define DEL_SEN_XX_MED				25ul
-#define DEL_SEN_XX_MAX				2500ul
+#define DEL_SEN_XX_MAX				3000ul
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg = {};
@@ -79,6 +79,7 @@ void task_sensor_statechart(void);
 /********************** internal data definition *****************************/
 const char *p_task_sensor 		= "Task Sensor (Sensor Statechart)";
 const char *p_task_sensor_ 		= "Non-Blocking & Update By Time Code";
+
 
 /********************** external data declaration ****************************/
 uint32_t g_task_sensor_cnt;
@@ -170,29 +171,78 @@ void task_sensor_statechart(void)
 	uint32_t *ir = &(p_task_sensor_dta->ir);
 
 	MAX30102_Read(&max30102, red, ir);
-	ppg_add_sample(*ir, *red);
+	//ppg_add_sample(*ir, *red); (si lo dejo aca va a procesar al pedo cuando los datos no sirven)
 
 	if (*ir < NOT_FINGER_THRESHOLD && *red < NOT_FINGER_THRESHOLD) {
 		p_task_sensor_dta->event = EV_SEN_FINGER_OUT;
 	} else {
 		p_task_sensor_dta->event = EV_SEN_FINGER_IN;
+		ppg_add_sample(*ir, *red);
 	}
 
 	switch (p_task_sensor_dta->state) {
+
 		case ST_SEN_IDLE:
-			if(p_task_sensor_dta->event == EV_SEN_FINGER_IN)
-				p_task_sensor_dta->state = ST_SEN_ACTIVE;
+			if(p_task_sensor_dta->event == EV_SEN_FINGER_IN){
+				p_task_sensor_dta->state = ST_SEN_DETECTING;
+				p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
+			}
+			break;
+
+		case ST_SEN_LOSING:
+
+			if(EV_SEN_FINGER_IN == p_task_sensor_dta->event) {
+				if(p_task_sensor_dta->tick > DEL_SEN_XX_MIN){
+					p_task_sensor_dta->state = ST_SEN_LOSING;
+					(p_task_sensor_dta->tick)--;
+				}
+				else {
+					p_task_sensor_dta->state = ST_SEN_ACTIVE;
+				}
+			}
+			else {
+				if(p_task_sensor_dta->tick > DEL_SEN_XX_MIN){
+					p_task_sensor_dta->state = ST_SEN_LOSING;
+					(p_task_sensor_dta->tick)--;
+				}
+				else {
+					p_task_sensor_dta->state = ST_SEN_IDLE;
+					//put_event_task_system(p_task_sensor_cfg->signal_down);
+				}
+			}
+			break;
+
+		case ST_SEN_DETECTING:
+			if(EV_SEN_FINGER_IN == p_task_sensor_dta-> event) {
+				if(p_task_sensor_dta->tick >DEL_SEN_XX_MIN){
+					p_task_sensor_dta->state = ST_SEN_DETECTING;
+					(p_task_sensor_dta->tick)--;
+				}
+				else {
+					p_task_sensor_dta->state = ST_SEN_ACTIVE;
+			//		put_event_task_system(p_task_sensor_cfg->signal_up);
+				}
+			}
+			else {
+				if(p_task_sensor_dta->tick > DEL_SEN_XX_MIN){
+					p_task_sensor_dta->state = ST_SEN_DETECTING;
+					(p_task_sensor_dta->tick)--;
+				}
+				else {
+					p_task_sensor_dta->state = ST_SEN_IDLE;
+				}
+			}
 			break;
 
 
 		case ST_SEN_ACTIVE:
 			if (p_task_sensor_dta->event == EV_SEN_FINGER_OUT) {
-				p_task_sensor_dta->state = ST_SEN_IDLE;
-			} else {
+				p_task_sensor_dta->state = ST_SEN_LOSING;
+				p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
+			}
+			else {
 				if (p_task_sensor_dta->tick == 0) {
 					task_sensor_results_dta_t data;
-					// uint32_t t = HAL_GetTick() / 1000;   // segundos
-					uint32_t t = 800;   // segundos
 
 					p_task_sensor_dta->tick = DEL_SEN_XX_MAX;
 					//LOGGER_INFO("red %lu , ir %lu", red, ir);
