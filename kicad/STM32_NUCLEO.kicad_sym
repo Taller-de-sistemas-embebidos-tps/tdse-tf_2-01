@@ -224,7 +224,7 @@
 			)
 		)
 		(symbol "NUCLEO-F103RB_0_0"
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 45.72 0)
 				(length 2.54)
 				(name "PC10"
@@ -242,7 +242,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 40.64 0)
 				(length 2.54)
 				(name "PC12"
@@ -260,7 +260,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 38.1 0)
 				(length 2.54)
 				(name "PD2"
@@ -278,7 +278,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 35.56 0)
 				(length 2.54)
 				(name "5V"
@@ -332,7 +332,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 27.94 0)
 				(length 2.54)
 				(name "GND"
@@ -422,7 +422,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 15.24 0)
 				(length 2.54)
 				(name "PA13"
@@ -458,7 +458,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 10.16 0)
 				(length 2.54)
 				(name "PA14"
@@ -476,7 +476,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 7.62 0)
 				(length 2.54)
 				(name "+3V3"
@@ -494,7 +494,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 5.08 0)
 				(length 2.54)
 				(name "PA15"
@@ -512,7 +512,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 2.54 0)
 				(length 2.54)
 				(name "+5V"
@@ -530,7 +530,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 0 0)
 				(length 2.54)
 				(name "GND"
@@ -548,7 +548,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 -2.54 0)
 				(length 2.54)
 				(name "GND"
@@ -566,7 +566,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -5.08 0)
 				(length 2.54)
 				(name "PB7"
@@ -584,7 +584,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 -7.62 0)
 				(length 2.54)
 				(name "GND"
@@ -602,7 +602,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -10.16 0)
 				(length 2.54)
 				(name "PC13"
@@ -620,7 +620,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at -15.24 -12.7 0)
 				(length 2.54)
 				(name "VIN"
@@ -638,7 +638,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -15.24 0)
 				(length 2.54)
 				(name "PC14"
@@ -674,7 +674,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -20.32 0)
 				(length 2.54)
 				(name "PC15"
@@ -710,7 +710,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -25.4 0)
 				(length 2.54)
 				(name "PD0"
@@ -728,7 +728,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -27.94 0)
 				(length 2.54)
 				(name "PA1"
@@ -746,7 +746,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -30.48 0)
 				(length 2.54)
 				(name "PD1"
@@ -764,7 +764,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -33.02 0)
 				(length 2.54)
 				(name "PA4"
@@ -800,7 +800,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -38.1 0)
 				(length 2.54)
 				(name "PB0"
@@ -818,7 +818,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -40.64 0)
 				(length 2.54)
 				(name "PC2"
@@ -836,7 +836,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -43.18 0)
 				(length 2.54)
 				(name "PC1"
@@ -854,7 +854,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -45.72 0)
 				(length 2.54)
 				(name "PC3"
@@ -872,7 +872,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 -48.26 0)
 				(length 2.54)
 				(name "PC0"
@@ -890,7 +890,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 45.72 180)
 				(length 2.54)
 				(name "PC9"
@@ -908,7 +908,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 43.18 180)
 				(length 2.54)
 				(name "PC8"
@@ -926,7 +926,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 40.64 180)
 				(length 2.54)
 				(name "PB8"
@@ -980,7 +980,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at 15.24 25.4 180)
 				(length 2.54)
 				(name "GND"
@@ -1016,7 +1016,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 20.32 180)
 				(length 2.54)
 				(name "PA5"
@@ -1034,7 +1034,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 17.78 180)
 				(length 2.54)
 				(name "PA12"
@@ -1052,7 +1052,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 15.24 180)
 				(length 2.54)
 				(name "PA6"
@@ -1070,7 +1070,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 12.7 180)
 				(length 2.54)
 				(name "PA11"
@@ -1088,7 +1088,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 10.16 180)
 				(length 2.54)
 				(name "PA7"
@@ -1106,7 +1106,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 7.62 180)
 				(length 2.54)
 				(name "PB12"
@@ -1124,7 +1124,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 5.08 180)
 				(length 2.54)
 				(name "PB6"
@@ -1142,7 +1142,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 2.54 180)
 				(length 2.54)
 				(name "PB11"
@@ -1160,7 +1160,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 0 180)
 				(length 2.54)
 				(name "PC7"
@@ -1178,7 +1178,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin power_in line
 				(at 15.24 -2.54 180)
 				(length 2.54)
 				(name "GND"
@@ -1196,7 +1196,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -5.08 180)
 				(length 2.54)
 				(name "PA9"
@@ -1214,7 +1214,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -7.62 180)
 				(length 2.54)
 				(name "PB2"
@@ -1232,7 +1232,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -10.16 180)
 				(length 2.54)
 				(name "PA8"
@@ -1250,7 +1250,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -12.7 180)
 				(length 2.54)
 				(name "PB1"
@@ -1268,7 +1268,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -15.24 180)
 				(length 2.54)
 				(name "PB10"
@@ -1286,7 +1286,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -17.78 180)
 				(length 2.54)
 				(name "PB15"
@@ -1304,7 +1304,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -20.32 180)
 				(length 2.54)
 				(name "PB4"
@@ -1322,7 +1322,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -22.86 180)
 				(length 2.54)
 				(name "PB14"
@@ -1340,7 +1340,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -25.4 180)
 				(length 2.54)
 				(name "PB5"
@@ -1358,7 +1358,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -27.94 180)
 				(length 2.54)
 				(name "PB13"
@@ -1376,7 +1376,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -30.48 180)
 				(length 2.54)
 				(name "PB3"
@@ -1394,25 +1394,7 @@
 					)
 				)
 			)
-			(pin unspecified line
-				(at 15.24 -33.02 180)
-				(length 2.54)
-				(name "AGND"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "70"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -35.56 180)
 				(length 2.54)
 				(name "PA10"
@@ -1430,7 +1412,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -38.1 180)
 				(length 2.54)
 				(name "PC4"
@@ -1448,7 +1430,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -40.64 180)
 				(length 2.54)
 				(name "PA2"
@@ -1484,7 +1466,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 -45.72 180)
 				(length 2.54)
 				(name "PA3"
@@ -1522,7 +1504,7 @@
 			)
 		)
 		(symbol "NUCLEO-F103RB_1_0"
-			(pin unspecified line
+			(pin bidirectional line
 				(at -15.24 43.18 0)
 				(length 2.54)
 				(name "PC11"
@@ -1540,7 +1522,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 38.1 180)
 				(length 2.54)
 				(name "PB6"
@@ -1558,7 +1540,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 35.56 180)
 				(length 2.54)
 				(name "PB9"
@@ -1576,7 +1558,7 @@
 					)
 				)
 			)
-			(pin unspecified line
+			(pin bidirectional line
 				(at 15.24 33.02 180)
 				(length 2.54)
 				(name "PC5"
@@ -1587,6 +1569,24 @@
 					)
 				)
 				(number "44"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at 15.24 -33.02 180)
+				(length 2.54)
+				(name "AGND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "70"
 					(effects
 						(font
 							(size 1.27 1.27)
