@@ -76,13 +76,29 @@ extern UART_HandleTypeDef huart2;
 #define RR_HIGH_ADULT_THRESHOLD	20
 
 /********************** internal data declaration ****************************/
+parameters_t kid_parameters  = {
+	.spo2 = SPO2_LOW,
+	.min_hr = HR_LOW_KID_THRESHOLD,
+	.max_hr = HR_HIGH_KID_THRESHOLD,
+	.min_rr = RR_LOW_KID_THRESHOLD,
+	.max_rr = RR_HIGH_KID_THRESHOLD,
+};
+
+parameters_t adult_parameters = {
+	.spo2 = SPO2_LOW,
+	.min_hr = HR_LOW_ADULT_THRESHOLD,
+	.max_hr = HR_HIGH_ADULT_THRESHOLD,
+	.min_rr = RR_LOW_ADULT_THRESHOLD,
+	.max_rr = RR_HIGH_ADULT_THRESHOLD,
+};
+
 task_system_dta_t task_system_dta =	{
 	ST_SYS_MAIN,
 	EV_SYS_BTN_PAIRING_PRESSED,
 	ID_KID,
 	false,
 	800,
-	{}
+	kid_parameters,
 };
 
 task_system_cfg_t task_system_cfg = { 100, 200 };
@@ -100,21 +116,6 @@ const char *p_task_system_ 		= "Non-Blocking & Update By Time Code";
 uint32_t g_task_system_cnt;
 volatile uint32_t g_task_system_tick_cnt;
 
-parameters_t kid_parameters  = {
-	.spo2 = SPO2_LOW,
-	.min_hr = HR_LOW_KID_THRESHOLD,
-	.max_hr = HR_HIGH_KID_THRESHOLD,
-	.min_rr = RR_LOW_KID_THRESHOLD,
-	.max_rr = RR_HIGH_KID_THRESHOLD,
-};
-
-parameters_t adult_parameters = {
-	.spo2 = SPO2_LOW,
-	.min_hr = HR_LOW_ADULT_THRESHOLD,
-	.max_hr = HR_HIGH_ADULT_THRESHOLD,
-	.min_rr = RR_LOW_ADULT_THRESHOLD,
-	.max_rr = RR_HIGH_ADULT_THRESHOLD,
-};
 /********************** external functions definition ************************/
 void task_system_init(void *parameters)
 {
