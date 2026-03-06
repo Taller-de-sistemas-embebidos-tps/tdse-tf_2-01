@@ -96,8 +96,6 @@ typedef struct task_system_dta {
 
 /********************** external data declaration ****************************/
 extern task_system_dta_t task_system_dta;
-extern parameters_t kid_parameters;
-extern parameters_t adult_parameters;
 
 /********************** external functions declaration ***********************/
 
