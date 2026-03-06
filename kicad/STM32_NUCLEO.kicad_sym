@@ -180,7 +180,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "STM32 NUCLEO F103RB"
+		(property "Reference" "U"
 			(at 0.254 -53.594 0)
 			(effects
 				(font
@@ -188,7 +188,7 @@
 				)
 			)
 		)
-		(property "Value" ""
+		(property "Value" "STM32 NUCLEO F103RB"
 			(at 0 0 0)
 			(effects
 				(font
@@ -196,7 +196,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "STM32:NUCLEO F103RB"
 			(at 0 0 0)
 			(effects
 				(font
