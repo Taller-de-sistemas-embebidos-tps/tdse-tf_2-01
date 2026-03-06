@@ -98,7 +98,7 @@ task_system_dta_t task_system_dta =	{
 	ID_KID,
 	false,
 	800,
-	kid_parameters,
+	//kid_parameters, ESTO HACE QUE NO COMPILE.
 };
 
 task_system_cfg_t task_system_cfg = { 100, 200 };

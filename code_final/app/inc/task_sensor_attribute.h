@@ -60,6 +60,8 @@ typedef enum task_sensor_ev {
 typedef enum task_sensor_st {
     ST_SEN_IDLE,
     ST_SEN_ACTIVE,
+	ST_SEN_LOSING,
+	ST_SEN_DETECTING
 } task_sensor_st_t;
 
 typedef struct {
