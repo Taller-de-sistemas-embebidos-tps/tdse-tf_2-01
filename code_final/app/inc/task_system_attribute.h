@@ -71,6 +71,14 @@ typedef enum task_system_mode_id {
     ID_ADULT
 } task_system_mode_id_t;
 
+typedef struct {
+    uint8_t spo2;
+    uint8_t max_hr;
+    uint8_t min_hr;
+    uint8_t max_rr;
+    uint8_t min_rr;
+} parameters_t;
+
 
 typedef struct {
     uint32_t kid_parameter;
@@ -83,11 +91,13 @@ typedef struct task_system_dta {
     task_system_mode_id_t mode;
     bool bluetooth_connected;
     uint32_t tick;
-    uint32_t parameter;
+    parameters_t parameters;
 } task_system_dta_t;
 
 /********************** external data declaration ****************************/
 extern task_system_dta_t task_system_dta;
+extern parameters_t kid_parameters;
+extern parameters_t adult_parameters;
 
 /********************** external functions declaration ***********************/
 

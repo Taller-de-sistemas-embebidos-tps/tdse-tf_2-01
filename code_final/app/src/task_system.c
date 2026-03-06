@@ -67,13 +67,13 @@ extern UART_HandleTypeDef huart2;
 
 #define HR_LOW_KID_THRESHOLD	90
 #define HR_HIGH_KID_THRESHOLD	120
-#define HR_LOW_ADULT_THRESHOLD	80
-#define HR_HIGH_ADULT_THRESHOLD	97
+#define RR_LOW_KID_THRESHOLD	15
+#define RR_HIGH_KID_THRESHOLD	30
 
-#define RR_LOW_KID_THRESHOLD	90
-#define RR_HIGH_KID_THRESHOLD	120
-#define RR_LOW_ADULT_THRESHOLD	80
-#define RR_HIGH_ADULT_THRESHOLD	97
+#define HR_LOW_ADULT_THRESHOLD	45
+#define HR_HIGH_ADULT_THRESHOLD	90
+#define RR_LOW_ADULT_THRESHOLD	10
+#define RR_HIGH_ADULT_THRESHOLD	20
 
 /********************** internal data declaration ****************************/
 task_system_dta_t task_system_dta =	{
@@ -82,7 +82,7 @@ task_system_dta_t task_system_dta =	{
 	ID_KID,
 	false,
 	800,
-	0
+	{}
 };
 
 task_system_cfg_t task_system_cfg = { 100, 200 };
@@ -100,6 +100,21 @@ const char *p_task_system_ 		= "Non-Blocking & Update By Time Code";
 uint32_t g_task_system_cnt;
 volatile uint32_t g_task_system_tick_cnt;
 
+parameters_t kid_parameters  = {
+	.spo2 = SPO2_LOW,
+	.min_hr = HR_LOW_KID_THRESHOLD,
+	.max_hr = HR_HIGH_KID_THRESHOLD,
+	.min_rr = RR_LOW_KID_THRESHOLD,
+	.max_rr = RR_HIGH_KID_THRESHOLD,
+};
+
+parameters_t adult_parameters = {
+	.spo2 = SPO2_LOW,
+	.min_hr = HR_LOW_ADULT_THRESHOLD,
+	.max_hr = HR_HIGH_ADULT_THRESHOLD,
+	.min_rr = RR_LOW_ADULT_THRESHOLD,
+	.max_rr = RR_HIGH_ADULT_THRESHOLD,
+};
 /********************** external functions definition ************************/
 void task_system_init(void *parameters)
 {
@@ -194,7 +209,6 @@ void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data);
 
 void task_system_statechart(void)
 {
-	char text[12] = "Alan 1\n";
 	task_system_dta_t *p_task_system_dta;
 	task_system_cfg_t *p_task_system_cfg;
 
@@ -202,11 +216,10 @@ void task_system_statechart(void)
 	p_task_system_dta = &task_system_dta;
 	p_task_system_cfg = &task_system_cfg;
 
-	task_sensor_results_dta_t result = get_sensor_results();
 
 	if (any_sensor_results()) {
 		char lcd_text[2][17];
-		//task_sensor_results_dta_t result = get_sensor_results();
+		task_sensor_results_dta_t result = get_sensor_results();
 		format_to_lcd_string(lcd_text, result);
 
 		displayCharPositionWrite(0, 0);
@@ -215,42 +228,25 @@ void task_system_statechart(void)
 		displayStringWrite(lcd_text[1]);
 		HAL_UART_Transmit(&huart1, (uint8_t *)lcd_text, 17*2, 500);
 
+		parameters_t params = p_task_system_dta->parameters;
+		if (result.spo2 < params.spo2)
+			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+		if (result.heart_rate < params.min_hr || result.heart_rate > params.max_hr)
+			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+		if (result.respiratory_rate < params.min_rr || result.respiratory_rate > params.max_rr)
+			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+		if (result.apnea == true) {
+			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+			put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
+		}
 	}
+
 
 	if (true == any_event_task_system())
 	{
 		// p_task_system_dta->flag = true;
 		p_task_system_dta->event = get_event_task_system();
 
-		switch (p_task_system_dta->mode)
-		{
-		    case ID_KID:
-		        if (result.spo2 < SPO2_LOW)
-		            put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.heart_rate < HR_LOW_KID_THRESHOLD || result.heart_rate > HR_HIGH_KID_THRESHOLD)
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.respiratory_rate < RR_LOW_KID_THRESHOLD || result.respiratory_rate > RR_HIGH_KID_THRESHOLD)
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.apnea == true)
-		        {
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        	put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
-		        }
-		        break;
-
-		    case ID_ADULT:
-		        if (result.spo2 < SPO2_LOW)
-		            put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.heart_rate < HR_LOW_ADULT_THRESHOLD || result.heart_rate > HR_HIGH_ADULT_THRESHOLD)
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.respiratory_rate < RR_LOW_ADULT_THRESHOLD || result.respiratory_rate > RR_HIGH_ADULT_THRESHOLD)
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        else if (result.apnea == true) {
-		        	put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		        	put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
-		        }
-		        break;
-		}
 
 		switch (p_task_system_dta->state)
 		{
@@ -260,12 +256,12 @@ void task_system_statechart(void)
 						LOGGER_INFO("cambiando de estado");
 						if (p_task_system_dta->mode == ID_KID) {
 							p_task_system_dta->mode = ID_ADULT;
-							p_task_system_dta->parameter = p_task_system_cfg->adult_parameter;
+							p_task_system_dta->parameters = adult_parameters;
 							put_event_task_actuator(EV_ACT_OFF, ID_LED_KID);
 							put_event_task_actuator(EV_ACT_ON, ID_LED_ADULT);
 						} else {
 							p_task_system_dta->mode = ID_KID;
-							p_task_system_dta->parameter = p_task_system_cfg->kid_parameter;
+							p_task_system_dta->parameters = kid_parameters;
 							put_event_task_actuator(EV_ACT_OFF, ID_LED_ADULT);
 							put_event_task_actuator(EV_ACT_ON, ID_LED_KID);
 						}
