@@ -1837,6 +1837,17 @@
 				(xyz 0 0 0)
 			)
 		)
+		(model "${KIPRJMOD}/models/Part_04_varible_resister.stp"
+			(offset
+				(xyz 8 -5 13)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 90)
+			)
+		)
 	)
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 		(layer "F.Cu")
