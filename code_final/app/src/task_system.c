@@ -76,7 +76,7 @@ extern UART_HandleTypeDef huart2;
 #define RR_HIGH_ADULT_THRESHOLD	20
 
 /********************** internal data declaration ****************************/
-parameters_t kid_parameters  = {
+const parameters_t kid_parameters  = {
 	.spo2 = SPO2_LOW,
 	.min_hr = HR_LOW_KID_THRESHOLD,
 	.max_hr = HR_HIGH_KID_THRESHOLD,
@@ -84,7 +84,7 @@ parameters_t kid_parameters  = {
 	.max_rr = RR_HIGH_KID_THRESHOLD,
 };
 
-parameters_t adult_parameters = {
+const parameters_t adult_parameters = {
 	.spo2 = SPO2_LOW,
 	.min_hr = HR_LOW_ADULT_THRESHOLD,
 	.max_hr = HR_HIGH_ADULT_THRESHOLD,
@@ -98,7 +98,7 @@ task_system_dta_t task_system_dta =	{
 	ID_KID,
 	false,
 	800,
-	//kid_parameters, ESTO HACE QUE NO COMPILE.
+	kid_parameters,
 };
 
 task_system_cfg_t task_system_cfg = { 100, 200 };
