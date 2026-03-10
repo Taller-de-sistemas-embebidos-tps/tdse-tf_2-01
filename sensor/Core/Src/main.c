@@ -148,22 +148,18 @@ int main(void)
       // 4. Vaciar TODAS las muestras disponibles en este ciclo
       for (int8_t i = 0; i < num_samples; i++)
       {
-          // Leer el registro de datos (0x07). Esto auto-incrementa el rd_ptr interno del sensor
           MAX30102_Read(&sensor, &red_value, &ir_value);
-
           ppg_add_sample(ir_value, red_value);
-
-          if (ppg_compute(&results))
-          {
-              // ¡Ventana de 10 segundos completada!
-              // Aquí puedes imprimir results.hr o procesar SpO2
-          }
       }
 
+      if (ppg_compute(&results))
+      {
+          // procesar resultados
+      }
       // Toggle del LED para saber que el loop principal NO está colgado
       HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 
-      HAL_Delay(10);
+      HAL_Delay(2);
   }
     /* USER CODE BEGIN 3 */
 }

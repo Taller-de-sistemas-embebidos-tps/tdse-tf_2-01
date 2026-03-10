@@ -10,9 +10,11 @@ extern "C" {
 
 /* ================= CONFIGURACIÓN ================= */
 
-#define PPG_FS_HZ              50u
+#define PPG_FS_HZ              100u
 #define PPG_WINDOW_SEC         10u
 #define PPG_WINDOW_SAMPLES     (PPG_FS_HZ * PPG_WINDOW_SEC)
+#define PPG_STEP_SAMPLES       50
+
 
 /* Rangos fisiológicos */
 #define HR_MIN_BPM             30u
@@ -37,6 +39,7 @@ typedef struct
     bool valid;
 
 } ppg_results_t;
+
 /* ================= API ================= */
 
 void ppg_init(void);
