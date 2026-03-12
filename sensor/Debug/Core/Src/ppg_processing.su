@@ -7,6 +7,6 @@
 ../Core/Src/ppg_processing.c:59:13:compute_hr	56	static
 ../Core/Src/ppg_processing.c:83:13:compute_rr	56	static
 ../Core/Src/ppg_processing.c:123:13:compute_spo2	64	static
-../Core/Src/ppg_processing.c:175:6:ppg_init	4	static
-../Core/Src/ppg_processing.c:185:6:ppg_add_sample	24	static
-../Core/Src/ppg_processing.c:197:6:ppg_compute	24	static
+../Core/Src/ppg_processing.c:176:6:ppg_init	4	static
+../Core/Src/ppg_processing.c:186:6:ppg_add_sample	24	static
+../Core/Src/ppg_processing.c:198:6:ppg_compute	24	static

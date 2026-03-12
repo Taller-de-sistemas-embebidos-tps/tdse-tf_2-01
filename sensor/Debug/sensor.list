@@ -2240,7 +2240,7 @@ static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
  800121a:	6078      	str	r0, [r7, #4]
  800121c:	6039      	str	r1, [r7, #0]
 
-    static float spo2_baseline = 98.0f;// se puede modificar
+    static float spo2_baseline = 99.0f;// se puede modificar
     static uint32_t samples_low_spo2 = 0;
 
     float dc_ir_m = 0, dc_red_m = 0;
@@ -2448,7 +2448,7 @@ static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
  80013bc:	4603      	mov	r3, r0
  80013be:	2b00      	cmp	r3, #0
  80013c0:	d014      	beq.n	80013ec <compute_spo2+0x1d8>
-        spo2_baseline = (0.98f * spo2_baseline) + (0.02f * val);
+        spo2_baseline = (0.80f * spo2_baseline) + (0.2f * val);
  80013c2:	4b23      	ldr	r3, [pc, #140]	@ (8001450 <compute_spo2+0x23c>)
  80013c4:	681b      	ldr	r3, [r3, #0]
  80013c6:	4923      	ldr	r1, [pc, #140]	@ (8001454 <compute_spo2+0x240>)
@@ -2490,7 +2490,8 @@ static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
  8001410:	4a12      	ldr	r2, [pc, #72]	@ (800145c <compute_spo2+0x248>)
  8001412:	6013      	str	r3, [r2, #0]
  8001414:	e002      	b.n	800141c <compute_spo2+0x208>
-    } else {
+    }
+    else {
         samples_low_spo2 = 0;
  8001416:	4b11      	ldr	r3, [pc, #68]	@ (800145c <compute_spo2+0x248>)
  8001418:	2200      	movs	r2, #0
@@ -2522,8 +2523,8 @@ static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
  8001448:	42c80000 	.word	0x42c80000
  800144c:	42bc0000 	.word	0x42bc0000
  8001450:	20000010 	.word	0x20000010
- 8001454:	3f7ae148 	.word	0x3f7ae148
- 8001458:	3ca3d70a 	.word	0x3ca3d70a
+ 8001454:	3f4ccccd 	.word	0x3f4ccccd
+ 8001458:	3e4ccccd 	.word	0x3e4ccccd
  800145c:	20003fe8 	.word	0x20003fe8
 
 08001460 <ppg_init>:

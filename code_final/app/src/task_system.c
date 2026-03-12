@@ -159,7 +159,7 @@ void task_system_init(void *parameters)
     displayCharPositionWrite(0, 0);
 	displayStringWrite("TdSE Bienvenidos");
 
-	hm10_init(&huart1);
+	hm10_init(&huart2);
 	/*uint8_t buffer[10] = {0};
 	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK) {
 	    LOGGER_INFO("HM10 responde: %s", buffer);

@@ -122,7 +122,7 @@ static bool compute_rr(uint16_t *rr_out) {
 // Cálculo de SpO2 y detección de Apnea integrados
 static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
 
-    static float spo2_baseline = 98.0f;// se puede modificar
+    static float spo2_baseline = 99.0f;// se puede modificar
     static uint32_t samples_low_spo2 = 0;
 
     float dc_ir_m = 0, dc_red_m = 0;
@@ -155,7 +155,7 @@ static bool compute_spo2(uint16_t *spo2_out, bool *apnea_out) {
 
     // --- Lógica de Apnea ---
     if (val > 94.0f) {
-        spo2_baseline = (0.98f * spo2_baseline) + (0.02f * val);
+        spo2_baseline = (0.80f * spo2_baseline) + (0.2f * val);
     }
 
 
