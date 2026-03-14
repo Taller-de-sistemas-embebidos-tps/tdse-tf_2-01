@@ -1,0 +1,29 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Introducción general}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Sistema de detección de apneas y variaciones de oxigenación durante el Sueño}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Análisis de sistemas similares al desarrollado}{2}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Introducción específica}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Descripción del equipo}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Requerimientos funcionales}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Casos de uso}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Descripción de módulos externos utilizados}{5}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Display LCD 16x2}{5}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}HM-10}{5}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}MAX30102}{5}{subsubsection.2.4.3}%
+\contentsline {section}{\numberline {3}Diseño e Implementación}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Hardware del sistema}{6}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Display LCD 16x2}{6}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Sensor MAX30102}{6}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Módulo bluetooth HM-10}{7}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}Buzzer}{7}{subsubsection.3.1.4}%
+\contentsline {subsubsection}{\numberline {3.1.5}Botones}{7}{subsubsection.3.1.5}%
+\contentsline {subsubsection}{\numberline {3.1.6}LEDs}{7}{subsubsection.3.1.6}%
+\contentsline {subsection}{\numberline {3.2}Costo de componentes}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Firmware}{8}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Sensor}{8}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Actuador}{8}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Botones}{9}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}Sistema}{9}{subsubsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.4}Diseño}{9}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Ensamblaje}{10}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Ensayos y resultados}{10}{section.4}%
