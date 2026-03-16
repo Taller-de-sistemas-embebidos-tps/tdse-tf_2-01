@@ -164,8 +164,8 @@ detección de episodios de apnea, proporcionando así una herramienta más
 completa para el seguimiento del estado fisiológico del usuario durante
 el descanso.
 
-![Oxímetro de pulso](img/oximetro.png){#fig:oximetro width="40%"}
-<div align=center> <img src=img/oximetro.png></div>
+<!-- ![Oxímetro de pulso](img/oximetro.png){#fig:oximetro width="40%"} -->
+<p align=center> <img width=40% src=img/oximetro.png></p>
 
 ::: {#tab:product_comparison}
 | **Characteristics** | **Product A**                                                                                          | **Product B**                                                                                          |
@@ -182,7 +182,6 @@ el descanso.
   : Comparison of two commercial irrigation controller products.
 :::
 
-s
 
 ## Requerimientos funcionales
 
@@ -211,7 +210,27 @@ s
 :::
 
 ## Casos de uso
+Con respecto a los casos de uso, se pueden mencionar los siguientes:
 
+El sistema cuenta con dos modos de funcionamiento: KID y ADULT, cada uno de los cuales establece parámetros específicos según el tipo de usuario.
+
+
+Rangos de parámetros del modo KID: 
+
+
+
+- Frecuencia cardíaca: {90,120}
+
+- Frecuencia respiratoria: {15,30}
+
+
+Rangos de parámetros del modo ADULT:
+
+- Frecuencia cardíaca: {45,90}
+- Frecuencia respiratoria : {10,20}
+
+En ambos casos el límite para la saturación de oxígeno en sangre es $SP02_{LOW} = 80$.
+Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como sin ella. Cuando la conexión está activa, los datos se envían al dispositivo móvil y, simultáneamente, se visualizan en la pantalla del sistema. En cambio, cuando no se establece la conexión Bluetooth, la información se muestra únicamente en la pantalla.
 ## Descripción de módulos externos utilizados
 
 -   Display LCD 16x2
@@ -227,7 +246,8 @@ la figura [4](#fig:LCD){reference-type="ref" reference="fig:LCD"}.
 Dichas conexiones se realizaron con una configuración de 4 bits. El
 mismo efectúa la comunicación con la placa mediante pines *GPIO*.
 
-![Módulo 1602A](lcd_display.png){#fig:LCD width="50%"}
+<!-- ![Módulo 1602A](img/lcd_display.png){#fig:LCD width="50%"} -->
+<p align=center><img width=50% src=img/lcd_display.png></p>
 
 ### HM-10
 
@@ -238,7 +258,9 @@ través de esta interfaz serie, el microcontrolador transmite al módulo
 los parámetros de interés para su posterior envío al dispositivo móvil
 del usuario.
 
-![Módulo bluetooth HM-10](HM10.png){#fig:HM10 width="50%"}
+<!-- ![Módulo bluetooth HM-10](img/HM10.png){#fig:HM10 width="50%"} -->
+<p align=center><img width=50% src=img/HM10.png></p>
+
 
 ### MAX30102
 
@@ -252,17 +274,68 @@ particular, el pin TX (transmit) del módulo se conecta al pin RX
 conecta al pin TX del microcontrolador permitiendo de esta forma el
 intercambio de datos.
 
-![Sensor MAX30102](MAX30102.png){#fig: MAX30102 width="50%"}
+<!-- ![Sensor MAX30102](MAX30102.png){#fig: MAX30102 width="50%"} -->
+<p align=center><img width=50% src=img/MAX30102.png></p>
+
 
 # Diseño e Implementación
+Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea, con muy comunes y muchas veces no se detectan a tiempo.
+ La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales 
+, suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno 
+durante la noche resulta una herramienta útil y accesible para identificar posibles alteraciones. 
+Desde el punto de vista tecnológico, el proyecto es adecuado para el área de sistemas embebidos porque integra sensores reales, procesamiento digital, 
+comunicación inalámbrica y manejo de bajo consumo. Además, el hardware seleccionado (MAX30102 y STM32F103RB) es económico, fácil de conseguir y cuenta 
+con buena documentación, lo que facilita el desarrollo y permite enfocarse en el funcionamiento del sistema sin una complejidad excesiva. 
+En conjunto, esto hace que el proyecto sea realizable, educativo y al mismo tiempo relevante desde lo biomédico. 
+Para la elección del proyecto, se realiza un análisis profundo de los distintos criterios que lo componen, asignando un peso a cada uno de ellos para 
+luego hacer un análisis total.
+
+| Criterio                                             | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Puntuación               | Peso final |
+| ------------------------------------------------------| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --------------------------| ------------|
+| Tiempo y facilidad de implementación. Peso (7)       | El uso del sensor MAX30102 y el microcontrolador STM32F103RB presenta una complejidad moderada, debido a la necesidad de configurar correctamente la comunicación I²C, filtrar la señal PPG y aplicar algoritmos de cálculo de SpO₂ y frecuencia respiratoria. Sin embargo, existe amplia documentación y librerías disponibles, lo que reduce las dificultades de implementación. En conjunto, se considera que la complejidad técnica es manejable dentro del marco de un proyecto de sistemas embebidos. | <p align="center">7</p>  | 49         |
+| Disponibilidad y costo de hardware. Peso (8)         | Los componentes principales —sensor óptico MAX30102, microcontrolador STM32, módulo Bluetooth y un buzzer/LED para alarmas— son económicos, fáciles de conseguir y ampliamente utilizados en proyectos biomédicos educativos. Esto permite realizar pruebas sin un costo elevado y garantiza buena disponibilidad de reemplazos.                                                                                                                                                                            | <p align="center">9</p>  | 72         |
+| Facilidad de realización de pruebas. Peso (5)        | La verificación del funcionamiento del sistema puede realizarse mediante lectura directa de las señales PPG, monitoreo en tiempo real por UART/Bluetooth y observación de la activación de alarmas locales. Además, se pueden usar herramientas básicas como un multímetro o un osciloscopio para validar etapas eléctricas, lo que facilita enormemente el proceso de pruebas y depuración.                                                                                                                | <p align="center">7</p>  | 35         |
+| Utilidad e interés personal en el proyecto. Peso (9) | El proyecto presenta un alto interés personal debido a su relación con aplicaciones biomédicas reales, la posibilidad de detectar apneas y desaturaciones durante el sueño, y su potencial mejora en versiones futuras. Además, permite aplicar conocimientos de sensores ópticos, filtrado digital y diseño embebido, lo que resulta atractivo tanto desde el punto de vista académico como práctico.                                                                                                      | <p align="center"> 9</p> | 81         |
+
+<p align="center"><b>Tabla 1: Evaluación de criterios del proyecto</b></p>
+
 
 ## Hardware del sistema
+
+### Comparación de módulos Bluetooth
+
+| Módulo      | Tecnología                     | Interface            | Precio unitario [USD] |
+| -------------| --------------------------------| ----------------------| -----------------------|
+| HM-10       | Bluetooth Low Energy (BLE 4.0) | UART (TX/RX)         | 4                     |
+| HC-05       | Bluetooth 2.0 (Classic)        | UART (TX/RX)         | 3                     |
+| ESP32 (BLE) | Bluetooth + WiFi               | UART, SPI, I2C, GPIO | 8,50                  |
+
+*Tabla: Comparación de módulos Bluetooth.*
+
+---
+
+### Comparación de sensores
+
+| Sensor   | Tecnología                 | Interface | Precio unitario [USD] |
+| ----------| ----------------------------| -----------| -----------------------|
+| MAX30102 | PPG (Red + IR LED)         | I2C       | 5                     |
+| MAX30100 | PPG (Red + IR LED)         | I2C       | 6                     |
+| MAX30105 | PPG (IR + Particle sensor) | I2C       | 7                     |
+
+*Tabla: Comparación de sensores.*
+
+---
+
+El módulo **HM-10** fue seleccionado debido a que implementa el estándar **Bluetooth Low Energy (BLE)**, lo que permite establecer comunicación con dispositivos móviles modernos manteniendo un bajo consumo de energía. Cabe destacar su bajo costo, tamaño reducido y amplia disponibilidad.
+
+Con respecto al sensor **MAX30102**, fue elegido debido a la recomendación de especialistas en el área, su tamaño compacto y su costo accesible, lo cual lo hace adecuado para este proyecto.
+
 
 A continuación se muestra un diagrama de bloques del Hardware del equipo
 y se explicarán las conexiones para cada uno de los componentes.
 
-![Componentes presentes en la
-placa.](img/explotada.png){width=".5 \\textwidth"}
+<!-- ![Componentes presentes en la placa.](img/explotada.png){width=".5 \\textwidth"} -->
+<p align=center><img src=img/explotada.png></p>
 
 ### Display LCD 16x2
 
@@ -406,6 +479,27 @@ reference="fig:LEDs"}.
   : Costos de componentes
 
 ## Firmware
+<figure>
+<p><span style="background-color: kicadpcbbg"><img src="img/softwaremodules.jpeg"
+alt="image" /></span></p>
+<figcaption>Diagrama de modulos de Software.</figcaption>
+</figure>maqes
+<figure>
+<p><span style="background-color: kicadpcbbg"><img src="img/diagramaarchivos.jpeg"
+alt="image" /></span></p>
+<figcaption>Diagrama de archivos .h y .c.</figcaption>
+</figure>
+
+| Módulo               | Funcionalidad                                              | Rol        |
+| ----------------------| ------------------------------------------------------------| ------------|
+| Sleep Monitor System | Coordina de entradas y configuraciones de parametros       | Sistema    |
+| PPG Sensor           | Lee el sensor PPG y procesa las lecturas.                  | Subsistema |
+| Buttons              | Filtra ruido de los botones.                               | Subsistema |
+| Bluetooth            | Envío de datos por bluetooth.                              | Driver     |
+| Display              | Exhibe mediciones por pantalla.                            | Driver     |
+| Buzzer               | Advierte estado crítico del usuario.                       | Subsistema |
+| LEDs                 | Indican modo de uso y parámetros fuera de rangos normales. | Subsistema |
+
 
 ### Sensor
 
@@ -455,6 +549,44 @@ y si hay algun dato para enviar. En caso de haber un dato disponible del
 sensor, lo envía por UART al HM10, que se encarga de transmitirlo por
 bluetooth, y se muestra por el display
 
+| Nombre del elemento | Tipo | Funcionalidad |
+| ---------------------| ------| ---------------|
+<figcaption>Objetos y variables del módulo X.
+
+<figure>
+<p><span style="background-color: kicadpcbbg"><img src="img/statechart_system.png"
+alt="image" /></span></p>
+<figcaption>Máquina de estados del Sistema.</figcaption>
+</figure>
+
+Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
+Cuenta con dos modos de funcionamiento: KID y ADULT, los cuales se seleccionan mediante el evento AV_SYS_BTN_MODE_PRESSED, correspondiente a la presión del botón de modo. Por default el sistema se inicializa en modo KID. El cambio de modo viene acompañado por el encendido del led correspondiente (ID_LED_KID O ID_LED_ADULT según el caso) asi como también del seteo de los parámetros correspondientes a ese modo. 
+Mediante el evento EV_SYS_SEN_READ se realiza la lectura de los sensores. Los datos obtenidos se muestran por display y además se envían a través de bluetoth.
+A partir de los datos medidos, el sistema evalúa distintas condiciones de riesgo. Si se detecta  una situación de apnea, se activa el buzzer y el led de alarma. Asimismo, si alguno de los parametros fisiologicos se encuantra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario. 
+Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento EV_SYS_BTN_ALARM_PRESSED, el cual apaga el LED de alarma y el Buzzer. 
+<p><span style="background-color: kicadpcbbg"><img src="img/statechart_sensor.png"
+alt="image" /></span></p>
+<figcaption>Máquina de estados del Sensor.</figcaption>
+</figure>
+Inicialmente el sistema comienza en el estado ST_SEN_IDLE, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento EV_SEN_FINGER_IN, esto provoca la transición al estado ST_SEN_DETECTING, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
+Mientras el sistema permanece en ST_SEN_DETECTING, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido DEL_SEN_XX_MIN, el sistema pasa al estado ST_SEN_ACTIVE. En este estado el sensor realiza el procesamiento de la señal PPG con la función ppg_compute(). 
+Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento EV_SEN_FINGER_OUT, provocando una transición al estado ST_SEN_LOSING. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a ST_SEN_IDLE, a la espera de una nueva medición. 
+<figure>
+<p><span style="background-color: kicadpcbbg"><img src="img/statechart_button.png"
+alt="image" /></span></p>
+<figcaption>Máquina de estados de Botones.</figcaption>
+</figure>
+La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
+El sistema comienza en estado ST_BTN_XX_UP, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(EV_BTN_XX_DOWN), EL SISTEMA PASA AL ESTADO ST_BTN_XX_FALLING e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
+Mientras el sistema permanece en ST_BTN-XX_FALLING, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a ST_BTN-XX_DOWN. En ese momento se genera el evento EV_SYS_BTN_XX_PRESSED, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
+Cuando el usuario libera el botón (EV_BTN_XX_UP), el sistema pasa al estado ST_BTN_XX_RISING, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
+Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado ST_BTN_XX_UP y se genera el evento EV_SYS_BTN_XX_RELEASED, indicando al sistema que el botón fue liberado correctamente.
+<figure>
+<p><span style="background-color: kicadpcbbg"><img src="img/statechart_actuator.png"
+alt="image" /></span></p>
+<figcaption>Máquina de estados Actuador.</figcaption>
+</figure>
+
 ## Diseño
 
 Se utilizó *KiCAD* durante la etapa de diseño, para preparar la pcb del
@@ -470,7 +602,7 @@ La disposición de la placa fue pensada para soldarse en una placa
 experimental. Se representaron los cables como pistas y se tuvo en
 cuenta el espaciado de los agujeros.
 
-<figure id="fig:">
+<figure id="renders">
 <p><img src="img/render_side.png" alt="image" /> <img src="img/render.png"
 alt="image" /></p>
 <figcaption>Previsualización 3D de la placa.</figcaption>
@@ -730,4 +862,3 @@ Se verificaron
 
 ## Proximos pasos
 
-aaa
