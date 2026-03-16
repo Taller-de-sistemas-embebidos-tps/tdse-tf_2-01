@@ -110,7 +110,7 @@ Santiago Archetti
   - [5.2 Próximos pasos](#52-próximos-pasos)
 
 - [Referencias](#referencias)
-- [Video](#video)
+- [Apendice A: Video](#video)
 
 ---
 
@@ -317,19 +317,21 @@ el descanso.
 </div>
 </figure>
 
-| **Characteristics** | **Product A**                                                                                          | **Product B**                                                                                          |
-| ---------------------| --------------------------------------------------------------------------------------------------------| --------------------------------------------------------------------------------------------------------|
-| Water-in port       | ½-inch connector                                                                                       | ½-inch connector                                                                                       |
-| Irrigation circuits | Controls two independent irrigation circuits                                                           | Controls one irrigation circuit                                                                        |
-| Operation modes     | Continuous: water flow is controlled by a button. Programmed irrigation: irrigation is time-controlled | Continuous: water flow is controlled by a button. Programmed irrigation: irrigation is time-controlled |
-| Configuration       | The parameters "how often" to irrigate and "how long" to irrigate can be configured for each circuit   | The parameters "how often" to irrigate and "how long" to irrigate can be configured                    |
-| User interface      | A rotary control key, two buttons, and a display                                                       | A set of buttons and a set of LEDs                                                                     |
-| Power supply        | Two AA batteries                                                                                       | Four AA batteries                                                                                      |
-| Sensors             | None                                                                                                   | None                                                                                                   |
-| Price               | 80 USD                                                                                                 | 60 USD                                                                                                 |
+| **Características** | **Sleep Sentinel (Dispositivo del proyecto)** | **Oxímetro de pulso tradicional** |
+|---------------------|-----------------------------------------------|------------------------------------|
+| Parámetros medidos | Saturación de oxígeno en sangre (SpO₂), frecuencia cardíaca y estimación del patrón respiratorio durante el sueño | Saturación de oxígeno en sangre (SpO₂) y frecuencia cardíaca |
+| Método de medición | Sensor óptico MAX30102 integrado en un sistema embebido con procesamiento de señal | Sensor óptico basado en fotopletismografía integrado en una pinza para el dedo |
+| Duración de la monitorización | Diseñado para monitorización continua durante el sueño | Normalmente utilizado para mediciones puntuales de corta duración |
+| Procesamiento de datos | Procesamiento de señal en el sistema embebido mediante ventanas de muestreo y filtrado | Procesamiento interno básico para mostrar valores instantáneos |
+| Interfaz de usuario | Pantalla LCD que muestra los datos fisiológicos y el estado del sistema | Pequeña pantalla integrada que muestra SpO₂ y frecuencia cardíaca |
+| Almacenamiento de datos | Uso de memoria RAM para almacenamiento temporal de muestras | Generalmente no dispone de almacenamiento interno |
+| Conectividad | Comunicación inalámbrica mediante Bluetooth para transmisión de datos a dispositivos externos | Normalmente dispositivo autónomo con conectividad limitada o inexistente |
+| Alimentación | Sistema embebido alimentado mediante fuente de alimentación del microcontrolador | Batería recargable interna o pilas AAA |
+| Sensores | Sensor óptico MAX30102 para adquisición de señales fisiológicas | Sensor óptico integrado para medición de SpO₂ |
+| Uso previsto | Monitorización continua del sueño y análisis de señales fisiológicas | Comprobación rápida del nivel de oxígeno y pulso |
+| Precio | Prototipo de investigación (sin precio comercial) | Aproximadamente entre 20 y 50 USD según el modelo |
 
-
-**Table 2.1: Comparison of Irrigation Controller Characteristics**
+**Table 2.1: Comparación de trabajos similares**
 
 ## 2.3: Requerimientos funcionales
 
@@ -396,11 +398,9 @@ la [Figura 2.3](#fig-lcd).
 Dichas conexiones se realizaron con una configuración de 4 bits. El
 mismo efectúa la comunicación con la placa mediante pines *GPIO*.
 
-<figure id="fig:lcd">
-<div align="center">
-<img src="img/lcd_display.png" width="30%" alt="LCD 1602A module">
-<figcaption><em>Figura 2.3: Módulo LCD 1602A utilizado.</em></figcaption>
-</div>
+<figure align="center">
+  <img src="img/lcd_display.png" width="30%" alt="LCD 1602A module">
+  <figcaption><em>Figura 2.3: Módulo LCD 1602A utilizado.</em></figcaption>
 </figure>
 
 ### 2.5.2: HM-10
@@ -414,10 +414,11 @@ del usuario.
 
 <!-- ![Módulo bluetooth HM-10](img/HM10.png){#fig:HM10 width="50%"} -->
 <figure id="fig:gm10">
-<div align="center">
-<img src="img/HM10.png" width="27%" alt="hm10">
-<figcaption><em>Figura 2.4: Modulo HM-10.</em></figcaption>
-</div>
+    <div align="center">
+        <img src="img/HM10.png" width="27%" alt="hm10">
+    </div>
+    <figcaption align="center"><em>Figura 2.4: Módulo HM-10.</em></figcaption>
+</figure>
 </figure>
 
 
@@ -435,11 +436,12 @@ conecta al pin TX del microcontrolador permitiendo de esta forma el
 intercambio de datos.
 
 <figure id="fig:gm10">
-<div align="center">
-<img src="img/MAX30102.png" width="27%" alt="MAX30102">
-<figcaption><em>Figura 2.5: Sensor óptico MAX30102.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/MAX30102.png" width="27%" alt="MAX30102">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 2.5: Sensor óptico MAX30102.</em></figcaption>
 </figure>
+
 
 
 
@@ -501,10 +503,10 @@ y se explicá las conexiones para cada uno de los componentes.
 
 
 <figure id="fig:gm10">
-<div align="center">
-<img src="img/explotada.png" width="27%" alt="Explotada">
-<figcaption><em>Figura 3.1: Explotada de la placa utilizada.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/explotada.png" width="27%" alt="Explotada">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.1: Explotada de la placa utilizada.</em></figcaption>
 </figure>
 
 ### Display LCD 16x2
@@ -616,10 +618,10 @@ $R = 220\,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
 observa en la [Figura 3.2](#fig-leds).
 
 <figure id="fig-leds">
-<div align="center">
-<img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
-<figcaption><em>Figura 3.2: Conexión de los LEDs.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
+    </div>
+  <figcaption style="text-align:center;"><em>Figura 3.2: Conexión de los LEDs.</em></figcaption>
 </figure>
 
 | Nucleo | LED           |
@@ -653,17 +655,17 @@ observa en la [Figura 3.2](#fig-leds).
 
 
 <figure id="fig-software-modules">
-<div align="center">
-<img src="img/softwaremodules.jpeg" width="40%" alt="Software modules diagram">
-<figcaption><em>Figura 3.3: Diagrama de módulos de software.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/softwaremodules.jpeg" width="30%" alt="Software modules diagram">
+  </div> 
+  <figcaption style="text-align:center;"><em>Figura 3.3: Diagrama de módulos de software.</em></figcaption>
 </figure>
 
 <figure id="fig-file-structure">
-<div align="center">
-<img src="img/diagramaarchivos.jpeg" width="40%" alt="Source files structure diagram">
-<figcaption><em>Figura 3.4: Diagrama de archivos .h y .c.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/diagramaarchivos.jpeg" width="30%" alt="Source files structure diagram">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.4: Diagrama de archivos .h y .c.</em></figcaption>
 </figure>
 
 | Módulo               | Funcionalidad                                              | Rol        |
@@ -732,10 +734,10 @@ bluetooth, y se muestra por el display
 <figcaption>Objetos y variables del módulo X.
 
 <figure id="fig-statechart-system">
-<div align="center">
-<img src="img/statechart_system.png" width="60%" alt="Máquina de estados del sistema">
-<figcaption><em>Figura 3.5: Máquina de estados del sistema.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/statechart_system.png" width="50%" alt="Máquina de estados del sistema">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.5: Máquina de estados del sistema.</em></figcaption>
 </figure>
 
 Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
@@ -745,10 +747,10 @@ A partir de los datos medidos, el sistema evalúa distintas condiciones de riesg
 Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento EV_SYS_BTN_ALARM_PRESSED, el cual apaga el LED de alarma y el Buzzer. 
 
 <figure id="fig-statechart-sensor">
-<div align="center">
-<img src="img/statechart_sensor.png" width="60%" alt="Máquina de estados del sensor">
-<figcaption><em>Figura 3.6: Máquina de estados del sensor.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.6: Máquina de estados del sensor.</em></figcaption>
 </figure>
 
 Inicialmente el sistema comienza en el estado ST_SEN_IDLE, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento EV_SEN_FINGER_IN, esto provoca la transición al estado ST_SEN_DETECTING, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
@@ -756,10 +758,10 @@ Mientras el sistema permanece en ST_SEN_DETECTING, el temporizador se va decreme
 Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento EV_SEN_FINGER_OUT, provocando una transición al estado ST_SEN_LOSING. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a ST_SEN_IDLE, a la espera de una nueva medición. 
 
 <figure id="fig-statechart-button">
-<div align="center">
-<img src="img/statechart_button.png" width="65%" alt="Máquina de estados de los botones">
-<figcaption><em>Figura 3.7: Máquina de estados de los botones.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.7: Máquina de estados de los botones.</em></figcaption>
 </figure>
 
 La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
@@ -769,10 +771,10 @@ Cuando el usuario libera el botón (EV_BTN_XX_UP), el sistema pasa al estado ST_
 Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado ST_BTN_XX_UP y se genera el evento EV_SYS_BTN_XX_RELEASED, indicando al sistema que el botón fue liberado correctamente.
 
 <figure id="fig-statechart-actuator">
-<div align="center">
-<img src="img/statechart_actuator.png" width="65%" alt="Máquina de estados del actuador">
-<figcaption><em>Figura 3.8. Máquina de estados del actuador.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.8. Máquina de estados del actuador.</em></figcaption>
 </figure>
 
 ## 3.2.3 Diseño de la placa
@@ -781,10 +783,10 @@ Se utilizó *KiCAD* durante la etapa de diseño, para preparar la pcb del
 dispositivo.
 
 <figure id="fig-pcb-design">
-<div align="center">
-<img src="img/tp3.png" width="65%" alt="Diseño de la PCB en KiCad">
-<figcaption><em>Figura 3.10: Diseño de la PCB en KiCad.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/tp3.png" width="25%" alt="Diseño de la PCB en KiCad">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.10: Diseño de la PCB en KiCad.</em></figcaption>
 </figure>
 
 La disposición de la placa fue pensada para soldarse en una placa
@@ -792,11 +794,11 @@ experimental. Se representaron los cables como pistas y se tuvo en
 cuenta el espaciado de los agujeros.
 
 <figure id="fig-pcb-render">
-<div align="center">
-<img src="img/render_side.png" width="45%" alt="Vista lateral 3D de la PCB">
-<img src="img/render.png" width="45%" alt="Vista superior 3D de la PCB">
-<figcaption><em>Figura 3.11: Previsualización 3D de la placa.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/render_side.png" width="13%" alt="Vista lateral 3D de la PCB">
+    <img src="img/render.png" width="25%" alt="Vista superior 3D de la PCB">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 3.11: Previsualización 3D de la placa.</em></figcaption>
 </figure>
 
 Se cuenta con espacio suficiente para agregar una batería para hacer al
@@ -899,17 +901,17 @@ resume los resultados obtenidos en las pruebas realizadas.
 **Tabla 4.1: Pruebas funcionales de hardware.**
 
 <figure id="fig-led-actuator">
-<div align="center">
-<img src="img/Actuador.png" width="30%" alt="LED del actuador en funcionamiento">
-<figcaption><em>Figura 4.1. LED indicadores en funcionamiento.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/Actuador.png" width="25%" alt="LED del actuador en funcionamiento">
+  </div>  
+  <figcaption style="text-align:center;">Figura 4.1: LED indicadores en funcionamiento.</em></figcaption>
 </figure>
 
 <figure id="fig-sensor-voltage">
-<div align="center">
-<img src="img/5,5V.jpeg" width="30%" alt="Medición de tensión del sensor MAX30102">
-<figcaption><em>Figura 4.2. Tensión del sensor MAX30102.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/5,5V.jpeg" width="25%" alt="Medición de tensión del sensor MAX30102">
+  </div>
+  <figcaption style="text-align:center;">Figura 4.2: Tensión del sensor MAX30102.</em></figcaption>
 </figure>
 
 ### 4.1.3: Análisis de resultados
@@ -1016,17 +1018,17 @@ presenta un conjunto representativo de las mediciones obtenidas.
 **Tabla 4.2. Pruebas funcionales de firmware.**
 
 <figure id="figdebugger">
-<div align="center">
-<img src="img/parameters.jpeg" width="3%" alt="Parametros en debugger">
-<figcaption><em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em></figcaption>
+  <div align="center">
+    <img src="img/parameters.jpeg" width="39%" alt="Parametros en debugger">
 </div>
+  <figcaption style="text-align:center;"><em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em></figcaption>
 </figure>
 
 <figure id="fig-deteccion">
-<div align="center">
-<img src="img/Zblutuconecting.png" width="30%" alt="Conexion bluetooth exitosa">
-<figcaption><em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/Zblutuconecting.png" width="30%" alt="Conexion bluetooth exitosa">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em></figcaption>
 </figure>
 
 ### 4.2.3: Análisis de resultados
@@ -1053,17 +1055,17 @@ funcionales definidos previamente.
 **Tabla 4.3. Pruebas de integración**
 
 <figure id="fig-datos-bluetooth">
-<div align="center">
-<img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
-<figcaption><em>Figura 4.5: Datos fisiológicos enviados a través de Bluetooth.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 4.5: Datos fisiológicos enviados a través de Bluetooth.</em></figcaption>
 </figure>
 
 <figure id="fig-datos-display">
-<div align="center">
-<img src="img/Datosdisplay.jpeg" width="40%" alt="Datos fisiológicos mostrados en el display">
-<figcaption><em>Figura 4.6:. Datos fisiológicos enviados a través del display.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/Datosdisplay.jpeg" width="40%" alt="Datos fisiológicos mostrados en el display">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 4.6:. Datos fisiológicos enviados a través del display.</em></figcaption>
 </figure>
 
 ## 4.4: Cumplimiento de requisitos 
@@ -1240,17 +1242,17 @@ Adjuntamos Captura de pantalla de **Console & Build Analyzer** luego de
 compilar la versión final
 
 <figure id="fig-memory-capture">
-<div align="center">
-<img src="img/zmemory.png" width="50%" alt="Captura de memoria del sistema">
-<figcaption><em>Figura 4.7: Captura de memoria.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/zmemory.png" width="50%" alt="Captura de memoria del sistema">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 4.7: Captura de memoria.</em></figcaption>
 </figure>
 
 <figure id="fig-compile-capture">
-<div align="center">
-<img src="img/zcompile.png" width="50%" alt="Salida del compilador">
-<figcaption><em>Figura 4.8: Captura del compilador.</em></figcaption>
-</div>
+  <div align="center">
+    <img src="img/zcompile.png" width="50%" alt="Salida del compilador">
+  </div>
+  <figcaption style="text-align:center;"><em>Figura 4.8: Captura del compilador.</em></figcaption>
 </figure>
 
 Como se observa en la [Figura 4.7](#fig-memory-capture), el uso de memoria RAM del 72,5 % podría considerarse elevado. Sin embargo, este valor se debe principalmente al tamaño de la ventana de muestras utilizada para procesar los datos crudos del sensor MAX30102.
