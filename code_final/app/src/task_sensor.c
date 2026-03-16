@@ -58,7 +58,7 @@
 
 #define DEL_SEN_XX_MIN				0ul
 #define DEL_SEN_XX_MED				25ul
-#define DEL_SEN_XX_MAX				3000ul
+#define DEL_SEN_XX_MAX				1000ul
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg = {};
@@ -93,13 +93,13 @@ void task_sensor_init(void *parameters)
 	task_sensor_ev_t event;
 
 	/* Print out: Task Initialized */
-	LOGGER_INFO(" ");
-	LOGGER_INFO("  %s is running - %s", GET_NAME(task_sensor_init), p_task_sensor);
-	LOGGER_INFO("  %s is a %s", GET_NAME(task_sensor), p_task_sensor_);
+	//LOGGER_INFO(" ");
+	//LOGGER_INFO("  %s is running - %s", GET_NAME(task_sensor_init), p_task_sensor);
+	//LOGGER_INFO("  %s is a %s", GET_NAME(task_sensor), p_task_sensor_);
 
 	/* Init & Print out: Task execution counter */
 	g_task_sensor_cnt = G_TASK_SEN_CNT_INIT;
-	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_cnt), g_task_sensor_cnt);
+	//LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_cnt), g_task_sensor_cnt);
 
 	/* Update Task Sensor Data Pointer */
 	p_task_sensor_dta = &task_sensor_dta;
@@ -110,10 +110,10 @@ void task_sensor_init(void *parameters)
 
 	event = EV_SEN_FINGER_OUT;
 	p_task_sensor_dta->event = event;
-	LOGGER_INFO(" ");
-	LOGGER_INFO("   %s = %lu   %s = %lu",
-				GET_NAME(state), (uint32_t)state,
-				GET_NAME(event), (uint32_t)event);
+	//LOGGER_INFO(" ");
+	//LOGGER_INFO("   %s = %lu   %s = %lu",
+	//			GET_NAME(state), (uint32_t)state,
+	//			GET_NAME(event), (uint32_t)event);
 
 	MAX30102_Init(&max30102, &hi2c1);
 	ppg_init();
@@ -170,14 +170,30 @@ void task_sensor_statechart(void)
 	uint32_t *red = &(p_task_sensor_dta->red);
 	uint32_t *ir = &(p_task_sensor_dta->ir);
 
-	MAX30102_Read(&max30102, red, ir);
-	//ppg_add_sample(*ir, *red); (si lo dejo aca va a procesar al pedo cuando los datos no sirven)
 
-	if (*ir < NOT_FINGER_THRESHOLD && *red < NOT_FINGER_THRESHOLD) {
-		p_task_sensor_dta->event = EV_SEN_FINGER_OUT;
-	} else {
-		p_task_sensor_dta->event = EV_SEN_FINGER_IN;
-		ppg_add_sample(*ir, *red);
+	static uint32_t sensor_read_timer = 10;
+	bool new_data_available = false;
+
+	if (sensor_read_timer > 0) {
+		sensor_read_timer--;
+	}
+	else {
+		sensor_read_timer = 20;
+		MAX30102_Read(&max30102, red, ir);
+		new_data_available = true;
+	}
+
+
+	if (new_data_available) {
+		if (*ir < NOT_FINGER_THRESHOLD && *red < NOT_FINGER_THRESHOLD) {
+			p_task_sensor_dta->event = EV_SEN_FINGER_OUT;
+		} else {
+			p_task_sensor_dta->event = EV_SEN_FINGER_IN;
+
+			if (p_task_sensor_dta->state == ST_SEN_ACTIVE) {
+				ppg_add_sample(*ir, *red);
+			}
+		}
 	}
 
 	switch (p_task_sensor_dta->state) {

@@ -63,7 +63,7 @@ extern UART_HandleTypeDef huart2;
 #define DEL_SYS_MED					25ul
 #define DEL_SYS_MAX					50ul
 
-#define SPO2_LOW				80
+#define SPO2_LOW				86
 
 #define HR_LOW_KID_THRESHOLD	90
 #define HR_HIGH_KID_THRESHOLD	120
@@ -125,13 +125,13 @@ void task_system_init(void *parameters)
 	bool b_event;
 
 	/* Print out: Task Initialized */
-	LOGGER_INFO(" ");
-	LOGGER_INFO("  %s is running - %s", GET_NAME(task_system_init), p_task_system);
-	LOGGER_INFO("  %s is a %s", GET_NAME(task_system), p_task_system_);
+	//LOGGER_INFO(" ");
+	//LOGGER_INFO("  %s is running - %s", GET_NAME(task_system_init), p_task_system);
+	//LOGGER_INFO("  %s is a %s", GET_NAME(task_system), p_task_system_);
 
 	/* Init & Print out: Task execution counter */
 	g_task_system_cnt = G_TASK_SYS_CNT_INI;
-	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_system_cnt), g_task_system_cnt);
+	//LOGGER_INFO("   %s = %lu", GET_NAME(g_task_system_cnt), g_task_system_cnt);
 
 	init_queue_event_task_system();
 
@@ -148,16 +148,16 @@ void task_system_init(void *parameters)
 	b_event = false;
 	// p_task_system_dta->flag = b_event;
 
-	LOGGER_INFO(" ");
-	LOGGER_INFO("   %s = %lu   %s = %lu   %s = %s",
-				 GET_NAME(state), (uint32_t)state,
-				 GET_NAME(event), (uint32_t)event,
-				 GET_NAME(b_event), (b_event ? "true" : "false"));
+	//LOGGER_INFO(" ");
+	//LOGGER_INFO("   %s = %lu   %s = %lu   %s = %s",
+	//			 GET_NAME(state), (uint32_t)state,
+	//			 GET_NAME(event), (uint32_t)event,
+	//			 GET_NAME(b_event), (b_event ? "true" : "false"));
 
 	displayInit( DISPLAY_CONNECTION_GPIO_4BITS );
 
     displayCharPositionWrite(0, 0);
-	displayStringWrite("TdSE Bienvenidos");
+	displayStringWrite("Sleep Centinel");
 
 	hm10_init(&huart2);
 	/*uint8_t buffer[10] = {0};
@@ -219,23 +219,32 @@ void task_system_statechart(void)
 
 
 	if (any_sensor_results()) {
-		char lcd_text[2][17];
-		task_sensor_results_dta_t result = get_sensor_results();
-		format_to_lcd_string(lcd_text, result);
+			// NUEVO 1: Agregamos 'static' para que la memoria no se borre
+			// mientras el UART envía los datos en segundo plano.
+			static char lcd_text[2][17];
 
-		displayCharPositionWrite(0, 0);
-		displayStringWrite(lcd_text[0]);
-		displayCharPositionWrite(0, 1);
-		displayStringWrite(lcd_text[1]);
-		HAL_UART_Transmit(&huart1, (uint8_t *)lcd_text, 17*2, 500);
+			task_sensor_results_dta_t result = get_sensor_results();
+			format_to_lcd_string(lcd_text, result);
 
-		parameters_t params = p_task_system_dta->parameters;
+			displayCharPositionWrite(0, 0);
+			displayStringWrite(lcd_text[0]);
+			displayCharPositionWrite(0, 1);
+			displayStringWrite(lcd_text[1]);
+
+			// NUEVO 2: Usamos la versión no bloqueante por interrupción (_IT)
+			// Le quitamos el '500' del final porque ya no hay timeout de espera.
+			HAL_UART_Transmit_IT(&huart1, (uint8_t *)lcd_text, 17*2);
+
+			parameters_t params = p_task_system_dta->parameters;
 		if (result.spo2 < params.spo2)
 			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		if (result.heart_rate < params.min_hr || result.heart_rate > params.max_hr)
+		if (result.heart_rate < params.min_hr || result.heart_rate > params.max_hr) {
 			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+		}
 		if (result.respiratory_rate < params.min_rr || result.respiratory_rate > params.max_rr)
+		{
 			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+		}
 		if (result.apnea == true) {
 			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
 			put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
@@ -254,26 +263,32 @@ void task_system_statechart(void)
 			case ST_SYS_MAIN:
 				switch (p_task_system_dta->event) {
 					case EV_SYS_BTN_MODE_PRESSED:
-						LOGGER_INFO("cambiando de estado");
+						//LOGGER_INFO("cambiando de estado");
 						if (p_task_system_dta->mode == ID_KID) {
 							p_task_system_dta->mode = ID_ADULT;
 							p_task_system_dta->parameters = adult_parameters;
 							put_event_task_actuator(EV_ACT_OFF, ID_LED_KID);
 							put_event_task_actuator(EV_ACT_ON, ID_LED_ADULT);
+							displayCharPositionWrite(0, 1);
+							displayStringWrite("           ");
+							displayCharPositionWrite(0, 1);
+							displayStringWrite("Modo adulto");
 						} else {
 							p_task_system_dta->mode = ID_KID;
 							p_task_system_dta->parameters = kid_parameters;
 							put_event_task_actuator(EV_ACT_OFF, ID_LED_ADULT);
 							put_event_task_actuator(EV_ACT_ON, ID_LED_KID);
+							displayCharPositionWrite(0, 1);
+							displayStringWrite("           ");
+							displayCharPositionWrite(0, 1);
+							displayStringWrite("Modo nino");
 						}
-						// displayCharPositionWrite(0, 1);
-						// displayStringWrite("MODO");
 						break;
 
 					case EV_SYS_BTN_ALARM_PRESSED:
 						put_event_task_actuator(EV_ACT_OFF, ID_LED_ALARM);
 						put_event_task_actuator(EV_ACT_OFF, ID_BUZZER);
-						LOGGER_INFO("PRENDIENDO_LA_ALARMA");
+						//LOGGER_INFO("PRENDIENDO_LA_ALARMA");
 						// displayCharPositionWrite(0, 1);
 						// displayStringWrite("ALARMA");
 						break;
@@ -284,7 +299,7 @@ void task_system_statechart(void)
 						break;
 
 					default:
-						LOGGER_INFO("NO ESTOY EN NINGUN CASO DEL MAIN");
+						//LOGGER_INFO("NO ESTOY EN NINGUN CASO DEL MAIN");
 						// displayStringWrite("NONE");
 						break;
 				}

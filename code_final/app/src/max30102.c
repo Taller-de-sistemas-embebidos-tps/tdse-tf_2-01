@@ -36,8 +36,8 @@ void MAX30102_Init(max30102_t *dev, I2C_HandleTypeDef *hi2c)
                       REG_FIFO_CONFIG, 1,
                       &data, 1, HAL_MAX_DELAY);
 
-    /* SpO2 config: 100 Hz, 411us pulse, 18-bit */
-    data = 0x27;
+    /* SpO2 config: 50 Hz, 411us pulse, 18-bit */
+    data = 0x23;
     HAL_I2C_Mem_Write(dev->hi2c, MAX30102_I2C_ADDR,
                       REG_SPO2_CONFIG, 1,
                       &data, 1, HAL_MAX_DELAY);

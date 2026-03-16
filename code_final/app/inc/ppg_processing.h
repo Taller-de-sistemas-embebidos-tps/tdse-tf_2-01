@@ -10,8 +10,8 @@ extern "C" {
 
 /* ================= CONFIGURACIÓN ================= */
 
-#define PPG_FS_HZ              100u
-#define PPG_WINDOW_SEC         10u
+#define PPG_FS_HZ              50u
+#define PPG_WINDOW_SEC         15u
 #define PPG_WINDOW_SAMPLES     (PPG_FS_HZ * PPG_WINDOW_SEC)
 #define PPG_STEP_SAMPLES       50
 
