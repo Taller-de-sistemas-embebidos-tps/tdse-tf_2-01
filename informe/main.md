@@ -1,43 +1,188 @@
-::::::: titlepage
-::: center
-![image](fiuba.pdf)\
-[Universidad de Buenos Aires]{.smallcaps}\
-[Facultad de Ingeniería]{.smallcaps}\
-Año 2025 - 2^do^ cuatrimestre
-:::
+<p align="center">
+<img src="img/fiubaPNG.png" width="200">
+</p>
 
-::: center
-[[Taller de Sistemas Embebidos]{.smallcaps}]{.underline}\
-[Trabajo Practico Final]{.smallcaps}
-:::
+<p align="center">
+<b>Universidad de Buenos Aires</b><br>
+<b>Facultad de Ingeniería</b><br>
+Año 2025 - 2<sup>do</sup> cuatrimestre
+</p>
 
-::: center
-[[Sistema de detección de apneas y variaciones de
-oxigenación]{.smallcaps}]{.underline}\
-[[durante el sueño]{.smallcaps}]{.underline}\
-:::
 
-::: tabbing
-FECHA : 4/03/2026\
-\
-\
-ESTUDIANTES: ̄̄\
-Musso Carboni Tomás\
-`tmusso@fi.uba.ar`\
-Alan\
-`fi.uba.ar`\
-Archetti Santiago\
-`sarchetti@fi.uba.ar`\
-:::
+<p align="center">
+<u><b>Taller de Sistemas Embebidos</b></u><br>
+<b>Trabajo Practico Final</b>
+</p>
 
-------------------------------------------------------------------------
+---
 
-Taller de Sistemas Embebidos
-:::::::
+<h1 align="center">
+<u><b>Sleep Centinel</b></u>
+</h1>
 
-# Introducción general
+<p align="center">
+<img src="img/logo.png" width="200">
+</p>
 
-## Sistema de detección de apneas y variaciones de oxigenación durante el Sueño
+<p align="center">
+<b>Sistema de detección de apneas y variaciones de oxigenación</b><br>
+<b>durante el sueño</b>
+</p>
+
+---
+
+**FECHA:** 4/03/2026  
+
+<br>
+
+**ESTUDIANTES**
+
+Tomás Musso Carboni  
+`tmusso@fi.uba.ar`
+
+Alan Romero
+`alan@fi.uba.ar`
+
+Santiago Archetti  
+`sarchetti@fi.uba.ar`
+
+---
+
+*Taller de Sistemas Embebidos*
+
+---
+
+# Índice
+
+
+- [1. Introducción general](#1-introducción-general)
+  - [1.1 Sistema de detección de apneas y variaciones de oxigenación durante el sueño](#11-sistema-de-detección-de-apneas-y-variaciones-de-oxigenación-durante-el-sueño)
+
+- [2. Introducción específica](#2-introducción-específica)
+  - [2.1 Descripción del equipo](#21-descripción-del-equipo)
+  - [2.2 Estado del arte](#22-estado-del-arte)
+  - [2.3 Requerimientos funcionales](#23-requerimientos-funcionales)
+  - [2.4 Casos de uso](#24-casos-de-uso)
+  - [2.5 Descripción de módulos externos utilizados](#25-descripción-de-módulos-externos-utilizados)
+    - [2.5.1 Display LCD 16x2](#251-display-lcd-16x2)
+    - [2.5.2 Módulo Bluetooth HM-10](#252-módulo-bluetooth-hm-10)
+    - [2.5.3 Sensor MAX30102](#253-sensor-max30102)
+
+- [3. Diseño e Implementación](#3-diseño-e-implementación)
+  - [3.1 Hardware del sistema](#31-hardware-del-sistema)
+    - [3.1.1 Comparación de módulos Bluetooth](#311-comparación-de-módulos-bluetooth)
+    - [3.1.2 Comparación de sensores](#312-comparación-de-sensores)
+    - [3.1.3 Conexiones del sistema](#313-conexiones-del-sistema)
+    - [3.1.4 Costo de componentes](#314-costo-de-componentes)
+  - [3.2 Firmware](#32-firmware)
+    - [3.2.1 Arquitectura general del firmware](#321-arquitectura-general-del-firmware)
+    - [3.2.2 Módulo Sensor](#322-módulo-sensor)
+    - [3.2.3 Módulo Actuador](#323-módulo-actuador)
+    - [3.2.4 Módulo de botones](#324-módulo-de-botones)
+    - [3.2.5 Módulo de sistema](#325-módulo-de-sistema)
+  - [3.3 Diseño de la placa](#33-diseño-de-la-placa)
+
+- [4. Ensayos y resultados](#4-ensayos-y-resultados)
+  - [4.1 Pruebas funcionales del hardware](#41-pruebas-funcionales-del-hardware)
+    - [4.1.1 Metodología de ensayo](#411-metodología-de-ensayo)
+    - [4.1.2 Resultados obtenidos](#412-resultados-obtenidos)
+    - [4.1.3 Análisis de resultados](#413-análisis-de-resultados)
+  - [4.2 Pruebas funcionales del firmware](#42-pruebas-funcionales-del-firmware)
+    - [4.2.1 Metodología de ensayo](#421-metodología-de-ensayo)
+    - [4.2.2 Resultados obtenidos](#422-resultados-obtenidos)
+    - [4.2.3 Análisis de resultados](#423-análisis-de-resultados)
+  - [4.3 Pruebas de integración](#43-pruebas-de-integración)
+  - [4.4 Cumplimiento de requisitos](#44-cumplimiento-de-requisitos)
+  - [4.5 Medición y análisis de consumo](#45-medición-y-análisis-de-consumo)
+    - [4.5.1 Procedimiento realizado](#451-procedimiento-realizado)
+    - [4.5.2 Modos de operación medidos](#452-modos-de-operación-medidos)
+    - [4.5.3 Alcance de la medición](#453-alcance-de-la-medición)
+  - [4.6 Medición y análisis de tiempos de ejecución (WCET)](#46-medición-y-análisis-de-tiempos-de-ejecución-wcet)
+    - [4.6.1 Metodología aplicada](#461-metodología-aplicada)
+    - [4.6.2 Tareas analizadas](#462-tareas-analizadas)
+    - [4.6.3 Resultados de medición](#463-resultados-de-medición)
+  - [4.7 Cálculo del factor de uso de la CPU](#47-cálculo-del-factor-de-uso-de-la-cpu)
+  - [4.8 Console & Build Analyzer](#48-console--build-analyzer)
+  - [4.9 Documentación del desarrollo realizado](#49-documentación-del-desarrollo-realizado)
+
+- [5. Conclusiones](#5-conclusiones)
+  - [5.1 Resultados](#51-resultados)
+  - [5.2 Próximos pasos](#52-próximos-pasos)
+
+- [Referencias](#referencias)
+- [Video](#video)
+
+---
+
+# Índice de Figuras
+
+Figura 2.1 Funcionamiento del sensor MAX30102  
+Figura 2.2 Oxímetro de pulso  
+
+Figura 2.3 Módulo LCD 1602A utilizado  
+Figura 2.4 Módulo Bluetooth HM-10  
+Figura 2.5 Sensor óptico MAX30102  
+
+Figura 3.1 Vista explotada de la placa utilizada  
+Figura 3.2 Conexión de los LEDs  
+
+Figura 3.3 Diagrama de módulos de software  
+Figura 3.4 Diagrama de archivos .h y .c  
+Figura 3.5 Máquina de estados del sistema  
+Figura 3.6 Máquina de estados del sensor  
+Figura 3.7 Máquina de estados de los botones  
+Figura 3.8 Máquina de estados del actuador  
+
+Figura 3.10 Diseño de la PCB en KiCad  
+Figura 3.11 Previsualización 3D de la placa  
+
+Figura 4.1 LED indicadores en funcionamiento  
+Figura 4.2 Tensión del sensor MAX30102  
+Figura 4.3 Parámetros fisiológicos vistos desde el debugger  
+Figura 4.4 Conexión Bluetooth exitosa  
+Figura 4.5 Datos fisiológicos enviados por Bluetooth  
+Figura 4.6 Datos fisiológicos mostrados en el display  
+Figura 4.7 Captura de memoria del sistema  
+Figura 4.8 Captura del compilador
+
+---
+
+# Índice de Tablas
+
+Tabla 2.1 Comparación de controladores de irrigación  
+Tabla 2.2 Requerimientos funcionales  
+
+Tabla 3.1 Evaluación de criterios del proyecto  
+Tabla 3.2 Comparación de módulos Bluetooth  
+Tabla 3.3 Comparación de sensores  
+
+Tabla 3.4 Conexiones del display  
+Tabla 3.5 Conexiones del sensor MAX30102  
+Tabla 3.6 Conexiones del módulo HM-10  
+Tabla 3.7 Conexión del buzzer  
+Tabla 3.8 Conexiones de los botones  
+
+Tabla 3.9 Caídas de tensión típicas para LEDs  
+Tabla 3.10 Conexiones de los LEDs  
+Tabla 3.11 Costo de los componentes  
+Tabla 3.12 Función de cada componente de hardware  
+
+Tabla 4.1 Pruebas funcionales de hardware  
+Tabla 4.2 Pruebas funcionales de firmware  
+Tabla 4.3 Pruebas de integración  
+Tabla 4.4 Cumplimiento de requerimientos funcionales  
+
+Tabla 4.5 Consumo del sistema en distintos modos  
+Tabla 4.6 Tareas analizadas para WCET  
+Tabla 4.7 Tiempos de ejecución medidos  
+
+Tabla 4.8 Resumen de elementos del proyecto
+
+---
+
+# 1: Introducción general
+
+## 1.1: Sistema de detección de apneas y variaciones de oxigenación durante el Sueño
 
 El sistema portátil de monitoreo respiratorio y de saturación de oxígeno
 desarrollado en este trabajo cuenta con:
@@ -67,13 +212,10 @@ desarrollado en este trabajo cuenta con:
 
 -   Modos de funcionamiento configurables (modo adulto, modo niño).
 
-    ![Diagrama de bloques del
-    sistema](diagrama_de_bloques.png){#fig:diag_bloques
-    width="0.6 \\linewidth"}
 
-# Introducción específica
+# 2: Introducción específica
 
-## Descripción del equipo
+## 2.1: Descripción del equipo
 
 El dispositivo dispone de dos botones, uno de los cuales permite
 seleccionar el modo de funcionamiento. Esta configuración es necesaria
@@ -84,9 +226,12 @@ adulto o pediátrico. Una vez establecidos los parametros
 correspondientes al modo seleccionado, el sensor óptico MAX30102 se
 coloca en el dedo del usuario.
 
-<figure id="fig:ppg2">
-<p width=100% align=center ><img src="img/ppg.png" height=180 alt="image" /> <img height=180 src="img/ppg2.png" alt="image" /></p>
-<figcaption>Funcionamiento del sensor MAX30102.</figcaption>
+<figure id="fig:ppg2" align="center">
+<p>
+<img src="img/ppg.png" height="180" alt="image" />
+<img src="img/ppg2.png" height="180" alt="image" />
+</p>
+<figcaption align="center"> Figura 2.1: Funcionamiento del sensor MAX30102.</figcaption>
 </figure>
 
 Este sensor se utiliza para la medición de señales de fotopletismografía
@@ -149,7 +294,7 @@ incorpora un modo de bajo consumo energético, el cual se activa
 automáticamente cuando no se detecta contacto del usuario con el sensor
 durante un período prolongado de tiempo.
 
-## Estado del arte
+## 2.2: Estado del arte
 
 La inspiración para el desarrollo de este proyecto se basa en el
 funcionamiento de un oxímetro de pulso, el cual utiliza señales PPG
@@ -165,9 +310,13 @@ completa para el seguimiento del estado fisiológico del usuario durante
 el descanso.
 
 <!-- ![Oxímetro de pulso](img/oximetro.png){#fig:oximetro width="40%"} -->
-<p align=center> <img width=40% src=img/oximetro.png></p>
+<figure id="fig:oximetro">
+<div align="center">
+<img width="20%" src="img/oximetro.png" alt="Oxímetro">
+<p><em>Figura 2.2: Oximetro de pulso.</em></p>
+</div>
+</figure>
 
-::: {#tab:product_comparison}
 | **Characteristics** | **Product A**                                                                                          | **Product B**                                                                                          |
 | ---------------------| --------------------------------------------------------------------------------------------------------| --------------------------------------------------------------------------------------------------------|
 | Water-in port       | ½-inch connector                                                                                       | ½-inch connector                                                                                       |
@@ -179,13 +328,12 @@ el descanso.
 | Sensors             | None                                                                                                   | None                                                                                                   |
 | Price               | 80 USD                                                                                                 | 60 USD                                                                                                 |
 
-  : Comparison of two commercial irrigation controller products.
-:::
+
+**Table 2.1: Comparison of Irrigation Controller Characteristics**
+
+## 2.3: Requerimientos funcionales
 
 
-## Requerimientos funcionales
-
-::: {#tab:tab_requerimientos}
 | Grupo         | ID  | Requerimiento Funcional | Descripción                                                     |
 | ---------------| -----| -------------------------| -----------------------------------------------------------------|
 | Adquisición   | 1.1 | Adquisición de señales  | Capturar señales ópticas ROJO/IR del MAX30102 via I2C.          |
@@ -206,10 +354,11 @@ el descanso.
 |               | 5.2 | Bajo consumo            | Entrar en modo Sleep cuando no hay actividad.                   |
 |               | 5.3 | Reactivación            | Retomar actividad ante movimiento o comando.                    |
 
-  : Tabla de requerimientos
-:::
 
-## Casos de uso
+**Table 2.2: Requerimientos funcionales**
+ 
+
+## 2.4: Casos de uso
 Con respecto a los casos de uso, se pueden mencionar los siguientes:
 
 El sistema cuenta con dos modos de funcionamiento: KID y ADULT, cada uno de los cuales establece parámetros específicos según el tipo de usuario.
@@ -231,7 +380,8 @@ Rangos de parámetros del modo ADULT:
 
 En ambos casos el límite para la saturación de oxígeno en sangre es $SP02_{LOW} = 80$.
 Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como sin ella. Cuando la conexión está activa, los datos se envían al dispositivo móvil y, simultáneamente, se visualizan en la pantalla del sistema. En cambio, cuando no se establece la conexión Bluetooth, la información se muestra únicamente en la pantalla.
-## Descripción de módulos externos utilizados
+
+## 2.5: Descripción de módulos externos utilizados
 
 -   Display LCD 16x2
 
@@ -239,17 +389,21 @@ Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como
 
 -   Módulo Bluetooth HM-10
 
-### Display LCD 16x2
+### 2.5.1: Display LCD 16x2
 
 El display utilizado es un display LCD de 16x2 como se puede observar en
-la figura [4](#fig:LCD){reference-type="ref" reference="fig:LCD"}.
+la [Figura 2.3](#fig-lcd).
 Dichas conexiones se realizaron con una configuración de 4 bits. El
 mismo efectúa la comunicación con la placa mediante pines *GPIO*.
 
-<!-- ![Módulo 1602A](img/lcd_display.png){#fig:LCD width="50%"} -->
-<p align=center><img width=50% src=img/lcd_display.png></p>
+<figure id="fig:lcd">
+<div align="center">
+<img src="img/lcd_display.png" width="30%" alt="LCD 1602A module">
+<figcaption><em>Figura 2.3: Módulo LCD 1602A utilizado.</em></figcaption>
+</div>
+</figure>
 
-### HM-10
+### 2.5.2: HM-10
 
 Para la transmisión de los datos hacia el dispositivo móvil del usuario
 se emplea un módulo Bluetooth HM-10. La comunicación entre el módulo
@@ -259,10 +413,16 @@ los parámetros de interés para su posterior envío al dispositivo móvil
 del usuario.
 
 <!-- ![Módulo bluetooth HM-10](img/HM10.png){#fig:HM10 width="50%"} -->
-<p align=center><img width=50% src=img/HM10.png></p>
+<figure id="fig:gm10">
+<div align="center">
+<img src="img/HM10.png" width="27%" alt="hm10">
+<figcaption><em>Figura 2.4: Modulo HM-10.</em></figcaption>
+</div>
+</figure>
 
 
-### MAX30102
+
+### 2.5.3: MAX30102
 
 En cuanto a la conexión del módulo Bluetooth con la placa de desarrollo,
 se realizaron cuatro conexiones principales: alimentación (VCC),
@@ -274,11 +434,16 @@ particular, el pin TX (transmit) del módulo se conecta al pin RX
 conecta al pin TX del microcontrolador permitiendo de esta forma el
 intercambio de datos.
 
-<!-- ![Sensor MAX30102](MAX30102.png){#fig: MAX30102 width="50%"} -->
-<p align=center><img width=50% src=img/MAX30102.png></p>
+<figure id="fig:gm10">
+<div align="center">
+<img src="img/MAX30102.png" width="27%" alt="MAX30102">
+<figcaption><em>Figura 2.5: Sensor óptico MAX30102.</em></figcaption>
+</div>
+</figure>
 
 
-# Diseño e Implementación
+
+# 3: Diseño e Implementación
 Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea, con muy comunes y muchas veces no se detectan a tiempo.
  La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales 
 , suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno 
@@ -297,12 +462,12 @@ luego hacer un análisis total.
 | Facilidad de realización de pruebas. Peso (5)        | La verificación del funcionamiento del sistema puede realizarse mediante lectura directa de las señales PPG, monitoreo en tiempo real por UART/Bluetooth y observación de la activación de alarmas locales. Además, se pueden usar herramientas básicas como un multímetro o un osciloscopio para validar etapas eléctricas, lo que facilita enormemente el proceso de pruebas y depuración.                                                                                                                | <p align="center">7</p>  | 35         |
 | Utilidad e interés personal en el proyecto. Peso (9) | El proyecto presenta un alto interés personal debido a su relación con aplicaciones biomédicas reales, la posibilidad de detectar apneas y desaturaciones durante el sueño, y su potencial mejora en versiones futuras. Además, permite aplicar conocimientos de sensores ópticos, filtrado digital y diseño embebido, lo que resulta atractivo tanto desde el punto de vista académico como práctico.                                                                                                      | <p align="center"> 9</p> | 81         |
 
-<p align="center"><b>Tabla 1: Evaluación de criterios del proyecto</b></p>
+<p align="center"><b>Tabla 3.1: Evaluación de criterios del proyecto</b></p>
 
 
-## Hardware del sistema
+## 3.1: Hardware del sistema
 
-### Comparación de módulos Bluetooth
+### 3.1.1: Comparación de módulos Bluetooth
 
 | Módulo      | Tecnología                     | Interface            | Precio unitario [USD] |
 | -------------| --------------------------------| ----------------------| -----------------------|
@@ -310,11 +475,13 @@ luego hacer un análisis total.
 | HC-05       | Bluetooth 2.0 (Classic)        | UART (TX/RX)         | 3                     |
 | ESP32 (BLE) | Bluetooth + WiFi               | UART, SPI, I2C, GPIO | 8,50                  |
 
-*Tabla: Comparación de módulos Bluetooth.*
+**Tabla 3.2: Comparación de módulos Bluetooth.**
+
+El módulo **HM-10** fue seleccionado debido a que implementa el estándar **Bluetooth Low Energy (BLE)**, lo que permite establecer comunicación con dispositivos móviles modernos manteniendo un bajo consumo de energía. Cabe destacar su bajo costo, tamaño reducido y amplia disponibilidad.
 
 ---
 
-### Comparación de sensores
+### 3.1.2: Comparación de sensores
 
 | Sensor   | Tecnología                 | Interface | Precio unitario [USD] |
 | ----------| ----------------------------| -----------| -----------------------|
@@ -322,20 +489,23 @@ luego hacer un análisis total.
 | MAX30100 | PPG (Red + IR LED)         | I2C       | 6                     |
 | MAX30105 | PPG (IR + Particle sensor) | I2C       | 7                     |
 
-*Tabla: Comparación de sensores.*
-
----
-
-El módulo **HM-10** fue seleccionado debido a que implementa el estándar **Bluetooth Low Energy (BLE)**, lo que permite establecer comunicación con dispositivos móviles modernos manteniendo un bajo consumo de energía. Cabe destacar su bajo costo, tamaño reducido y amplia disponibilidad.
+**Tabla 3.3: Comparación de sensores.**
 
 Con respecto al sensor **MAX30102**, fue elegido debido a la recomendación de especialistas en el área, su tamaño compacto y su costo accesible, lo cual lo hace adecuado para este proyecto.
 
+---
+### 3.1.3: Conexiones del sistema
 
 A continuación se muestra un diagrama de bloques del Hardware del equipo
-y se explicarán las conexiones para cada uno de los componentes.
+y se explicá las conexiones para cada uno de los componentes.
 
-<!-- ![Componentes presentes en la placa.](img/explotada.png){width=".5 \\textwidth"} -->
-<p align=center><img src=img/explotada.png></p>
+
+<figure id="fig:gm10">
+<div align="center">
+<img src="img/explotada.png" width="27%" alt="Explotada">
+<figcaption><em>Figura 3.1: Explotada de la placa utilizada.</em></figcaption>
+</div>
+</figure>
 
 ### Display LCD 16x2
 
@@ -356,7 +526,7 @@ y se explicarán las conexiones para cada uno de los componentes.
 | PB14   | D7      |
 | GND    | K       |
 
-  : Conexiones del Display
+**Tabla 3.4: Conexiones del display**
 
 El pin A se conecta a 5V a través de una resistencia de $1 k\Omega$
 mientras que el pin _Vo_ se conecta a _5V_ y _GND_ a través de un
@@ -371,7 +541,7 @@ potenciometro de $100k\Omega$.
 | PB6    | SCL             |
 | PB7    | SDA             |
 
-  : Conexiones del sensor MAX30102
+**Tabla 3.5: Conexiones del MAX30102.**
 
 ### Módulo bluetooth HM-10
 
@@ -382,7 +552,7 @@ potenciometro de $100k\Omega$.
 | PA3    | TXD   |
 | PA2    | RXD   |
 
-  : Conexiones del módulo bluetooth HM-10
+**Tabla 3.6: Conexiones del módulo HM-10.**
 
 ### Buzzer
 
@@ -391,7 +561,7 @@ potenciometro de $100k\Omega$.
 | GND    | \-     |
 | PC7    | \+     |
 
-  : Conexiones del sensor MAX30102
+**Tabla 3.7: Conexion del Buzzer**
 
 ### Botones
 
@@ -400,7 +570,7 @@ potenciometro de $100k\Omega$.
 | PC10   | SWITCH-MODE |
 | PC11   | ALARM-OFF   |
 
-  : Conexiones de los botones
+**Tabla 3.8: Conexiones de los botones.**
 
 Siendo SWITCH-MODE y ALARM-OFF los botones encargados de cambiar el modo
 de uso y apagar la alarma respectivamente, ambos configurados en modo
@@ -439,20 +609,17 @@ dependerá de la caída de tensión típica según el color:
 | Verde     | 2.2V         |
 | Azul      | 3.1V         |
 
-  : Caída de tensión típica según el color
+**Tabla 3.9: Caidas de tensión tipicas para LEDs.**
+Se tomó como valor deseado de corriente $I_f = 10\,mA$. Los valores de las
+resistencias utilizadas para los LEDs amarillo, verde y rojo son
+$R = 220\,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
+observa en la [Figura 3.2](#fig-leds).
 
-Se tomó como valor deseado de corriente $I_f = 10mA$. Los valores de las
-resistencias utilizadas para los LEDs amarillo, verde y rojo son de
-$R = 220 \Omega$ y $R= 30\Omega$ para el LED azul, conectados como se
-observa en la figura [7](#fig:LEDs){reference-type="ref"
-reference="fig:LEDs"}.
-
-<figure id="fig:LEDs">
-<div class="circuitikz">
-<p>(-1,1) node<span>3,3V</span> (-.5,1) node[circ] – (0,1) to [led]
-(2,1) to [R] (4,1) – (4.5,1) – ++(0,-1) node[tlground];</p>
+<figure id="fig-leds">
+<div align="center">
+<img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
+<figcaption><em>Figura 3.2: Conexión de los LEDs.</em></figcaption>
 </div>
-<figcaption>Conexión de los LEDs.</figcaption>
 </figure>
 
 | Nucleo | LED           |
@@ -462,32 +629,41 @@ reference="fig:LEDs"}.
 | PB2    | LED-ADULT     |
 | PB1    | LED-KID       |
 
-  : Conexión de los LEDs
+**Tabla 3.10: Conexiones de los LEDs**
 
-## Costo de componentes
+### 3.1.4: Costo de componentes
 
-| Componente   | Costo |
+| Componente   | Costo [ARS] |
 | --------------| -------|
-| MAX30102     |       |
-| HM10         |       |
-| Display      |       |
-| Resistencias |       |
-| LEDs         |       |
-| Buzzer       |       |
-| Botones      |       |
+| MAX30102     |   6239    |
+| HM10         |    6630   |
+| Display      |     7200  |
+| Resistencias |     70  |
+| LEDs         |     150  |
+| Buzzer       |      1500 |
+| Botones      |       1100 |
 
-  : Costos de componentes
+**Tabla 3.11: Costo de los componentes**
 
-## Firmware
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/softwaremodules.jpeg"
-alt="image" /></span></p>
-<figcaption>Diagrama de modulos de Software.</figcaption>
-</figure>maqes
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/diagramaarchivos.jpeg"
-alt="image" /></span></p>
-<figcaption>Diagrama de archivos .h y .c.</figcaption>
+<sub>*Valores aproximados.</sub>
+
+##  3.2: Firmware
+
+### 3.2.1 General; MEJORAR ESTE TITULO
+
+
+<figure id="fig-software-modules">
+<div align="center">
+<img src="img/softwaremodules.jpeg" width="40%" alt="Software modules diagram">
+<figcaption><em>Figura 3.3: Diagrama de módulos de software.</em></figcaption>
+</div>
+</figure>
+
+<figure id="fig-file-structure">
+<div align="center">
+<img src="img/diagramaarchivos.jpeg" width="40%" alt="Source files structure diagram">
+<figcaption><em>Figura 3.4: Diagrama de archivos .h y .c.</em></figcaption>
+</div>
 </figure>
 
 | Módulo               | Funcionalidad                                              | Rol        |
@@ -500,8 +676,10 @@ alt="image" /></span></p>
 | Buzzer               | Advierte estado crítico del usuario.                       | Subsistema |
 | LEDs                 | Indican modo de uso y parámetros fuera de rangos normales. | Subsistema |
 
+**Tabla 3.12: Funcion de cada componente de hardware.**
 
-### Sensor
+
+### 3.2.2: Módulo Sensor
 
 Este módulo representa un sensor que se comunica con un oxímetro de
 pulso (*MAX30102*) y procesa la señal para obtener los datos en la
@@ -523,21 +701,21 @@ procesada, cada `DEL_SEN_MAX_TICKS` se accede a la interfaz del sistema
 y se actualiza la estructura de datos, además de activar una variable
 booleana indicando que el valor no ha sido leído.
 
-### Actuador
+### 3.2.3: Módulo Actuador
 
 Consiste en los indicadores al usuario. Consta de 4 estados. Pueden
 estar prendidos, apagados, parpadeando o emtiendo un pulso. Éstos
 últimos permiten ajustar la frecuencia con la que un led parpadea, o la
 frecuencia de un buzzer.
 
-### Botones
+### 3.2.4: Módulo de botones
 
 Modela el comportamiento de un pulsador mecanico. Permite filrar por
 software el ruido durante los cambios de estado del botón
 (_debouncing_). Aunque el botón es mecánico, se puede modelar otras
 entradas digitales con ruido de la misma manera.
 
-### Sistema
+### 3.2.5: Módulo de sistema
 
 Es la tarea principal encargada de recibir las entradas desde los
 botones y sensores y producir los efectos correspondientes en los otros
@@ -553,10 +731,11 @@ bluetooth, y se muestra por el display
 | ---------------------| ------| ---------------|
 <figcaption>Objetos y variables del módulo X.
 
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/statechart_system.png"
-alt="image" /></span></p>
-<figcaption>Máquina de estados del Sistema.</figcaption>
+<figure id="fig-statechart-system">
+<div align="center">
+<img src="img/statechart_system.png" width="60%" alt="Máquina de estados del sistema">
+<figcaption><em>Figura 3.5: Máquina de estados del sistema.</em></figcaption>
+</div>
 </figure>
 
 Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
@@ -564,48 +743,60 @@ Cuenta con dos modos de funcionamiento: KID y ADULT, los cuales se seleccionan m
 Mediante el evento EV_SYS_SEN_READ se realiza la lectura de los sensores. Los datos obtenidos se muestran por display y además se envían a través de bluetoth.
 A partir de los datos medidos, el sistema evalúa distintas condiciones de riesgo. Si se detecta  una situación de apnea, se activa el buzzer y el led de alarma. Asimismo, si alguno de los parametros fisiologicos se encuantra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario. 
 Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento EV_SYS_BTN_ALARM_PRESSED, el cual apaga el LED de alarma y el Buzzer. 
-<p><span style="background-color: kicadpcbbg"><img src="img/statechart_sensor.png"
-alt="image" /></span></p>
-<figcaption>Máquina de estados del Sensor.</figcaption>
+
+<figure id="fig-statechart-sensor">
+<div align="center">
+<img src="img/statechart_sensor.png" width="60%" alt="Máquina de estados del sensor">
+<figcaption><em>Figura 3.6: Máquina de estados del sensor.</em></figcaption>
+</div>
 </figure>
+
 Inicialmente el sistema comienza en el estado ST_SEN_IDLE, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento EV_SEN_FINGER_IN, esto provoca la transición al estado ST_SEN_DETECTING, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
 Mientras el sistema permanece en ST_SEN_DETECTING, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido DEL_SEN_XX_MIN, el sistema pasa al estado ST_SEN_ACTIVE. En este estado el sensor realiza el procesamiento de la señal PPG con la función ppg_compute(). 
 Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento EV_SEN_FINGER_OUT, provocando una transición al estado ST_SEN_LOSING. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a ST_SEN_IDLE, a la espera de una nueva medición. 
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/statechart_button.png"
-alt="image" /></span></p>
-<figcaption>Máquina de estados de Botones.</figcaption>
+
+<figure id="fig-statechart-button">
+<div align="center">
+<img src="img/statechart_button.png" width="65%" alt="Máquina de estados de los botones">
+<figcaption><em>Figura 3.7: Máquina de estados de los botones.</em></figcaption>
+</div>
 </figure>
+
 La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
 El sistema comienza en estado ST_BTN_XX_UP, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(EV_BTN_XX_DOWN), EL SISTEMA PASA AL ESTADO ST_BTN_XX_FALLING e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
 Mientras el sistema permanece en ST_BTN-XX_FALLING, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a ST_BTN-XX_DOWN. En ese momento se genera el evento EV_SYS_BTN_XX_PRESSED, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
 Cuando el usuario libera el botón (EV_BTN_XX_UP), el sistema pasa al estado ST_BTN_XX_RISING, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
 Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado ST_BTN_XX_UP y se genera el evento EV_SYS_BTN_XX_RELEASED, indicando al sistema que el botón fue liberado correctamente.
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/statechart_actuator.png"
-alt="image" /></span></p>
-<figcaption>Máquina de estados Actuador.</figcaption>
+
+<figure id="fig-statechart-actuator">
+<div align="center">
+<img src="img/statechart_actuator.png" width="65%" alt="Máquina de estados del actuador">
+<figcaption><em>Figura 3.8. Máquina de estados del actuador.</em></figcaption>
+</div>
 </figure>
 
-## Diseño
+## 3.2.3 Diseño de la placa
 
 Se utilizó *KiCAD* durante la etapa de diseño, para preparar la pcb del
 dispositivo.
 
-<figure>
-<p><span style="background-color: kicadpcbbg"><img src="img/tp3.png"
-alt="image" /></span></p>
-<figcaption>Diseño de la PCB en KiCAD.</figcaption>
+<figure id="fig-pcb-design">
+<div align="center">
+<img src="img/tp3.png" width="65%" alt="Diseño de la PCB en KiCad">
+<figcaption><em>Figura 3.10: Diseño de la PCB en KiCad.</em></figcaption>
+</div>
 </figure>
 
 La disposición de la placa fue pensada para soldarse en una placa
 experimental. Se representaron los cables como pistas y se tuvo en
 cuenta el espaciado de los agujeros.
 
-<figure id="renders">
-<p><img src="img/render_side.png" alt="image" /> <img src="img/render.png"
-alt="image" /></p>
-<figcaption>Previsualización 3D de la placa.</figcaption>
+<figure id="fig-pcb-render">
+<div align="center">
+<img src="img/render_side.png" width="45%" alt="Vista lateral 3D de la PCB">
+<img src="img/render.png" width="45%" alt="Vista superior 3D de la PCB">
+<figcaption><em>Figura 3.11: Previsualización 3D de la placa.</em></figcaption>
+</div>
 </figure>
 
 Se cuenta con espacio suficiente para agregar una batería para hacer al
@@ -613,12 +804,10 @@ dispositivo portable. Considerando que solo se precisa el integrado y el
 uso de una pantalla con menor tamaño y similar o mejor resolución queda
 margen para un modelo más compacto.
 
-## Ensamblaje
 
-
-# Ensayos y resultados
-
-## Pruebas funcionales del hardware
+# 4: Ensayos y resultados
+ 
+## 4.1: Pruebas funcionales del hardware
 
 Con el objetivo de verificar el correcto funcionamiento de los
 componentes físicos del sistema, se realizaron diversas pruebas
@@ -627,7 +816,7 @@ validar la correcta operación de los módulos utilizados, así como la
 integridad de las conexiones eléctricas entre los distintos dispositivos
 que componen el sistema.
 
-### Metodología de ensayo
+### 4.1.1: Metodología de ensayo
 
 Las pruebas se realizaron verificando individualmente cada uno de los
 módulos del sistema. En primer lugar, se comprobó el correcto suministro
@@ -649,35 +838,81 @@ Finalmente, se probaron los dispositivos de salida del sistema,
 incluyendo los indicadores LED, el buzzer de alarma y el display,
 verificando su activación ante distintos estados del sistema.
 
-### Resultados obtenidos
+### 4.1.2: Resultados obtenidos
 
 Durante los ensayos se comprobó el correcto funcionamiento de los
-distintos módulos de hardware. La Tabla
-[3](#tab:hardware_tests){reference-type="ref"
-reference="tab:hardware_tests"} resume los resultados obtenidos en las
-pruebas realizadas.
+distintos módulos de hardware. La [Tabla 4.1](#tabla-hardware-tests)
+resume los resultados obtenidos en las pruebas realizadas.
 
-::: {#tab:hardware_tests}
-| Componente      | Prueba realizada               Resultado            |
-| -----------------| -----------------------------------------------------|
-| Alimentación    | Verificación de tensión de alimentación    Correcto |
-| Sensor MAX30102 | Comunicación I2C y lectura de registros    Correcto |
-| Sensor MAX30102 | Adquisición de señal PPG           Correcto         |
-| Bluetooth HM-10 | Comunicación UART y transmisión de datos   Correcto |
-| LEDs            | Encendido según estado del sistema      Correcto    |
-| Buzzer          | Activación ante condición crítica       Correcto    |
-| Display         | Visualización de parámetros fisiológicos   Correcto |
 
-  : Resultados de las pruebas funcionales del hardware.
-:::
+<table id="tabla-hardware-tests">
+<tr>
+<th>Componente</th>
+<th>Prueba realizada</th>
+<th>Resultado</th>
+</tr>
 
-![Led indicador de modo encendido.](img/Actuador.png){#fig:actuador
-width="0.6 \\linewidth"}
+<tr>
+<td>Alimentación</td>
+<td>Verificación de tensión de alimentación</td>
+<td>Correcto</td>
+</tr>
 
-![Tensión de alimentacion del
-MAX30102.](img/5,5V.jpeg){width=".5 \\textwidth"}
+<tr>
+<td>Sensor MAX30102</td>
+<td>Comunicación I²C y lectura de registros</td>
+<td>Correcto</td>
+</tr>
 
-### Análisis de resultados
+<tr>
+<td>Sensor MAX30102</td>
+<td>Adquisición de señal PPG</td>
+<td>Correcto</td>
+</tr>
+
+<tr>
+<td>Bluetooth HM-10</td>
+<td>Comunicación UART y transmisión de datos</td>
+<td>Correcto</td>
+</tr>
+
+<tr>
+<td>LEDs</td>
+<td>Encendido según estado del sistema</td>
+<td>Correcto</td>
+</tr>
+
+<tr>
+<td>Buzzer</td>
+<td>Activación ante condición crítica</td>
+<td>Correcto</td>
+</tr>
+
+<tr>
+<td>Display</td>
+<td>Visualización de parámetros fisiológicos</td>
+<td>Correcto</td>
+</tr>
+
+</table>
+
+**Tabla 4.1: Pruebas funcionales de hardware.**
+
+<figure id="fig-led-actuator">
+<div align="center">
+<img src="img/Actuador.png" width="30%" alt="LED del actuador en funcionamiento">
+<figcaption><em>Figura 4.1. LED indicadores en funcionamiento.</em></figcaption>
+</div>
+</figure>
+
+<figure id="fig-sensor-voltage">
+<div align="center">
+<img src="img/5,5V.jpeg" width="30%" alt="Medición de tensión del sensor MAX30102">
+<figcaption><em>Figura 4.2. Tensión del sensor MAX30102.</em></figcaption>
+</div>
+</figure>
+
+### 4.1.3: Análisis de resultados
 
 Los resultados obtenidos muestran que todos los módulos de hardware del
 sistema funcionan correctamente y que las conexiones entre los distintos
@@ -695,7 +930,7 @@ En base a estas pruebas, se concluye que el hardware del sistema se
 encuentra en condiciones adecuadas para la ejecución del firmware y la
 realización de las pruebas funcionales del software.
 
-## Pruebas funcionales del firmware
+## 4.2: Pruebas funcionales del firmware
 
 Con el objetivo de verificar el correcto funcionamiento del firmware
 desarrollado, se realizaron distintos ensayos funcionales sobre el
@@ -706,7 +941,7 @@ sistema, incluyendo la adquisición de señales, el procesamiento de datos
 fisiológicos, la detección de eventos críticos y la transmisión de
 información.
 
-### Metodología de ensayo
+### 4.2.1: Metodología de ensayo
 
 Las pruebas se realizaron colocando el sensor óptico en el dedo del
 usuario, permitiendo la adquisición de las señales infrarroja y roja
@@ -719,35 +954,82 @@ indicadores visuales y sonoros ante la detección de eventos críticos,
 como disminuciones significativas en la saturación de oxígeno o
 irregularidades en el patrón respiratorio y/o cardiaco.
 
-### Resultados obtenidos
+### 4.2.2: Resultados obtenidos
 
-Durante los ensayos se registraron los valores de $SpO_{2}$ y frecuencia
-respiratoria estimados por el sistema. La Tabla
-[4](#tab:resultados_prueba){reference-type="ref"
-reference="tab:resultados_prueba"} presenta un conjunto representativo
-de las mediciones obtenidas.
+Durante los ensayos se registraron los valores de $SpO_{2}$ y demas parametros estimados por el sistema. La [Tabla 4.2](#tabla-resultados-prueba)
+presenta un conjunto representativo de las mediciones obtenidas.
 
-::: {#tab:resultados_prueba}
-| Muestra | $SpO_{2}$ (%) | Frecuencia respiratoria (rr) | Frecuencia Cardiaca (hr) | Apnea |
-| ---------| ---------------| ------------------------------| --------------------------| -------|
-| 1       | 97            | 20                           | 61                       | False |
-| 2       | 98            | 21                           | 61                       | False |
-| 3       | 95            | 20                           | 56                       | False |
-| 4       | 94            | 23                           | 53                       | False |
-| 5       | 95            | 22                           | 55                       | False |
 
-  : Ejemplo de resultados obtenidos durante las pruebas funcionales del
-  sistema.
-:::
 
-![Captura parametros medidos mediante el debugger del
-IDE.](img/parameters.jpeg){#fig:debuger width="0.6 \\linewidth"}
+<table id="tabla-resultados-prueba">
 
-![Deteccion exitososa del modulo HM-10 via
-Bluetooth](img/Zblutuconecting.png){#fig:blutuconecting
-width="0.4 \\linewidth"}
+<tr>
+<th>Muestra</th>
+<th>SpO₂ (%)</th>
+<th>Frecuencia respiratoria (rr)</th>
+<th>Frecuencia cardíaca (hr)</th>
+<th>Apnea</th>
+</tr>
 
-### Análisis de resultados
+<tr>
+<td>1</td>
+<td>97</td>
+<td>20</td>
+<td>61</td>
+<td>False</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>98</td>
+<td>21</td>
+<td>61</td>
+<td>False</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>95</td>
+<td>20</td>
+<td>56</td>
+<td>False</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>94</td>
+<td>23</td>
+<td>53</td>
+<td>False</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>95</td>
+<td>22</td>
+<td>55</td>
+<td>False</td>
+</tr>
+
+</table>
+
+**Tabla 4.2. Pruebas funcionales de firmware.**
+
+<figure id="figdebugger">
+<div align="center">
+<img src="img/parameters.jpeg" width="3%" alt="Parametros en debugger">
+<figcaption><em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em></figcaption>
+</div>
+</figure>
+
+<figure id="fig-deteccion">
+<div align="center">
+<img src="img/Zblutuconecting.png" width="30%" alt="Conexion bluetooth exitosa">
+<figcaption><em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em></figcaption>
+</div>
+</figure>
+
+### 4.2.3: Análisis de resultados
 
 Los resultados obtenidos durante los ensayos muestran que el sistema es
 capaz de adquirir y procesar correctamente las señales provenientes del
@@ -758,56 +1040,59 @@ comunicación y de los mecanismos de alerta implementados. En general, el
 comportamiento del firmware resultó consistente con los requerimientos
 funcionales definidos previamente.
 
-## Pruebas de integración
+## 4.3: Pruebas de integración
 
-::: {#tab:casos_uso}
-| **\#** | **Caso de uso**                                                                                                                                                        | **Cumplido** |
-| --------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --------------|
-| 1      | El usuario inicia el monitoreo del sueño y el dispositivo comienza a adquirir señales PPG del sensor MAX30102 para calcular los datos fisiológicos.                    | $\checkmark$ |
-| 2      | El sistema monitorea continuamente los parámetros fisiológicos durante el sueño y transmite los valores de $SpO_{2}$ y respiración a la aplicación mediante Bluetooth. | $\checkmark$ |
-| 3      | El sistema detecta una disminución crítica de $SpO_{2}$ o un episodio de apnea y activa una alarma sonora y visual para alertar al usuario.                            | $\checkmark$ |
-| 4      | El usuario puede visualizar en tiempo real los parámetros fisiológicos en la aplicación o en el display del dispositivo.                                               | $\checkmark$ |
 
-  : Evaluación de los casos de uso del sistema de detección de apnea y
-  monitoreo de $SpO_{2}$.
-:::
+| # | Caso de uso | Cumplido |
+|---|-------------|----------|
+| 1 | El usuario inicia el monitoreo del sueño y el dispositivo comienza a adquirir señales PPG del sensor MAX30102 para calcular los datos fisiológicos. | ✔ |
+| 2 | El sistema monitorea continuamente los parámetros fisiológicos durante el sueño y transmite los valores de $SpO_{2}$ y respiración a la aplicación mediante Bluetooth. | ✔ |
+| 3 | El sistema detecta una disminución crítica de $SpO_{2}$ o un episodio de apnea y activa una alarma sonora y visual para alertar al usuario. | ✔ |
+| 4 | El usuario puede visualizar en tiempo real los parámetros fisiológicos en la aplicación o en el display del dispositivo. | ✔ |
 
-![Datos fisiológicos enviados a través de
-Bluetooth](img/zdatosblutu.png){#fig:datosblutu width="0.6 \\linewidth"}
+**Tabla 4.3. Pruebas de integración**
 
-![Datos fisiológicos enviados a través del
-Display](img/Datosdisplay.jpeg){#fig:datosdisplay
-width="0.6 \\linewidth"}
+<figure id="fig-datos-bluetooth">
+<div align="center">
+<img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
+<figcaption><em>Figura 4.5: Datos fisiológicos enviados a través de Bluetooth.</em></figcaption>
+</div>
+</figure>
 
-## Cumplimiento de requisitos 
+<figure id="fig-datos-display">
+<div align="center">
+<img src="img/Datosdisplay.jpeg" width="40%" alt="Datos fisiológicos mostrados en el display">
+<figcaption><em>Figura 4.6:. Datos fisiológicos enviados a través del display.</em></figcaption>
+</div>
+</figure>
 
-::: {#tab:tab_requerimientos2}
-| Grupo         | ID                     | Requerimiento Funcional                                                                         | Descripción                                                  | Cumplido |
-| ---------------| ------------------------| -------------------------------------------------------------------------------------------------| --------------------------------------------------------------| ----------|
-| Adquisición   | 1.1                    | Adquisición de señales                                                                          | Capturar señales ópticas ROJO/IR del MAX30102 vía I2C.       |          |
-| 1.2           | Lectura periódica      | Obtener muestras desde la FIFO del sensor.                                                      |                                                              |          |
-| 1.3           | Análisis de variación  | Detectar variaciones relevantes para el cálculo de $SpO_{2}$ y respiración.                     |                                                              |          |
-| Procesamiento | 2.1                    | Filtrado digital                                                                                | Aplicar filtrado digital para reducir ruido en la señal PPG. |          |
-| 2.2           | Cálculo de $SpO_{2}$   | Calcular $SpO_{2}$ mediante el método del ratio R.                                              |                                                              |          |
-| 2.3           | Cálculo de respiración | Estimar la frecuencia respiratoria mediante análisis de envolvente o variaciones de línea base. |                                                              |          |
-| 2.4           | Empaquetado de datos   | Generar paquetes de datos con $SpO_{2}$, respiración y estado del sistema.                      |                                                              |          |
-| Indicadores   | 3.1                    | Alarma crítica                                                                                  | Activar alarma sonora cuando se detecta apnea.               |          |
-| 3.2           | Indicadores LED        | Mostrar estados (crítico, normal, error) mediante LEDs.                                         |                                                              |          |
-| Comunicación  | 4.1                    | Bluetooth                                                                                       | Transmitir datos vía HM-10 utilizando UART.                  |          |
-| 4.2           | Envío de parámetros    | Enviar $SpO_{2}$, respiración y estado del paciente a la aplicación.                            |                                                              |          |
-| 4.3           | Registro de eventos    | Informar alarmas, desconexiones o estados especiales.                                           |                                                              |          |
-| 4.4           | Display                | Mostrar parámetros fisiológicos relevantes en pantalla.                                         |                                                              |          |
-| Alimentación  | 5.1                    | Alimentación                                                                                    | Alimentación del sistema mediante conexión USB.              |          |
-| 5.2           | Bajo consumo           | Entrar en modo Sleep cuando no hay actividad.                                                   |                                                              |          |
-| 5.3           | Reactivación           | Retomar actividad ante interrupciones o comandos.                                               |                                                              |          |
+## 4.4: Cumplimiento de requisitos 
 
-  : Requerimientos funcionales del sistema de detección de apnea y
-  monitoreo de $SpO_{2}$.
-:::
 
-## 4.4 Medición y análisis de consumo
+| Grupo | ID | Requerimiento Funcional | Descripción | Cumplido |
+|------|----|------------------------|-------------|----------|
+| Adquisición | 1.1 | Adquisición de señales | Capturar señales ópticas ROJO/IR del MAX30102 vía I²C. | ✔ |
+| Adquisición | 1.2 | Lectura periódica | Obtener muestras desde la FIFO del sensor. | ✔ |
+| Adquisición | 1.3 | Análisis de variación | Detectar variaciones relevantes para el cálculo de SpO₂ y respiración. | ✔ |
+| Procesamiento | 2.1 | Filtrado digital | Aplicar filtrado digital para reducir ruido en la señal PPG. | ✔ |
+| Procesamiento | 2.2 | Cálculo de SpO₂ | Calcular SpO₂ mediante el método del ratio R. | ✔ |
+| Procesamiento | 2.3 | Cálculo de respiración | Estimar la frecuencia respiratoria mediante análisis de envolvente o variaciones de línea base. | ✔ |
+| Procesamiento | 2.4 | Empaquetado de datos | Generar paquetes de datos con SpO₂, respiración y estado del sistema. | ✔ |
+| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando se detecta apnea. | ✔ |
+| Indicadores | 3.2 | Indicadores LED | Mostrar estados (crítico, normal, error) mediante LEDs. | ✔ |
+| Comunicación | 4.1 | Bluetooth | Transmitir datos vía HM-10 utilizando UART. | ✔ |
+| Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. | ✔ |
+| Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. | ✔ |
+| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. | ✔ |
+| Alimentación | 5.1 | Alimentación | Alimentación del sistema mediante conexión USB. | ✔ |
+| Alimentación | 5.2 | Bajo consumo | Entrar en modo Sleep cuando no hay actividad. | ✔ |
+| Alimentación | 5.3 | Reactivación | Retomar actividad ante interrupciones o comandos. | ✔ |
 
-### Procedimiento realizado
+**Tabla 4.4. Requerimientos funcionales del sistema.**
+
+## 4.5 Medición y análisis de consumo
+
+### 4.5.1: Procedimiento realizado
 
 La placa NUCLEO-F103RB permite medir el consumo del microcontrolador utilizando el jumper **JP6 (IDD)**.
 
@@ -837,7 +1122,7 @@ Esta medición permite analizar el consumo energético del sistema y evaluar el 
 
 ---
 
-### Modos de operación medidos
+### 4.5.2: Modos de operación medidos
 
 Se realizaron mediciones del consumo del sistema bajo diferentes condiciones de funcionamiento, representativas del uso normal del dispositivo.
 
@@ -848,11 +1133,11 @@ Se realizaron mediciones del consumo del sistema bajo diferentes condiciones de 
 | Sistema transmitiendo datos via Bluetooth | 32,4| 162 | |
 | Sistema en estado de alarma (buzzer + LED) | 42,8| 214 | Mayor consumo, proceso de datos y actuadores |
 
-**Tabla X — Consumo total medido del jumper J6 en distintos modos de operación.**
+**Tabla 4.5: Consumo total medido del jumper J6 en distintos modos de operación.**
 
 ---
 
-### Alcance de la medición
+### 4.5.3: Alcance de la medición
 
 La medición realizada representa el **consumo total del sistema a la tensión de entrada de 5 V**.  
 Los subsistemas alimentados a **3,3 V** quedan incluidos indirectamente en esta medición, dado que dicha tensión es generada mediante el regulador de la propia placa.
@@ -864,9 +1149,9 @@ Por lo tanto, la corriente medida corresponde al consumo global del dispositivo 
 El análisis de los resultados permite determinar el **consumo máximo del sistema**, correspondiente al caso del sistema en estado de alarma.
 
 
-## 4.5 Medición y análisis de tiempos de ejecución (WCET)
+## 4.6: Medición y análisis de tiempos de ejecución (WCET)
 
-### Metodología aplicada
+### 4.6.1: Metodología aplicada
 
 Con el objetivo de evaluar el desempeño temporal del sistema, se realizó un análisis del **tiempo de ejecución de las tareas principales**, determinando su **Worst Case Execution Time (WCET)**, es decir, el mayor tiempo observado durante múltiples ejecuciones.
 
@@ -890,7 +1175,7 @@ donde:
 
 ---
 
-## Tareas analizadas
+## 4.6.2: Tareas analizadas
 
 Se midieron los tiempos de ejecución de las principales tareas del sistema, responsables de la adquisición de datos, procesamiento de señal y comunicación.
 
@@ -901,9 +1186,9 @@ Se midieron los tiempos de ejecución de las principales tareas del sistema, res
 | task_actuator | task_actuator.c | Control de actuadores (LED, buzzer) |
 | task_button | task_button.c | Lectura de botones |
 
-**Tabla X — Tareas principales del sistema analizadas para WCET.**
+**Tabla 4.6: Tareas principales del sistema analizadas para WCET.**
 
-## Resultados de medición
+## 4.6.3: Resultados de medición
 
 Los tiempos de ejecución se obtuvieron ejecutando cada tarea múltiples veces durante el funcionamiento normal del sistema y registrando el **máximo valor observado**.
 
@@ -915,11 +1200,11 @@ Los tiempos de ejecución se obtuvieron ejecutando cada tarea múltiples veces d
 | task_system |2536 |3000 |0.000845|
 | task_actuator |30|1 | 0.03 |
 
-**Tabla X — Tiempos de ejecución medidos para las tareas del sistema.**
+**Tabla 4.7: Tiempos de ejecución medidos para las tareas del sistema.**
 
 Como se observa en la Tabla X, para el análisis de la tarea `task_system` se utilizó su período real de ejecución (determinado por la cadencia de actualización de datos en la pantalla LCD, cada 3000 ms) en lugar del período de *polling* del planificador base (1 ms). Asumir la tasa de *polling* para una rutina asíncrona de baja frecuencia resultaría en un error analítico y en una sobreestimación matemática del factor de uso.
 
-## 4.6 Cálculo del Factor de Uso (U) de la CPU
+## 4.7 Cálculo del Factor de Uso (U) de la CPU
 
 Con el objetivo de analizar la carga computacional del sistema, se estimó el **factor de uso del procesador (U)** a partir de los tiempos de ejecución de las tareas y sus respectivos períodos de activación.
 
@@ -949,25 +1234,30 @@ Como consecuencia directa de esta alta carga computacional, se descarta la imple
 
 ---
 
-## Consola
+## 4.8: Console & Build Analyzer
 
 Adjuntamos Captura de pantalla de **Console & Build Analyzer** luego de
 compilar la versión final
 
-<p align=center>
-    <img width=50% src=img/zmemory.png>
-    <i>Figura 4.4.1: Captura de memoria</i>
-</p>
+<figure id="fig-memory-capture">
+<div align="center">
+<img src="img/zmemory.png" width="50%" alt="Captura de memoria del sistema">
+<figcaption><em>Figura 4.7: Captura de memoria.</em></figcaption>
+</div>
+</figure>
 
-<p align=center>
-    <img width=50% src=img/zcompile.png>
-    <i>Figura 4.4.2: Captura del compilador </i>
-</p>
+<figure id="fig-compile-capture">
+<div align="center">
+<img src="img/zcompile.png" width="50%" alt="Salida del compilador">
+<figcaption><em>Figura 4.8: Captura del compilador.</em></figcaption>
+</div>
+</figure>
 
-Como visualizamos en la Figura 4.4.1, el uso de memoria RAM del 72,50 % puede resultar excesivo, pero si se entra en contexto, es a causa de la amplia ventana de muestras utilizada para procesar los datos crudos del sensor MAX30102. Un valor menor de muestreo de datos o del tamaño de la ventana perjudicaría claramente el valor de los datos fisiológicos, y los mismos perderían su validez. De hecho, sería incluso recomendable aumentar el valor de las ventanas para obtener datos más fidedignos.
+Como se observa en la [Figura 4.7](#fig-memory-capture), el uso de memoria RAM del 72,5 % podría considerarse elevado. Sin embargo, este valor se debe principalmente al tamaño de la ventana de muestras utilizada para procesar los datos crudos del sensor MAX30102.
 
+Reducir la frecuencia de muestreo o el tamaño de dicha ventana afectaría negativamente la calidad de los datos fisiológicos obtenidos, comprometiendo su validez. De hecho, en ciertas condiciones podría resultar incluso conveniente aumentar el tamaño de la ventana de procesamiento para mejorar la fidelidad de las mediciones.
 
-## Documentación del desarrollo realizado
+## 4.9: Documentación del desarrollo realizado
 
 En la Tabla [7](#tab:project_summary){reference-type="ref"
 reference="tab:project_summary"} se presenta un conjunto de elementos
@@ -1002,11 +1292,16 @@ obtenidos durante la etapa de implementación y evaluación..
   detección de apnea y monitoreo de SpO$_2$.
 :::
 
-# Conclusiones
+# 5: Conclusiones
 
 Se verificaron
 
-## Resultados
+## 5.1: Resultados
 
-## Proximos pasos
+## 5.2: Proximos pasos
+
+# Referencias
+
+# Video
+https://www.youtube.com/watch?v=pGM0ltA05JQ
 
