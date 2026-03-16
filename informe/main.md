@@ -1202,7 +1202,7 @@ Los tiempos de ejecución se obtuvieron ejecutando cada tarea múltiples veces d
 
 **Tabla 4.7: Tiempos de ejecución medidos para las tareas del sistema.**
 
-Como se observa en la Tabla X, para el análisis de la tarea `task_system` se utilizó su período real de ejecución (determinado por la cadencia de actualización de datos en la pantalla LCD, cada 3000 ms) en lugar del período de *polling* del planificador base (1 ms). Asumir la tasa de *polling* para una rutina asíncrona de baja frecuencia resultaría en un error analítico y en una sobreestimación matemática del factor de uso.
+Como se observa en la **Tabla 4.7**, para el análisis de la tarea `task_system` se utilizó su período real de ejecución (determinado por la cadencia de actualización de datos en la pantalla LCD, cada 3000 ms) en lugar del período de *polling* del planificador base (1 ms). Asumir la tasa de *polling* para una rutina asíncrona de baja frecuencia resultaría en un error analítico y en una sobreestimación matemática del factor de uso.
 
 ## 4.7 Cálculo del Factor de Uso (U) de la CPU
 
@@ -1257,40 +1257,35 @@ Como se observa en la [Figura 4.7](#fig-memory-capture), el uso de memoria RAM d
 
 Reducir la frecuencia de muestreo o el tamaño de dicha ventana afectaría negativamente la calidad de los datos fisiológicos obtenidos, comprometiendo su validez. De hecho, en ciertas condiciones podría resultar incluso conveniente aumentar el tamaño de la ventana de procesamiento para mejorar la fidelidad de las mediciones.
 
-## 4.9: Documentación del desarrollo realizado
+## 4.9 Documentación del desarrollo realizado
 
-En la Tabla [7](#tab:project_summary){reference-type="ref"
-reference="tab:project_summary"} se presenta un conjunto de elementos
-que resumen la información más relevante acerca del diseño y la
-implementación del sistema propuesto para la detección de apneas y
-variaciones en la saturación de oxígeno durante el sueño.
+En la **Tabla 4.8** se presenta un conjunto de elementos que resumen la
+información más relevante acerca del diseño y la implementación del
+sistema propuesto para la detección de apneas y variaciones en la
+saturación de oxígeno durante el sueño.
 
 A partir del análisis de estos elementos, es posible comprender los
 principales aspectos del proyecto, incluyendo los objetivos del sistema,
 su arquitectura de hardware y software, así como los resultados
-obtenidos durante la etapa de implementación y evaluación..
+obtenidos durante la etapa de implementación y evaluación.
 
-::: {#tab:project_summary}
-| **Elemento**                                                                | **Referencia** |
-| -----------------------------------------------------------------------------| ----------------|
-| Justificación y objetivos del proyecto                                      | Sección 2      |
-| Requisitos funcionales y no funcionales del sistema                         | Sección 3      |
-| Casos de uso del sistema                                                    | Sección 3      |
-| Arquitectura de hardware del dispositivo                                    | Sección 4      |
-| Diagrama de conexiones entre los componentes del sistema                    | Sección 4      |
-| Lista de materiales (BOM)                                                   | Sección 4      |
-| Arquitectura del software del sistema embebido                              | Sección 5      |
-| Definición de módulos de software (funciones, variables y tareas)           | Sección 5      |
-| Algoritmos de procesamiento de señales (detección de respiración y SpO$_2$) | Sección 5      |
-| Implementación del sistema                                                  | Sección 6      |
-| Evaluación del cumplimiento de los requisitos del sistema                   | Sección 7      |
-| Evaluación de los casos de uso                                              | Sección 7      |
-| Propuestas de mejoras o trabajos futuros                                    | Sección 8      |
-| Conclusiones finales                                                        | Sección 9      |
 
-  : Elementos que resumen la información más importante del sistema de
-  detección de apnea y monitoreo de SpO$_2$.
-:::
+| Elemento | Referencia |
+|----------|------------|
+| Justificación y objetivos del proyecto | Sección [1](#1-introduccion-general) |
+| Requisitos funcionales y no funcionales del sistema | Sección  [2](#2-introduccion-especifica) |
+| Casos de uso del sistema | Sección [2](#2-introduccion-especifica) |
+| Arquitectura de hardware del dispositivo | Sección [3](#3-diseno-e-implementacion) |
+| Diagrama de conexiones entre los componentes del sistema | Sección [3](#3-diseno-e-implementacion) |
+| Arquitectura del software del sistema embebido | Sección [3](#3-diseno-e-implementacion) |
+| Evaluación del cumplimiento de los requisitos del sistema | Sección [4](#4-ensayos-y-resultados) |
+| Evaluación del consumo | Sección [4](#4-ensayos-y-resultados) |
+| Propuestas de mejoras o trabajos futuros | Sección [5](#5-conclusiones) |
+| Video demostrativo | Apéndice [A](#a-video) |
+| Conclusiones finales | Sección [5](#5-conclusiones)|
+
+
+**Tabla 4.8: Elementos que resumen la información más importante de "Sleep Centinel"**
 
 # 5: Conclusiones
 
@@ -1302,6 +1297,6 @@ Se verificaron
 
 # Referencias
 
-# Video
+# "A" Video
 https://www.youtube.com/watch?v=pGM0ltA05JQ
 
