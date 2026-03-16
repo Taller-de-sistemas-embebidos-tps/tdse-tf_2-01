@@ -805,11 +805,149 @@ width="0.6 \\linewidth"}
   monitoreo de $SpO_{2}$.
 :::
 
-## Analisis de consumo
+## 4.4 Medición y análisis de consumo
 
-## Factor de Uso (U)
+### Procedimiento realizado
 
-## Análisis de tiempos de ejecución (WCET)
+La placa NUCLEO-F103RB permite medir el consumo del microcontrolador utilizando el jumper **JP6 (IDD)**.
+
+Según el manual de usuario de la placa, el jumper JP6 puede retirarse para insertar un amperímetro en serie y medir la corriente consumida por el microcontrolador.
+
+Funcionamiento del jumper:
+
+| Estado del jumper | Descripción |
+|---|---|
+| JP6 conectado | El microcontrolador recibe alimentación normalmente |
+| JP6 removido | Se puede conectar un amperímetro para medir el consumo |
+
+Para realizar la medición se retira el jumper JP6 y se conecta un miliamperímetro entre los dos pines del conector. De esta manera se obtiene la corriente consumida por el STM32 durante la ejecución de la aplicación.
+
+La potencia consumida se estimó mediante la expresión:
+
+P = V * I
+
+donde:
+
+- **V** es la tensión de alimentación del sistema.
+- **I** es la corriente medida en la línea de alimentación.
+
+
+Esta medición permite analizar el consumo energético del sistema y evaluar el impacto de los modos.
+
+
+---
+
+### Modos de operación medidos
+
+Se realizaron mediciones del consumo del sistema bajo diferentes condiciones de funcionamiento, representativas del uso normal del dispositivo.
+
+| Modo de operación | I pico @5V [mA] | P pico @5V [mW] | Observaciones |
+|------------------|----------------|---------------|--------------|
+| Sistema esperando dedo | 10,8 | 54 | Menor consumo, no se procesan datos |
+| Sistema sensanso datos | 28,6 | 143 | |
+| Sistema transmitiendo datos via Bluetooth | 32,4| 162 | |
+| Sistema en estado de alarma (buzzer + LED) | 42,8| 214 | Mayor consumo, proceso de datos y actuadores |
+
+**Tabla X — Consumo total medido del jumper J6 en distintos modos de operación.**
+
+---
+
+### Alcance de la medición
+
+La medición realizada representa el **consumo total del sistema a la tensión de entrada de 5 V**.  
+Los subsistemas alimentados a **3,3 V** quedan incluidos indirectamente en esta medición, dado que dicha tensión es generada mediante el regulador de la propia placa.
+
+Por lo tanto, la corriente medida corresponde al consumo global del dispositivo completo en cada modo de funcionamiento.
+
+---
+
+El análisis de los resultados permite determinar el **consumo máximo del sistema**, correspondiente al caso del sistema en estado de alarma.
+
+
+## 4.5 Medición y análisis de tiempos de ejecución (WCET)
+
+### Metodología aplicada
+
+Con el objetivo de evaluar el desempeño temporal del sistema, se realizó un análisis del **tiempo de ejecución de las tareas principales**, determinando su **Worst Case Execution Time (WCET)**, es decir, el mayor tiempo observado durante múltiples ejecuciones.
+
+La medición se realizó utilizando el **contador de ciclos del procesador (DWT – Data Watchpoint and Trace)** disponible en los microcontroladores ARM Cortex-M. Este contador permite registrar con alta precisión el número de ciclos de reloj transcurridos durante la ejecución de una sección de código.
+
+El procedimiento consiste en:
+
+1. Leer el valor del contador de ciclos antes de ejecutar la tarea.
+2. Ejecutar la tarea o función a medir.
+3. Leer nuevamente el contador al finalizar la ejecución.
+4. Calcular la diferencia entre ambas lecturas para obtener el tiempo de ejecución.
+
+El tiempo medido en ciclos se convierte a unidades de tiempo mediante la frecuencia de reloj del microcontrolador:
+
+t = ciclos / f_CPU
+
+donde:
+
+- **ciclos**: número de ciclos de reloj medidos.
+- **f_CPU**: frecuencia de operación del procesador.
+
+---
+
+## Tareas analizadas
+
+Se midieron los tiempos de ejecución de las principales tareas del sistema, responsables de la adquisición de datos, procesamiento de señal y comunicación.
+
+| Tarea | Archivo asociado | Descripción |
+|------|------|------|
+| task_sensor | task_sensor.c | Adquisición de datos desde el sensor |
+| task_system | task_system.c | Control general del sistema |
+| task_actuator | task_actuator.c | Control de actuadores (LED, buzzer) |
+| task_button | task_button.c | Lectura de botones |
+
+**Tabla X — Tareas principales del sistema analizadas para WCET.**
+
+## Resultados de medición
+
+Los tiempos de ejecución se obtuvieron ejecutando cada tarea múltiples veces durante el funcionamiento normal del sistema y registrando el **máximo valor observado**.
+
+
+| Tarea | WCET [µs] | Período [ms] | Utilización |
+|------|------|------|------|
+| task_button | 22| 1 | 0.022|
+| task_sensor | 879|1 | 0.879 |
+| task_system |2536 |3000 |0.000845|
+| task_actuator |30|1 | 0.03 |
+
+**Tabla X — Tiempos de ejecución medidos para las tareas del sistema.**
+
+Como se observa en la Tabla X, para el análisis de la tarea `task_system` se utilizó su período real de ejecución (determinado por la cadencia de actualización de datos en la pantalla LCD, cada 3000 ms) en lugar del período de *polling* del planificador base (1 ms). Asumir la tasa de *polling* para una rutina asíncrona de baja frecuencia resultaría en un error analítico y en una sobreestimación matemática del factor de uso.
+
+## 4.6 Cálculo del Factor de Uso (U) de la CPU
+
+Con el objetivo de analizar la carga computacional del sistema, se estimó el **factor de uso del procesador (U)** a partir de los tiempos de ejecución de las tareas y sus respectivos períodos de activación.
+
+El factor de uso se calcula mediante la expresión:
+
+U = Σ (WCET_i / Periodo_i)
+
+Dando como resultado U = 0.933 = 93% 
+
+
+Este valor permite estimar qué fracción del tiempo total de CPU es utilizada por el conjunto de tareas del sistema.
+
+U = 0.933 = 93 %
+
+---
+
+### Interpretación del resultado
+
+El valor total obtenido para **U** representa la fracción de tiempo en la cual el procesador se encuentra ejecutando tareas activas.
+
+- Si **U < 1**, el sistema es temporalmente viable, ya que el procesador puede completar todas las tareas dentro de sus plazos.
+- Si **U ≪ 1**, el procesador permanece ocioso durante una fracción significativa del tiempo.
+
+En este sistema, se observa que el valor de **U** (93.3%) se encuentra muy cercano al límite de la capacidad total del procesador. Esto indica que la CPU se mantiene fuertemente exigida y el margen de maniobra ante interrupciones asíncronas es mínimo. 
+
+Como consecuencia directa de esta alta carga computacional, se descarta la implementación de modos de bajo consumo (como *Sleep* o *Wait For Interrupt*). Dado que el tiempo ocioso remanente es de apenas ~7%, se estaria aportando un ahorro energético insignificante frente al riesgo de inestabilidad del sistema.
+
+---
 
 ## Consola
 
