@@ -219,8 +219,6 @@ void task_system_statechart(void)
 
 
 	if (any_sensor_results()) {
-			// NUEVO 1: Agregamos 'static' para que la memoria no se borre
-			// mientras el UART envía los datos en segundo plano.
 			static char lcd_text[2][17];
 
 			task_sensor_results_dta_t result = get_sensor_results();
@@ -231,8 +229,6 @@ void task_system_statechart(void)
 			displayCharPositionWrite(0, 1);
 			displayStringWrite(lcd_text[1]);
 
-			// NUEVO 2: Usamos la versión no bloqueante por interrupción (_IT)
-			// Le quitamos el '500' del final porque ya no hay timeout de espera.
 			HAL_UART_Transmit_IT(&huart1, (uint8_t *)lcd_text, 17*2);
 
 			parameters_t params = p_task_system_dta->parameters;
