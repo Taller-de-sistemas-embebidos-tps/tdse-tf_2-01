@@ -954,8 +954,18 @@ Como consecuencia directa de esta alta carga computacional, se descarta la imple
 Adjuntamos Captura de pantalla de **Console & Build Analyzer** luego de
 compilar la versión final
 
-![\"Console and Build Analyzer\"](explotada){#fig:console
-width="0.6 \\linewidth"}
+<p align=center>
+    <img width=50% src=img/zmemory.png>
+    <i>Figura 4.4.1: Captura de memoria</i>
+</p>
+
+<p align=center>
+    <img width=50% src=img/zcompile.png>
+    <i>Figura 4.4.2: Captura del compilador </i>
+</p>
+
+Como visualizamos en la Figura 4.4.1, el uso de memoria RAM del 72,50 % puede resultar excesivo, pero si se entra en contexto, es a causa de la amplia ventana de muestras utilizada para procesar los datos crudos del sensor MAX30102. Un valor menor de muestreo de datos o del tamaño de la ventana perjudicaría claramente el valor de los datos fisiológicos, y los mismos perderían su validez. De hecho, sería incluso recomendable aumentar el valor de las ventanas para obtener datos más fidedignos.
+
 
 ## Documentación del desarrollo realizado
 
