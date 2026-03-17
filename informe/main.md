@@ -46,6 +46,15 @@ Santiago Archetti
 
 ---
 
+# Resumen
+
+El presente trabajo describe el diseño y la implementación de un sistema embebido portátil denominado Sleep Centinel, cuyo objetivo es la monitorización continua de parámetros fisiológicos durante el sueño para la detección temprana de apneas y variaciones en la oxigenación. Este desarrollo resulta de gran importancia debido a que los trastornos respiratorios del sueño suelen estar subdiagnosticados y requieren equipos clínicos costosos o complejos de utilizar en el hogar, por lo que una alternativa de bajo costo e inalámbrica facilita el seguimiento ambulatorio y preventivo del paciente.
+
+El proyecto demuestra la aplicación práctica de los conocimientos adquiridos a lo largo de la carrera mediante la integración de un microcontrolador de la familia STM32 con un sensor óptico de fotopletismografía, la implementación de algoritmos de procesamiento digital de señales y el diseño de una arquitectura de firmware basada en máquinas de estado. Asimismo, se incorporó un módulo de comunicación Bluetooth para la transmisión de datos en tiempo real y se realizó un análisis exhaustivo del rendimiento del sistema, evaluando métricas fundamentales de sistemas embebidos como el consumo energético, el factor de uso del procesador y la ocupación de memoria.
+
+A lo largo de esta memoria, el lector encontrará un análisis detallado de los requerimientos funcionales del sistema y una justificación de la selección de los componentes de hardware utilizados. Posteriormente, se describen la arquitectura del firmware y el diseño de la placa de circuito impreso, finalizando con la presentación de los ensayos funcionales, las mediciones de desempeño temporal y de consumo, y las conclusiones obtenidas a partir de la evaluación global del prototipo.
+
+---
 
 # Índice
 
@@ -177,9 +186,9 @@ Tabla 4.8 Resumen de elementos del proyecto
 
 ---
 
-# 1: Introducción general
+# 1 Introducción general
 
-## 1.1: Sistema de detección de apneas y variaciones de oxigenación durante el Sueño
+## 1.1 Sistema de detección de apneas y variaciones de oxigenación durante el Sueño
 
 El sistema portátil de monitoreo respiratorio y de saturación de oxígeno
 desarrollado en este trabajo cuenta con:
@@ -209,19 +218,19 @@ desarrollado en este trabajo cuenta con:
 
 -   Modos de funcionamiento configurables (modo adulto, modo niño).
 
+<p align="center">
+  <img src="img/diagrama_de_bloques.png" width="39%" alt="block diagram">
+</p>
+<p align="center">
+  <em>Figura 1.1: Diagrama de bloques general</em>
+</p>
 
-# 2: Introducción específica
 
-## 2.1: Descripción del equipo
+# 2 Introducción específica
 
-El dispositivo dispone de dos botones, uno de los cuales permite
-seleccionar el modo de funcionamiento. Esta configuración es necesaria
-debido a que los valores normales de saturación de oxígeno en sangre,
-frecuencia respratoria y frecuencia cardíaca difieren según la edad del
-usuario. Con esta consideración, se cuentan 2 modos de funcionamiento:
-adulto o pediátrico. Una vez establecidos los parametros
-correspondientes al modo seleccionado, el sensor óptico MAX30102 se
-coloca en el dedo del usuario.
+## 2.1 Descripción del equipo
+
+El dispositivo dispone de dos botones, uno de los cuales permite seleccionar el modo de funcionamiento. Esta configuración es necesaria debido a que los valores normales de saturación de oxígeno en sangre, frecuencia respiratoria y frecuencia cardíaca difieren según la edad del usuario. Con esta consideración, se cuentan 2 modos de funcionamiento: adulto o niño. Una vez establecidos los parámetros correspondientes al modo seleccionado, el sensor óptico MAX30102 se coloca en el dedo del usuario.
 
 <p align="center">
   <img src="img/ppg.png" height="180">
@@ -232,67 +241,24 @@ coloca en el dedo del usuario.
   <em>Figura 2.1: Funcionamiento del sensor MAX30102.</em>
 </p>
 
-Este sensor se utiliza para la medición de señales de fotopletismografía
-(PPG), el mismo integra dos dfuentes de luz LED (una roja y una
-infrarroja), un fotodiodo y un sistema de conversión analógico-digita.
-Debido a que el volumen de sangre en los vasos varía con cada latido
-cardíaco, la cantidad de luz absorbida también cambia de forma
-periódica. Las variaciones de luz absorbida son captadas por el
-fotodiodo del sensor, el cual convierte la intensidad de la luz
-reflejada en una señal eléctrica. Los valores digitalizados corresponden
-a las mediciones de luz detectada por los LEDs rojo e infrarrojo, los
-cuales constituyen la señal PPG. Estos datos son transmitidos al
-microcontrolador mediante $I^2C$. Posteriormente, las señales adquiridas
-son sometidas a una etapa de procesamiento digital, en la cual se
-aplican los algoritmos necesarios para calcular los valores de
-saturación de oxígeno en sangre, frecuencia cardíaca y frecuencia
-respiratoria.
+Este sensor se utiliza para la medición de señales de fotopletismografía (PPG). El mismo integra dos fuentes de luz LED (una roja y una infrarroja), un fotodiodo y un sistema de conversión analógico-digital. Debido a que el volumen de sangre en los vasos varía con cada latido cardíaco, la cantidad de luz absorbida también cambia de forma periódica. Las variaciones de luz absorbida son captadas por el fotodiodo del sensor, el cual convierte la intensidad de la luz reflejada en una señal eléctrica. Los valores digitalizados corresponden a las mediciones de luz detectada por los LEDs rojo e infrarrojo, los cuales constituyen la señal PPG. Estos datos son transmitidos al microcontrolador mediante I²C. Posteriormente, las señales adquiridas son sometidas a una etapa de procesamiento digital, en la cual se aplican los algoritmos necesarios para calcular los valores de saturación de oxígeno en sangre, frecuencia cardíaca y frecuencia respiratoria.
 
-Para la estimación de la frecuencia cardíaca, se utiliza principalmente
-la señal PPG infrarroja. Se aplica un filtrado pasa-banda en el rango
-aproximado de 0.5 a 5Hz, con el objetivo de eliminar ruidos para
-posteriormente detectar los máximos locales de la señal filtrada, que
-corresponden a latidos válidos. A partir del intervalo temporal entre
-picos consecutivos, se calcula la frecuencia cardíaca en latidos por
-minuto. En el caso de la saturación de oxígeno en sangre ($SpO_{2}$), se
-utilizan ambas señales PPG. Cada una de estas señales se descompone en
-dos componentes, una componente continua (DC) y una componente alterna
-(AC). A partir de estas componentes se calcula una relación entre las
-señales roja e infrerroja.
+Para la estimación de la frecuencia cardíaca, se utiliza principalmente la señal PPG infrarroja. Se aplica un filtrado pasa-banda en el rango aproximado de 0,5 a 5 Hz, con el objetivo de eliminar ruidos para posteriormente detectar los máximos locales de la señal filtrada, que corresponden a latidos válidos. A partir del intervalo temporal entre picos consecutivos, se calcula la frecuencia cardíaca en latidos por minuto. En el caso de la saturación de oxígeno en sangre ($SpO_{2}$), se utilizan ambas señales PPG. Cada una de estas señales se descompone en dos componentes: una componente continua (DC) y una componente alterna (AC). A partir de estas componentes se calcula una relación entre las señales roja e infrarroja:
 
 $$R = \frac{\frac{AC_{RED}}{DC_{RED}}}{\frac{AC_{IR}}{DC_{IR}}}$$
 
-$$SpO_{2} \approx 110 -25*R$$
+$$SpO_{2} \approx 110 - 25*R$$
 
-Por último, la frecuencia respiratoria puede estimarse analizando las
-oscilaciones de baja frecuencia presentes en la señal infrarroja. Se
-aplica un filtro pasa-bajos con una frecuencia cercana a 0.4 Hz.
-Finalmente, mediante la detección de picos o el análisis de la
-frecuencia dominante de la señal filtrada, se obtiene el número de
-ciclos respiratorios por minuto. Luego de la etapa de procesamiento, y
-considerando los rangos previamente establecidos según el modo de
-funcionamiento seleccionado, el sistema transmite en tiempo real la
-información obtenida tanto al display como a un dispositivo movil en
-caso de haberse establecido la conexión mediante bluetooth. Los datos
-transmitidos incluyen :
+Por último, la frecuencia respiratoria puede estimarse analizando las oscilaciones de baja frecuencia presentes en la señal infrarroja. Se aplica un filtro pasa-bajos con una frecuencia cercana a 0,4 Hz. Finalmente, mediante la detección de picos o el análisis de la frecuencia dominante de la señal filtrada, se obtiene el número de ciclos respiratorios por minuto. Luego de la etapa de procesamiento, y considerando los rangos previamente establecidos según el modo de funcionamiento seleccionado, el sistema transmite en tiempo real la información obtenida tanto al display como a un dispositivo móvil en caso de haberse establecido la conexión mediante Bluetooth. Los datos transmitidos incluyen:
 
--   Detección de apnea (presencia o ausencia).
+- Detección de apnea (presencia o ausencia).
+- Frecuencia respiratoria actual.
+- Frecuencia cardíaca actual.
+- Saturación de oxígeno en sangre actual.
 
--   Frecuencia respiratoria actual.
+En caso de que la oxigenación en sangre descienda por debajo de los límites considerados peligrosos durante cierto tiempo, el sistema detecta una apnea activa el buzzer y un LED para alertar al usuario. Esta alarma puede desactivarse manualmente mediante el botón de apagado correspondiente. Asimismo, si no se detecta contacto del usuario con el sensor durante un período prolongado de tiempo, el sistema retorna a su estado de reposo a la espera de una nueva medición.
 
--   Frecuencia cardíaca actual.
-
--   Saturacióin de oxígeno en sangre actual.
-
-En caso de que la frecuencia respiratoria descienda por debajo de los
-límites considerados peligrosos, el sistema activa el buzzer y un led
-para alertar al usuario. Esta alarma puede desactivarse manualmente
-mediante el botón de apagado correpondiente. Asimismo, el dispositivo
-incorpora un modo de bajo consumo energético, el cual se activa
-automáticamente cuando no se detecta contacto del usuario con el sensor
-durante un período prolongado de tiempo.
-
-## 2.2: Estado del arte
+## 2.2 Estado del arte
 
 La inspiración para el desarrollo de este proyecto se basa en el
 funcionamiento de un oxímetro de pulso, el cual utiliza señales PPG
@@ -301,7 +267,7 @@ saturación de oxígeno en sangre. Tomando como referencia este principio
 de funcionamiento, el presente proyecto propone extender sus
 capacidades, con el objetivo de desarrollar un sistema de monitoreo
 completo durante el sueño. Además de estimar la saturación de
-oxígeno,permite obtener y supervisar otros parámetros fisiológicos
+oxígeno, permite obtener y supervisar otros parámetros fisiológicos
 relevantes, como la frecuencia cardíaca, la frecuencia respiratoria y la
 detección de episodios de apnea, proporcionando así una herramienta más
 completa para el seguimiento del estado fisiológico del usuario durante
@@ -315,7 +281,9 @@ el descanso.
   <em>Figura 2.2: Oxímetro de pulso.</em>
 </p>
 
-| **Características** | **Sleep Sentinel (Dispositivo del proyecto)** | **Oxímetro de pulso tradicional** |
+**Tabla 2.1 Comparación de trabajos similares**
+
+| **Características** | **Sleep Centinel (Dispositivo del proyecto)** | **Oxímetro de pulso tradicional** |
 |---------------------|-----------------------------------------------|------------------------------------|
 | Parámetros medidos | Saturación de oxígeno en sangre (SpO₂), frecuencia cardíaca y estimación del patrón respiratorio durante el sueño | Saturación de oxígeno en sangre (SpO₂) y frecuencia cardíaca |
 | Método de medición | Sensor óptico MAX30102 integrado en un sistema embebido con procesamiento de señal | Sensor óptico basado en fotopletismografía integrado en una pinza para el dedo |
@@ -329,10 +297,13 @@ el descanso.
 | Uso previsto | Monitorización continua del sueño y análisis de señales fisiológicas | Comprobación rápida del nivel de oxígeno y pulso |
 | Precio | Prototipo de investigación (sin precio comercial) | Aproximadamente entre 20 y 50 USD según el modelo |
 
-**Table 2.1: Comparación de trabajos similares**
 
-## 2.3: Requerimientos funcionales
 
+## 2.3 Requerimientos funcionales
+
+
+
+**Table 2.2: Requerimientos funcionales**
 
 | Grupo | ID | Requerimiento Funcional | Descripción |
 |---|---|---|---|
@@ -357,10 +328,7 @@ el descanso.
 | Alimentación | 6.3 | Reactivación | Retomar actividad ante interrupciones o comandos. |
 
 
-**Table 2.2: Requerimientos funcionales**
- 
-
-## 2.4: Casos de uso
+## 2.4 Casos de uso
 Con respecto a los casos de uso, se pueden mencionar los siguientes:
 
 El sistema cuenta con dos modos de funcionamiento: KID y ADULT, cada uno de los cuales establece parámetros específicos según el tipo de usuario.
@@ -381,9 +349,9 @@ Rangos de parámetros del modo ADULT:
 - Frecuencia respiratoria : {10,20}
 
 En ambos casos el límite para la saturación de oxígeno en sangre es $SP02_{LOW} = 80$.
-Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como sin ella. Cuando la conexión está activa, los datos se envían al dispositivo móvil y, simultáneamente, se visualizan en la pantalla del sistema. En cambio, cuando no se establece la conexión Bluetooth, la información se muestra únicamente en la pantalla.
+Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como sin ella. Cuando la conexión está activa, los datos se envían al dispositivo móvil y, simultáneamente, se visualizan en la pantalla del sistema. En cambio, cuando no se establece la conexión, la información se muestra únicamente en la pantalla del display.
 
-## 2.5: Descripción de módulos externos utilizados
+## 2.5 Descripción de módulos externos utilizados
 
 -   Display LCD 16x2
 
@@ -391,7 +359,7 @@ Cabe destacar que el sistema puede utilizarse tanto con conexión Bluetooth como
 
 -   Módulo Bluetooth HM-10
 
-### 2.5.1: Display LCD 16x2
+### 2.5.1 Display LCD 16x2
 
 El display utilizado es un display LCD de 16x2 como se puede observar en
 la [Figura 2.3](#fig-lcd).
@@ -406,7 +374,7 @@ mismo efectúa la comunicación con la placa mediante pines *GPIO*.
   <em>Figura 2.3: Módulo LCD 1602A utilizado.</em>
 </p>
 
-### 2.5.2: HM-10
+### 2.5.2 HM-10
 
 Para la transmisión de los datos hacia el dispositivo móvil del usuario
 se emplea un módulo Bluetooth HM-10. La comunicación entre el módulo
@@ -425,29 +393,22 @@ del usuario.
 
 
 
-### 2.5.3: MAX30102
 
-En cuanto a la conexión del módulo Bluetooth con la placa de desarrollo,
-se realizaron cuatro conexiones principales: alimentación (VCC),
-referencia a tierra (GND) y dos líneas de comunicación correspondientes
-a la interfaz serie. Las líneas de datos se conectan mediante una
-configuración cruzada entre los pines de transmisión y recepción. En
-particular, el pin TX (transmit) del módulo se conecta al pin RX
-(receive) del microcontrolador, mientras que el pin RX del módulo se
-conecta al pin TX del microcontrolador permitiendo de esta forma el
-intercambio de datos.
+### 2.5.3 MAX30102
+El MAX30102 es un módulo sensor óptico.
+En este proyecto, se encarga de adquirir la señal de fotopletismografía (PPG) directamente desde el dedo del usuario, la cual es fundamental para estimar la saturación de oxígeno en sangre (SpO₂), la frecuencia cardíaca y la frecuencia respiratoria. A diferencia del módulo Bluetooth, el sensor MAX30102 se comunica con el microcontrolador mediante el protocolo I²C, utilizando para ello las líneas de datos (SDA) y reloj (SCL), además de sus correspondientes pines de alimentación.
 
 <p align="center">
   <img src="img/MAX30102.png" width="27%">
 </p>
-
 <p align="center">
   <em>Figura 2.5: Sensor óptico MAX30102.</em>
 </p>
 
 
 
-# 3: Diseño e Implementación
+
+# 3 Diseño e Implementación
 Este proyecto se eligió porque los problemas respiratorios durante el sueño, como la apnea, con muy comunes y muchas veces no se detectan a tiempo.
  La falta de diagnóstico puede generar cansancio crónico, bajo rendimiento y riesgos cardiovasculares, pero los estudios clínicos tradicionales 
 , suelen ser costosos y difíciles de realizar en el hogar. Por eso, un dispositivo portátil que mida la respiración y la saturación de oxígeno 
@@ -459,6 +420,8 @@ En conjunto, esto hace que el proyecto sea realizable, educativo y al mismo tiem
 Para la elección del proyecto, se realiza un análisis profundo de los distintos criterios que lo componen, asignando un peso a cada uno de ellos para 
 luego hacer un análisis total.
 
+<p align="center"><b>Tabla 3.1: Evaluación de criterios del proyecto</b></p>
+
 | Criterio                                             | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Puntuación               | Peso final |
 | ------------------------------------------------------| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --------------------------| ------------|
 | Tiempo y facilidad de implementación. Peso (7)       | El uso del sensor MAX30102 y el microcontrolador STM32F103RB presenta una complejidad moderada, debido a la necesidad de configurar correctamente la comunicación I²C, filtrar la señal PPG y aplicar algoritmos de cálculo de SpO₂ y frecuencia respiratoria. Sin embargo, existe amplia documentación y librerías disponibles, lo que reduce las dificultades de implementación. En conjunto, se considera que la complejidad técnica es manejable dentro del marco de un proyecto de sistemas embebidos. | <p align="center">7</p>  | 49         |
@@ -466,12 +429,15 @@ luego hacer un análisis total.
 | Facilidad de realización de pruebas. Peso (5)        | La verificación del funcionamiento del sistema puede realizarse mediante lectura directa de las señales PPG, monitoreo en tiempo real por UART/Bluetooth y observación de la activación de alarmas locales. Además, se pueden usar herramientas básicas como un multímetro o un osciloscopio para validar etapas eléctricas, lo que facilita enormemente el proceso de pruebas y depuración.                                                                                                                | <p align="center">7</p>  | 35         |
 | Utilidad e interés personal en el proyecto. Peso (9) | El proyecto presenta un alto interés personal debido a su relación con aplicaciones biomédicas reales, la posibilidad de detectar apneas y desaturaciones durante el sueño, y su potencial mejora en versiones futuras. Además, permite aplicar conocimientos de sensores ópticos, filtrado digital y diseño embebido, lo que resulta atractivo tanto desde el punto de vista académico como práctico.                                                                                                      | <p align="center"> 9</p> | 81         |
 
-<p align="center"><b>Tabla 3.1: Evaluación de criterios del proyecto</b></p>
 
 
-## 3.1: Hardware del sistema
 
-### 3.1.1: Comparación de módulos Bluetooth
+## 3.1 Hardware del sistema
+
+### 3.1.1 Comparación de módulos Bluetooth
+
+
+**Tabla 3.2: Comparación de módulos Bluetooth.**
 
 | Módulo      | Tecnología                     | Interface            | Precio unitario [USD] |
 | -------------| --------------------------------| ----------------------| -----------------------|
@@ -479,13 +445,14 @@ luego hacer un análisis total.
 | HC-05       | Bluetooth 2.0 (Classic)        | UART (TX/RX)         | 3                     |
 | ESP32 (BLE) | Bluetooth + WiFi               | UART, SPI, I2C, GPIO | 8,50                  |
 
-**Tabla 3.2: Comparación de módulos Bluetooth.**
 
 El módulo **HM-10** fue seleccionado debido a que implementa el estándar **Bluetooth Low Energy (BLE)**, lo que permite establecer comunicación con dispositivos móviles modernos manteniendo un bajo consumo de energía. Cabe destacar su bajo costo, tamaño reducido y amplia disponibilidad.
 
 ---
 
-### 3.1.2: Comparación de sensores
+### 3.1.2 Comparación de sensores
+
+**Tabla 3.3: Comparación de sensores.**
 
 | Sensor   | Tecnología                 | Interface | Precio unitario [USD] |
 | ----------| ----------------------------| -----------| -----------------------|
@@ -493,12 +460,11 @@ El módulo **HM-10** fue seleccionado debido a que implementa el estándar **Blu
 | MAX30100 | PPG (Red + IR LED)         | I2C       | 6                     |
 | MAX30105 | PPG (IR + Particle sensor) | I2C       | 7                     |
 
-**Tabla 3.3: Comparación de sensores.**
 
 Con respecto al sensor **MAX30102**, fue elegido debido a la recomendación de especialistas en el área, su tamaño compacto y su costo accesible, lo cual lo hace adecuado para este proyecto.
 
 ---
-### 3.1.3: Conexiones del sistema
+### 3.1.3 Conexiones del sistema
 
 A continuación se muestra un diagrama de bloques del Hardware del equipo
 y se explicá las conexiones para cada uno de los componentes.
@@ -513,10 +479,12 @@ y se explicá las conexiones para cada uno de los componentes.
 
 ### Display LCD 16x2
 
+**Tabla 3.4: Conexiones del display**
+
 | Nucleo | Display |
 | --------| ---------|
-| 5V     | VSS     |
-| 5V     | VDD     |
+| 5 V     | VSS     |
+| 5 V     | VDD     |
 | B12    | RS      |
 | GND    | RW      |
 | A11    | E       |
@@ -530,51 +498,57 @@ y se explicá las conexiones para cada uno de los componentes.
 | PB14   | D7      |
 | GND    | K       |
 
-**Tabla 3.4: Conexiones del display**
 
-El pin A se conecta a 5V a través de una resistencia de $1 k\Omega$
+
+El pin A se conecta a 5 V a través de una resistencia de $1 k\Omega$
 mientras que el pin _Vo_ se conecta a _5V_ y _GND_ a través de un
 potenciometro de $100k\Omega$.
 
 ### Sensor MAX30102
 
+**Tabla 3.5: Conexiones del MAX30102.**
+
 | Nucleo | Sensor MAX30102 |
 | --------| -----------------|
 | GND    | GND             |
-| 3.3V   | VCC             |
+| 3,3 V   | VCC             |
 | PB6    | SCL             |
 | PB7    | SDA             |
 
-**Tabla 3.5: Conexiones del MAX30102.**
 
 ### Módulo bluetooth HM-10
+
+**Tabla 3.6: Conexiones del módulo HM-10.**
 
 | Nucleo | HM-10 |
 | --------| -------|
 | GND    | GND   |
-| 5V     | VCC   |
+| 5 V     | VCC   |
 | PA3    | TXD   |
 | PA2    | RXD   |
 
-**Tabla 3.6: Conexiones del módulo HM-10.**
+
 
 ### Buzzer
+
+**Tabla 3.7: Conexion del Buzzer**
 
 | Nucleo | Buzzer |
 | --------| --------|
 | GND    | \-     |
 | PC7    | \+     |
 
-**Tabla 3.7: Conexion del Buzzer**
 
 ### Botones
+
+**Tabla 3.8: Conexiones de los botones.**
 
 | Nucleo | BOTON       |
 | --------| -------------|
 | PC10   | SWITCH-MODE |
 | PC11   | ALARM-OFF   |
 
-**Tabla 3.8: Conexiones de los botones.**
+
 
 Siendo SWITCH-MODE y ALARM-OFF los botones encargados de cambiar el modo
 de uso y apagar la alarma respectivamente, ambos configurados en modo
@@ -582,14 +556,14 @@ pull-up y conectados a GND del otro extremo.
 
 ### LEDs
 
-Para polarizar los LEDs con una fuente de 3.3V, las resistencias
+Para polarizar los LEDs con una fuente de 3,3 V, las resistencias
 limitadoras se calculan mediante la siguiente fórmula:
 $$R = \frac{V_{CC}- V_f}{I_f}$$
 
--   $V_{CC}$ la tensión de alimentación (en este caso 3.3V).
+-   $V_{CC}$ la tensión de alimentación (en este caso 3,3 V).
 
 -   $I_f$ la corriente deseada por el LED(normalmente se utiliza entre
-    5ma y 10ma).
+    5 mA y 10 mA).
 
 -   $V_f$ la tensión directa del LED.
 
@@ -606,17 +580,19 @@ dependerá de la caída de tensión típica según el color:
 
 -   LED amarillo $\longrightarrow$ modo niño.
 
+**Tabla 3.9: Caidas de tensión tipicas para LEDs.**
+
 | Color LED | $V_f$ típico |
 | -----------| --------------|
-| Rojo      | 2V           |
-| Amarillo  | 2.1V         |
-| Verde     | 2.2V         |
-| Azul      | 3.1V         |
+| Rojo      | 2 V           |
+| Amarillo  | 2,1 V         |
+| Verde     | 2,2 V         |
+| Azul      | 3,1 V         |
 
-**Tabla 3.9: Caidas de tensión tipicas para LEDs.**
+
 Se tomó como valor deseado de corriente $I_f = 10\,mA$. Los valores de las
 resistencias utilizadas para los LEDs amarillo, verde y rojo son
-$R = 220\,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
+$R = 220 \,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
 observa en la [Figura 3.2](#fig-leds).
 
 <p align="center">
@@ -626,6 +602,8 @@ observa en la [Figura 3.2](#fig-leds).
   <em>Figura 3.2: Conexión de los LEDs.</em>
 </p>
 
+**Tabla 3.10: Conexiones de los LEDs**
+
 | Nucleo | LED           |
 | --------| ---------------|
 | PB10   | LED-Alarm     |
@@ -633,9 +611,10 @@ observa en la [Figura 3.2](#fig-leds).
 | PB2    | LED-ADULT     |
 | PB1    | LED-KID       |
 
-**Tabla 3.10: Conexiones de los LEDs**
 
-### 3.1.4: Costo de componentes
+### 3.1.4 Costo de componentes
+
+**Tabla 3.11: Costo de los componentes**
 
 | Componente   | Costo [ARS] |
 | --------------| -------|
@@ -647,17 +626,16 @@ observa en la [Figura 3.2](#fig-leds).
 | Buzzer       |      1500 |
 | Botones      |       1100 |
 
-**Tabla 3.11: Costo de los componentes**
 
 <sub>*Valores aproximados.</sub>
 
-##  3.2: Firmware
+##  3.2 Firmware
 
-### 3.2.1: Arquitectura general del firmware
+### 3.2.1 Arquitectura general del firmware
 
 
 <p align="center">
-  <img src="img/softwaremodules.jpeg" width="30%" alt="Software modules diagram">
+  <img src="img/softwaremodules.jpg" width="39%" alt="Software modules diagram">
 </p>
 <p align="center">
   <em>Figura 3.3: Diagrama de módulos de software.</em>
@@ -665,7 +643,7 @@ observa en la [Figura 3.2](#fig-leds).
 
 
 <p align="center">
-  <img src="img/diagramaarchivos.jpeg" width="30%" alt="Source files structure diagram">
+  <img src="img/diagramaarchivos.jpg" width="39%" alt="Source files structure diagram">
 </p>
 <p align="center">
   <em>Figura 3.4: Diagrama de archivos .h y .c.</em>
@@ -677,6 +655,8 @@ Como se observa en la **Figura 3.3**, a nivel lógico, el núcleo del programa r
 
 A nivel de implementación, la **Figura 3.4** ilustra la organización de los archivos del proyecto. El código fuente se estructuró de manera jerárquica, separando claramente la aplicación principal, las rutinas de comunicación y las tareas dedicadas (`task_system`, `task_sensor`, `task_actuator`, `task_button`). Cada uno de estos módulos cuenta con su respectiva cabecera (`.h`) para la definición de las interfaces públicas y su archivo fuente (`.c`) para la implementación de la lógica privada, garantizando un correcto encapsulamiento.
 
+**Tabla 3.12: Función de cada módulo de software.**
+
 | Módulo | Funcionalidad | Rol |
 | :--- | :--- | :--- |
 | **Button** | Gestión de entradas físicas y filtrado de rebotes (*debouncing*). | Subsistema |
@@ -687,12 +667,9 @@ A nivel de implementación, la **Figura 3.4** ilustra la organización de los ar
 | **PPG_processing** | Algoritmos de filtrado digital y cálculo de parámetros fisiológicos. | Procesamiento de señal |
 | **MAX30102** | Abstracción de hardware y manejo de registros vía I²C. | Driver |
 
-
-**Tabla 3.12: Función de cada módulo de software.**
-
 ---
 
-### 3.2.2: Módulo Sensor
+### 3.2.2 Módulo Sensor
 
 Este módulo representa un sensor que se comunica con un oxímetro de
 pulso (*MAX30102*) y procesa la señal para obtener los datos en la
@@ -730,7 +707,7 @@ Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el 
 
 ---
 
-### 3.2.3: Módulo Actuador
+### 3.2.3 Módulo Actuador
 
 Consiste en los indicadores al usuario. Consta de 4 estados. Pueden
 estar prendidos, apagados, parpadeando o emtiendo un pulso. Éstos
@@ -757,7 +734,7 @@ Cuando la variable alcanza su límite inferior (`[tick == DEL_BTN_XX_MIN]`), el 
 
 El actuador permanecerá en este ciclo de intermitencia hasta que reciba una orden explícita para detenerse: el evento `EV_ACT_XX_OFF` lo llevará nuevamente al estado de reposo, mientras que `EV_ACT_XX_ON` lo dejará encendido de manera permanente.
 
-### 3.2.4: Módulo de botones
+### 3.2.4 Módulo de botones
 
 Modela el comportamiento de un pulsador mecanico. Permite filtrar por
 software el ruido durante los cambios de estado del botón
@@ -784,7 +761,7 @@ Si el botón permanece liberado durante el tiempo mínimo establecido, el sistem
 ---
 
 
-### 3.2.5: Módulo de sistema
+### 3.2.5 Módulo de sistema
 
 Es la tarea principal encargada de recibir las entradas desde los
 botones y sensores y producir los efectos correspondientes en los otros
@@ -844,9 +821,9 @@ cuenta el espaciado de los agujeros.
 
 
 
-# 4: Ensayos y resultados
+# 4 Ensayos y resultados
  
-## 4.1: Pruebas funcionales del hardware
+## 4.1 Pruebas funcionales del hardware
 
 Con el objetivo de verificar el correcto funcionamiento de los
 componentes físicos del sistema, se realizaron diversas pruebas
@@ -855,7 +832,7 @@ validar la correcta operación de los módulos utilizados, así como la
 integridad de las conexiones eléctricas entre los distintos dispositivos
 que componen el sistema.
 
-### 4.1.1: Metodología de ensayo
+### 4.1.1 Metodología de ensayo
 
 Las pruebas se realizaron verificando individualmente cada uno de los
 módulos del sistema. En primer lugar, se comprobó el correcto suministro
@@ -877,12 +854,13 @@ Finalmente, se probaron los dispositivos de salida del sistema,
 incluyendo los indicadores LED, el buzzer de alarma y el display,
 verificando su activación ante distintos estados del sistema.
 
-### 4.1.2: Resultados obtenidos
+### 4.1.2 Resultados obtenidos
 
 Durante los ensayos se comprobó el correcto funcionamiento de los
 distintos módulos de hardware. La [Tabla 4.1](#tabla-hardware-tests)
 resume los resultados obtenidos en las pruebas realizadas.
 
+**Tabla 4.1: Pruebas funcionales de hardware.**
 
 <table id="tabla-hardware-tests">
 <tr>
@@ -935,7 +913,7 @@ resume los resultados obtenidos en las pruebas realizadas.
 
 </table>
 
-**Tabla 4.1: Pruebas funcionales de hardware.**
+
 
 <p align="center">
   <img src="img/Actuador.png" width="25%" alt="LED del actuador en funcionamiento">
@@ -951,7 +929,7 @@ resume los resultados obtenidos en las pruebas realizadas.
   <em>Figura 4.2: Tensión del sensor MAX30102.</em>
 </p>
 
-### 4.1.3: Análisis de resultados
+### 4.1.3 Análisis de resultados
 
 Los resultados obtenidos muestran que todos los módulos de hardware del
 sistema funcionan correctamente y que las conexiones entre los distintos
@@ -969,7 +947,7 @@ En base a estas pruebas, se concluye que el hardware del sistema se
 encuentra en condiciones adecuadas para la ejecución del firmware y la
 realización de las pruebas funcionales del software.
 
-## 4.2: Pruebas funcionales del firmware
+## 4.2 Pruebas funcionales del firmware
 
 Con el objetivo de verificar el correcto funcionamiento del firmware
 desarrollado, se realizaron distintos ensayos funcionales sobre el
@@ -980,7 +958,7 @@ sistema, incluyendo la adquisición de señales, el procesamiento de datos
 fisiológicos, la detección de eventos críticos y la transmisión de
 información.
 
-### 4.2.1: Metodología de ensayo
+### 4.2.1 Metodología de ensayo
 
 Las pruebas se realizaron colocando el sensor óptico en el dedo del
 usuario, permitiendo la adquisición de las señales infrarroja y roja
@@ -993,12 +971,12 @@ indicadores visuales y sonoros ante la detección de eventos críticos,
 como disminuciones significativas en la saturación de oxígeno o
 irregularidades en el patrón respiratorio y/o cardiaco.
 
-### 4.2.2: Resultados obtenidos
+### 4.2.2 Resultados obtenidos
 
 Durante los ensayos se registraron los valores de $SpO_{2}$ y demas parametros estimados por el sistema. La [Tabla 4.2](#tabla-resultados-prueba)
 presenta un conjunto representativo de las mediciones obtenidas.
 
-
+**Tabla 4.2. Pruebas funcionales de firmware.**
 
 <table id="tabla-resultados-prueba">
 
@@ -1052,7 +1030,6 @@ presenta un conjunto representativo de las mediciones obtenidas.
 
 </table>
 
-**Tabla 4.2. Pruebas funcionales de firmware.**
 
 <p align="center">
   <img src="img/parameters.jpeg" width="39%" alt="Parametros en debugger">
@@ -1068,7 +1045,7 @@ presenta un conjunto representativo de las mediciones obtenidas.
   <em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em>
 </p>
 
-### 4.2.3: Análisis de resultados
+### 4.2.3 Análisis de resultados
 
 Los resultados obtenidos durante los ensayos muestran que el sistema es
 capaz de adquirir y procesar correctamente las señales provenientes del
@@ -1079,8 +1056,9 @@ comunicación y de los mecanismos de alerta implementados. En general, el
 comportamiento del firmware resultó consistente con los requerimientos
 funcionales definidos previamente.
 
-## 4.3: Pruebas de integración
+## 4.3 Pruebas de integración
 
+**Tabla 4.3. Pruebas de integración**
 
 | # | Caso de uso | Cumplido |
 |---|-------------|----------|
@@ -1089,7 +1067,7 @@ funcionales definidos previamente.
 | 3 | El sistema detecta una disminución crítica de $SpO_{2}$ o un episodio de apnea y activa una alarma sonora y visual para alertar al usuario. | ✔ |
 | 4 | El usuario puede visualizar en tiempo real los parámetros fisiológicos en la aplicación o en el display del dispositivo. | ✔ |
 
-**Tabla 4.3. Pruebas de integración**
+
 
 <p align="center">
   <img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
@@ -1105,7 +1083,9 @@ funcionales definidos previamente.
   <em>Figura 4.6: Datos fisiológicos enviados a través del display.</em>
 </p>
 
-## 4.4: Cumplimiento de requisitos 
+## 4.4 Cumplimiento de requisitos 
+
+**Tabla 4.4. Requerimientos funcionales del sistema.**
 
 | Estado | Descripción |
 |---|---|
@@ -1135,13 +1115,12 @@ funcionales definidos previamente.
 | Alimentación | 6.2 | Bajo consumo | Entrar en modo Sleep cuando no hay actividad. | 🔴 |
 | Alimentación | 6.3 | Reactivación | Retomar actividad ante interrupciones o comandos. | 🟢 |
 
-**Tabla 4.4. Requerimientos funcionales del sistema.**
 
 Los items no implementados ya fueron justificados anteriorimente en nuestro informe de avance.
 
 ## 4.5 Medición y análisis de consumo
 
-### 4.5.1: Procedimiento realizado
+### 4.5.1 Procedimiento realizado
 
 La placa NUCLEO-F103RB permite medir el consumo del microcontrolador utilizando el jumper **JP6 (IDD)**.
 
@@ -1171,22 +1150,24 @@ Esta medición permite analizar el consumo energético del sistema y evaluar el 
 
 ---
 
-### 4.5.2: Modos de operación medidos
+### 4.5.2 Modos de operación medidos
 
 Se realizaron mediciones del consumo del sistema bajo diferentes condiciones de funcionamiento, representativas del uso normal del dispositivo.
 
-| Modo de operación | I pico @5V [mA] | P pico @5V [mW] | Observaciones |
+**Tabla 4.5: Consumo total medido del jumper J6 en distintos modos de operación.**
+ 
+| Modo de operación | I pico @5 V [mA] | P pico @5 V [mW] | Observaciones |
 |------------------|----------------|---------------|--------------|
 | Sistema esperando dedo | 10,8 | 54 | Menor consumo, no se procesan datos |
 | Sistema sensanso datos | 28,6 | 143 | |
 | Sistema transmitiendo datos via Bluetooth | 32,4| 162 | |
 | Sistema en estado de alarma (buzzer + LED) | 42,8| 214 | Mayor consumo, proceso de datos y actuadores |
 
-**Tabla 4.5: Consumo total medido del jumper J6 en distintos modos de operación.**
+
 
 ---
 
-### 4.5.3: Alcance de la medición
+### 4.5.3 Alcance de la medición
 
 La medición realizada representa el **consumo total del sistema a la tensión de entrada de 5 V**.  
 Los subsistemas alimentados a **3,3 V** quedan incluidos indirectamente en esta medición, dado que dicha tensión es generada mediante el regulador de la propia placa.
@@ -1198,9 +1179,9 @@ Por lo tanto, la corriente medida corresponde al consumo global del dispositivo 
 El análisis de los resultados permite determinar el **consumo máximo del sistema**, correspondiente al caso del sistema en estado de alarma.
 
 
-## 4.6: Medición y análisis de tiempos de ejecución (WCET)
+## 4.6 Medición y análisis de tiempos de ejecución (WCET)
 
-### 4.6.1: Metodología aplicada
+### 4.6.1 Metodología aplicada
 
 Con el objetivo de evaluar el desempeño temporal del sistema, se realizó un análisis del **tiempo de ejecución de las tareas principales**, determinando su **Worst Case Execution Time (WCET)**, es decir, el mayor tiempo observado durante múltiples ejecuciones.
 
@@ -1224,9 +1205,11 @@ donde:
 
 ---
 
-## 4.6.2: Tareas analizadas
+## 4.6.2 Tareas analizadas
 
 Se midieron los tiempos de ejecución de las principales tareas del sistema, responsables de la adquisición de datos, procesamiento de señal y comunicación.
+
+**Tabla 4.6: Tareas principales del sistema analizadas para WCET.**
 
 | Tarea | Archivo asociado | Descripción |
 |------|------|------|
@@ -1235,27 +1218,26 @@ Se midieron los tiempos de ejecución de las principales tareas del sistema, res
 | task_actuator | task_actuator.c | Control de actuadores (LED, buzzer) |
 | task_button | task_button.c | Lectura de botones |
 
-**Tabla 4.6: Tareas principales del sistema analizadas para WCET.**
 
-## 4.6.3: Resultados de medición
+## 4.6.3 Resultados de medición
 
 Los tiempos de ejecución se obtuvieron ejecutando cada tarea múltiples veces durante el funcionamiento normal del sistema y registrando el **máximo valor observado**.
 
+**Tabla 4.7: Tiempos de ejecución medidos para las tareas del sistema.**
 
 | Tarea | WCET [µs] | Período [ms] | Utilización |
 |------|------|------|------|
-| task_button | 22| 1 | 0.022|
-| task_sensor | 879|1 | 0.879 |
-| task_system |2536 |3000 |0.000845|
-| task_actuator |30|1 | 0.03 |
+| task_button | 22| 1 | 0,022|
+| task_sensor | 879|1 | 0,879 |
+| task_system |2536 |3000 |0,000845|
+| task_actuator |30|1 | 0,03 |
 
-**Tabla 4.7: Tiempos de ejecución medidos para las tareas del sistema.**
 
 Como se observa en la **Tabla 4.7**, para el análisis de la tarea `task_system` se utilizó su período real de ejecución (determinado por la cadencia de actualización de datos en la pantalla LCD, cada 3000 ms) en lugar del período de *polling* del planificador base (1 ms). Asumir la tasa de *polling* para una rutina asíncrona de baja frecuencia resultaría en un error analítico y en una sobreestimación matemática del factor de uso.
 
 ## 4.7 Cálculo del Factor de Uso (U) de la CPU
 
-### 4.7.1 Metodo de cálculo
+### 4.7.1 Método de cálculo
 
 Con el objetivo de analizar la carga computacional del sistema, se estimó el **factor de uso del procesador (U)** a partir de los tiempos de ejecución de las tareas y sus respectivos períodos de activación.
 
@@ -1263,7 +1245,7 @@ El factor de uso se calcula mediante la expresión:
 
 U = Σ (WCET_i / Periodo_i)
 
-Dando como resultado <b>U = 0.933 = 93%</b>
+Dando como resultado <b>U = 0,933 = 93 %</b>
 
 ---
 
@@ -1274,13 +1256,13 @@ El valor total obtenido para **U** representa la fracción de tiempo en la cual 
 - Si **U < 1**, el sistema es temporalmente viable, ya que el procesador puede completar todas las tareas dentro de sus plazos.
 - Si **U ≪ 1**, el procesador permanece ocioso durante una fracción significativa del tiempo.
 
-En este sistema, se observa que el valor de **U** (93.3%) se encuentra muy cercano al límite de la capacidad total del procesador. Esto indica que la CPU se mantiene fuertemente exigida y el margen de maniobra ante interrupciones asíncronas es mínimo. 
+En este sistema, se observa que el valor de **U** (93,3 %) se encuentra muy cercano al límite de la capacidad total del procesador. Esto indica que la CPU se mantiene fuertemente exigida y el margen de maniobra ante interrupciones asíncronas es mínimo. 
 
-Como consecuencia directa de esta alta carga computacional, se descarta la implementación de modos de bajo consumo (como *Sleep* o *Wait For Interrupt*). Dado que el tiempo ocioso remanente es de apenas ~7%, se estaria aportando un ahorro energético insignificante frente al riesgo de inestabilidad del sistema.
+Como consecuencia directa de esta alta carga computacional, se descarta la implementación de modos de bajo consumo (como *Sleep* o *Wait For Interrupt*). Dado que el tiempo ocioso remanente es de apenas ~7 %, se estaria aportando un ahorro energético insignificante frente al riesgo de inestabilidad del sistema.
 
 ---
 
-## 4.8: Console & Build Analyzer
+## 4.8 Console & Build Analyzer
 
 Adjuntamos Captura de pantalla de **Console & Build Analyzer** luego de
 compilar la versión final
@@ -1315,6 +1297,7 @@ principales aspectos del proyecto, incluyendo los objetivos del sistema,
 su arquitectura de hardware y software, así como los resultados
 obtenidos durante la etapa de implementación y evaluación.
 
+**Tabla 4.8: Elementos que resumen la información más importante de "Sleep Centinel"**
 
 | Elemento | Referencia |
 |----------|------------|
@@ -1331,13 +1314,12 @@ obtenidos durante la etapa de implementación y evaluación.
 | Conclusiones finales | Sección [5](#5-conclusiones)|
 
 
-**Tabla 4.8: Elementos que resumen la información más importante de "Sleep Centinel"**
 
-# 5: Conclusiones
+# 5 Conclusiones
 
 El desarrollo del trabajo "Sleep Centinel" ha permitido consolidar la integración de hardware y software en un sistema embebido orientado a la salud, logrando diseñar e implementar exitosamente un dispositivo portátil capaz de monitorizar señales vitales de forma continua.
 
-## 5.1: Resultados
+## 5.1 Resultados
 
 Las pruebas funcionales y de integración confirmaron que el dispositivo cumple satisfactoriamente con los requerimientos de adquisición, procesamiento y transmisión de datos. Se obtuvo una estimación aceptable y consistente de los parámetros fisiológicos (SpO₂, frecuencia cardíaca y respiratoria) a partir de la señal PPG obtenida por el sensor MAX30102, validando el correcto desempeño de los algoritmos de procesamiento digital implementados.
 
@@ -1353,7 +1335,7 @@ Por último, cabe destacar cómo la asistencia de herramientas de Inteligencia A
 - Asistencia en el diseño y validación de la lógica de las máquinas de estado.
 - Asistencia en el uso de herramientas de control de versiones (Git y GitHub)
 
-## 5.2: Próximos pasos
+## 5.2 Próximos pasos
 
 A partir de los resultados obtenidos y la arquitectura planteada, se identifican diversas oportunidades de mejora para futuras iteraciones del proyecto:
 
@@ -1373,7 +1355,6 @@ A partir de los resultados obtenidos y la arquitectura planteada, se identifican
 4. MAX30102 – Pulse Oximeter and Heart-Rate Sensor Datasheet. Maxim Integrated. Disponible en: https://datasheets.maximintegrated.com/en/ds/MAX30102.pdf
 5. Ariel Lutenberg, Pablo Gomez, & Eric Pernia. *A Beginner's Guide to Designing Embedded System Applications on Arm Cortex-M Microcontrollers*. Arm Education Media. Disponible en: https://armkeil.blob.core.windows.net/developer/Files/pdf/ebook/arm-designing-embedded-system-application-cortex-m.pdf
 6. Manual de usuario de la placa NUCLEO-F103RB. STMicroelectronics. Disponible en: https://www.st.com/en/evaluation-tools/nucleo-f103rb.html
-7. 
 ---
 
 
