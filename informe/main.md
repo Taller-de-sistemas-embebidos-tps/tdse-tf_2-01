@@ -238,7 +238,7 @@ Para cumplir con los objetivos planteados, el sistema desarrollado cuenta con la
   <img src="img/diagrama_de_bloques.png" width="39%" alt="block diagram">
 </p>
 <p align="center">
-  <em>Figura 1.1: Diagrama de bloques general</em>
+  <em>Figura 1.1: Diagrama de bloques general.</em>
 </p>
 
 
