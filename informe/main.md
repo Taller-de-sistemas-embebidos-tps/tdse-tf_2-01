@@ -44,9 +44,9 @@ Alan Romero
 Santiago Archetti  
 `sarchetti@fi.uba.ar`
 
----
+<div align="center">
 
-# Resumen
+# RESUMEN
 
 Este trabajo describe el desarrollo de Sleep Centinel, un sistema embebido portátil de bajo costo diseñado para el monitoreo continuo de parámetros fisiológicos durante el sueño. El dispositivo integra un microcontrolador de la familia STM32 y un sensor óptico para detectar de forma inalámbrica apneas y variaciones de oxigenación en el paciente. Este proyecto resulta de gran importancia debido a que los trastornos respiratorios del sueño suelen estar subdiagnosticados y requieren equipos costosos, por lo que una alternativa accesible facilita el seguimiento preventivo y ambulatorio.
 
@@ -54,7 +54,9 @@ El diseño demuestra la aplicación de los conocimientos adquiridos en la carrer
 
 A lo largo de esta memoria, el lector encontrará un análisis detallado de los requerimientos y la selección de componentes de hardware. Posteriormente, se describen la arquitectura del firmware y el diseño de la placa de circuito impreso, finalizando con la presentación de los ensayos funcionales y las conclusiones obtenidas a partir de la evaluación global del prototipo.
 
-# Abstract
+<br>
+
+# ABSTRACT
 
 This work describes the development of Sleep Centinel, a low-cost portable embedded system designed for the continuous monitoring of physiological parameters during sleep. The device integrates an STM32 family microcontroller and an optical sensor to wirelessly detect apneas and oxygenation variations in the patient. This project is of great importance because sleep-related breathing disorders are often underdiagnosed and require expensive equipment; therefore, an accessible alternative facilitates preventive and ambulatory follow-up.
 
@@ -62,8 +64,7 @@ The design demonstrates the application of the knowledge acquired throughout the
 
 Throughout this report, the reader will find a detailed analysis of the requirements and the selection of hardware components. Subsequently, the firmware architecture and the printed circuit board design are described, concluding with the presentation of functional tests and the conclusions obtained from the global evaluation of the prototype.
 
-
----
+</div>
 
 # Índice
 
@@ -199,8 +200,14 @@ Tabla 4.8 Resumen de elementos del proyecto
 
 ## 1.1 Sistema de detección de apneas y variaciones de oxigenación durante el Sueño
 
-El sistema portátil de monitoreo respiratorio y de saturación de oxígeno
-desarrollado en este trabajo cuenta con:
+Los trastornos respiratorios durante el sueño, como la apnea obstructiva, representan una problemática de salud creciente que afecta la calidad de vida y aumenta el riesgo cardiovascular de quienes los padecen. El presente trabajo surge de la necesidad de contar con dispositivos de monitoreo continuo que sean accesibles y de uso domiciliario, permitiendo una detección temprana de episodios de desaturación de oxígeno sin la complejidad ni los costos de los estudios clínicos tradicionales. La motivación principal es brindar una herramienta portátil e inalámbrica que facilite el seguimiento ambulatorio y preventivo del paciente.
+
+El presente trabajo se destaca especialmente por incorporar el procesamiento digital de señales en tiempo real dentro de un sistema embebido de bajo consumo.
+El desafío técnico de este trabajo consistió en integrar sensores de alta precisión con algoritmos de filtrado eficientes, aplicando los conceptos de arquitectura de firmware y gestión de recursos aprendidos durante la carrera.
+
+A continuación, se presenta un diagrama en bloques general que describe la interacción de los componentes del sistema, los cuales se detallan en mayor profundidad en la sección [3](#3-diseño-e-implementación)
+
+Para cumplir con los objetivos planteados, el sistema desarrollado cuenta con las siguientes características principales:
 
 -   Una placa con microcontrolador *STM32 F103RB*, encargada de la
     adquisición, procesamiento digital de señales y control general del
