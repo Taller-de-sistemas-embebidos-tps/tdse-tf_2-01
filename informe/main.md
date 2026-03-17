@@ -48,11 +48,20 @@ Santiago Archetti
 
 # Resumen
 
-El presente trabajo describe el diseño y la implementación de un sistema embebido portátil denominado Sleep Centinel, cuyo objetivo es la monitorización continua de parámetros fisiológicos durante el sueño para la detección temprana de apneas y variaciones en la oxigenación. Este desarrollo resulta de gran importancia debido a que los trastornos respiratorios del sueño suelen estar subdiagnosticados y requieren equipos clínicos costosos o complejos de utilizar en el hogar, por lo que una alternativa de bajo costo e inalámbrica facilita el seguimiento ambulatorio y preventivo del paciente.
+Este trabajo describe el desarrollo de Sleep Centinel, un sistema embebido portátil de bajo costo diseñado para el monitoreo continuo de parámetros fisiológicos durante el sueño. El dispositivo integra un microcontrolador de la familia STM32 y un sensor óptico para detectar de forma inalámbrica apneas y variaciones de oxigenación en el paciente. Este proyecto resulta de gran importancia debido a que los trastornos respiratorios del sueño suelen estar subdiagnosticados y requieren equipos costosos, por lo que una alternativa accesible facilita el seguimiento preventivo y ambulatorio.
 
-El proyecto demuestra la aplicación práctica de los conocimientos adquiridos a lo largo de la carrera mediante la integración de un microcontrolador de la familia STM32 con un sensor óptico de fotopletismografía, la implementación de algoritmos de procesamiento digital de señales y el diseño de una arquitectura de firmware basada en máquinas de estado. Asimismo, se incorporó un módulo de comunicación Bluetooth para la transmisión de datos en tiempo real y se realizó un análisis exhaustivo del rendimiento del sistema, evaluando métricas fundamentales de sistemas embebidos como el consumo energético, el factor de uso del procesador y la ocupación de memoria.
+El diseño demuestra la aplicación de los conocimientos adquiridos en la carrera mediante la integración de hardware de bajo consumo y el desarrollo de un firmware basado en máquinas de estado. Se implementaron algoritmos de procesamiento digital de señales para la extracción de datos y se incorporó comunicación Bluetooth para la transmisión inalámbrica. Asimismo, se realizó un análisis del rendimiento del sistema, evaluando métricas fundamentales como el consumo energético, el uso de memoria y la carga del procesador central.
 
-A lo largo de esta memoria, el lector encontrará un análisis detallado de los requerimientos funcionales del sistema y una justificación de la selección de los componentes de hardware utilizados. Posteriormente, se describen la arquitectura del firmware y el diseño de la placa de circuito impreso, finalizando con la presentación de los ensayos funcionales, las mediciones de desempeño temporal y de consumo, y las conclusiones obtenidas a partir de la evaluación global del prototipo.
+A lo largo de esta memoria, el lector encontrará un análisis detallado de los requerimientos y la selección de componentes de hardware. Posteriormente, se describen la arquitectura del firmware y el diseño de la placa de circuito impreso, finalizando con la presentación de los ensayos funcionales y las conclusiones obtenidas a partir de la evaluación global del prototipo.
+
+# Abstract
+
+This work describes the development of Sleep Centinel, a low-cost portable embedded system designed for the continuous monitoring of physiological parameters during sleep. The device integrates an STM32 family microcontroller and an optical sensor to wirelessly detect apneas and oxygenation variations in the patient. This project is of great importance because sleep-related breathing disorders are often underdiagnosed and require expensive equipment; therefore, an accessible alternative facilitates preventive and ambulatory follow-up.
+
+The design demonstrates the application of the knowledge acquired throughout the degree through the integration of low-power hardware and the development of firmware based on state machines. Digital signal processing algorithms were implemented for data extraction, and Bluetooth communication was incorporated for wireless transmission. Likewise, a system performance analysis was conducted, evaluating fundamental metrics such as power consumption, memory usage, and central processor load.
+
+Throughout this report, the reader will find a detailed analysis of the requirements and the selection of hardware components. Subsequently, the firmware architecture and the printed circuit board design are described, concluding with the presentation of functional tests and the conclusions obtained from the global evaluation of the prototype.
+
 
 ---
 
@@ -596,7 +605,7 @@ $R = 220 \,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
 observa en la [Figura 3.2](#fig-leds).
 
 <p align="center">
-  <img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
+  <img src="img/leds_circuit.png" width="25%" alt="Circuito de conexión de los LEDs">
 </p>
 <p align="center">
   <em>Figura 3.2: Conexión de los LEDs.</em>
