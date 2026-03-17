@@ -1,32 +1,30 @@
+![Platform](https://img.shields.io/badge/platform-STM32-green)
+![Language](https://img.shields.io/badge/language-C-orange)
+
 <p align="center">
 <img src="img/fiubaPNG.png" width="200">
 </p>
 
-<p align="center">
-<b>Universidad de Buenos Aires</b><br>
-<b>Facultad de Ingeniería</b><br>
-Año 2025 - 2<sup>do</sup> cuatrimestre
-</p>
-
+<h3 align="center">
+Universidad de Buenos Aires<br>
+Facultad de Ingeniería
+</h3>
 
 <p align="center">
-<u><b>Taller de Sistemas Embebidos</b></u><br>
-<b>Trabajo Practico Final</b>
+Taller de Sistemas Embebidos<br>
+Trabajo Práctico Final
 </p>
 
 ---
 
-<h1 align="center">
-<u><b>Sleep Centinel</b></u>
-</h1>
+<h1 align="center">Sleep Centinel</h1>
 
 <p align="center">
 <img src="img/logo.png" width="200">
 </p>
 
 <p align="center">
-<b>Sistema de detección de apneas y variaciones de oxigenación</b><br>
-<b>durante el sueño</b>
+Sistema de detección de apneas y variaciones de oxigenación durante el sueño
 </p>
 
 ---
@@ -48,9 +46,6 @@ Santiago Archetti
 
 ---
 
-*Taller de Sistemas Embebidos*
-
----
 
 # Índice
 
@@ -102,6 +97,8 @@ Santiago Archetti
     - [4.6.2 Tareas analizadas](#462-tareas-analizadas)
     - [4.6.3 Resultados de medición](#463-resultados-de-medición)
   - [4.7 Cálculo del factor de uso de la CPU](#47-cálculo-del-factor-de-uso-de-la-cpu)
+    - [4.7.1 Metodo de cálculo](#471-metodo-de-cálculo)
+    - [4.7.2 Interpretación del resultado](#472-Interpretación-del-resultado)
   - [4.8 Console & Build Analyzer](#48-console--build-analyzer)
   - [4.9 Documentación del desarrollo realizado](#49-documentación-del-desarrollo-realizado)
 
@@ -110,7 +107,7 @@ Santiago Archetti
   - [5.2 Próximos pasos](#52-próximos-pasos)
 
 - [Referencias](#referencias)
-- [Apendice A: Video](#video)
+- [Apéndice A: Video](#video)
 
 ---
 
@@ -149,7 +146,7 @@ Figura 4.8 Captura del compilador
 
 # Índice de Tablas
 
-Tabla 2.1 Comparación de controladores de irrigación  
+Tabla 2.1 Comparación de trabajos similares  
 Tabla 2.2 Requerimientos funcionales  
 
 Tabla 3.1 Evaluación de criterios del proyecto  
@@ -226,13 +223,14 @@ adulto o pediátrico. Una vez establecidos los parametros
 correspondientes al modo seleccionado, el sensor óptico MAX30102 se
 coloca en el dedo del usuario.
 
-<figure id="fig:ppg2" align="center">
-<p>
-<img src="img/ppg.png" height="180" alt="image" />
-<img src="img/ppg2.png" height="180" alt="image" />
+<p align="center">
+  <img src="img/ppg.png" height="180">
+  <img src="img/ppg2.png" height="180">
 </p>
-<figcaption align="center"> Figura 2.1: Funcionamiento del sensor MAX30102.</figcaption>
-</figure>
+
+<p align="center">
+  <em>Figura 2.1: Funcionamiento del sensor MAX30102.</em>
+</p>
 
 Este sensor se utiliza para la medición de señales de fotopletismografía
 (PPG), el mismo integra dos dfuentes de luz LED (una roja y una
@@ -309,13 +307,13 @@ detección de episodios de apnea, proporcionando así una herramienta más
 completa para el seguimiento del estado fisiológico del usuario durante
 el descanso.
 
-<!-- ![Oxímetro de pulso](img/oximetro.png){#fig:oximetro width="40%"} -->
-<figure id="fig:oximetro">
-<div align="center">
-<img width="20%" src="img/oximetro.png" alt="Oxímetro">
-<p><em>Figura 2.2: Oximetro de pulso.</em></p>
-</div>
-</figure>
+<p align="center">
+  <img src="img/oximetro.png" width="20%">
+</p>
+
+<p align="center">
+  <em>Figura 2.2: Oxímetro de pulso.</em>
+</p>
 
 | **Características** | **Sleep Sentinel (Dispositivo del proyecto)** | **Oxímetro de pulso tradicional** |
 |---------------------|-----------------------------------------------|------------------------------------|
@@ -398,10 +396,13 @@ la [Figura 2.3](#fig-lcd).
 Dichas conexiones se realizaron con una configuración de 4 bits. El
 mismo efectúa la comunicación con la placa mediante pines *GPIO*.
 
-<figure align="center">
-  <img src="img/lcd_display.png" width="30%" alt="LCD 1602A module">
-  <figcaption><em>Figura 2.3: Módulo LCD 1602A utilizado.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/lcd_display.png" width="30%">
+</p>
+
+<p align="center">
+  <em>Figura 2.3: Módulo LCD 1602A utilizado.</em>
+</p>
 
 ### 2.5.2: HM-10
 
@@ -412,14 +413,13 @@ través de esta interfaz serie, el microcontrolador transmite al módulo
 los parámetros de interés para su posterior envío al dispositivo móvil
 del usuario.
 
-<!-- ![Módulo bluetooth HM-10](img/HM10.png){#fig:HM10 width="50%"} -->
-<figure id="fig:gm10">
-    <div align="center">
-        <img src="img/HM10.png" width="27%" alt="hm10">
-    </div>
-    <figcaption align="center"><em>Figura 2.4: Módulo HM-10.</em></figcaption>
-</figure>
-</figure>
+<p align="center">
+  <img src="img/HM10.png" width="27%">
+</p>
+
+<p align="center">
+  <em>Figura 2.4: Módulo Bluetooth HM-10.</em>
+</p>
 
 
 
@@ -435,13 +435,13 @@ particular, el pin TX (transmit) del módulo se conecta al pin RX
 conecta al pin TX del microcontrolador permitiendo de esta forma el
 intercambio de datos.
 
-<figure id="fig:gm10">
-  <div align="center">
-    <img src="img/MAX30102.png" width="27%" alt="MAX30102">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 2.5: Sensor óptico MAX30102.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/MAX30102.png" width="27%">
+</p>
 
+<p align="center">
+  <em>Figura 2.5: Sensor óptico MAX30102.</em>
+</p>
 
 
 
@@ -502,12 +502,12 @@ A continuación se muestra un diagrama de bloques del Hardware del equipo
 y se explicá las conexiones para cada uno de los componentes.
 
 
-<figure id="fig:gm10">
-  <div align="center">
-    <img src="img/explotada.png" width="27%" alt="Explotada">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.1: Explotada de la placa utilizada.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/explotada.png" width="27%" alt="Explotada">
+</p>
+<p align="center">
+  <em>Figura 3.1: Explotada de la placa utilizada.</em>
+</p>
 
 ### Display LCD 16x2
 
@@ -617,12 +617,12 @@ resistencias utilizadas para los LEDs amarillo, verde y rojo son
 $R = 220\,\Omega$ y $R = 30\,\Omega$ para el LED azul, conectados como se
 observa en la [Figura 3.2](#fig-leds).
 
-<figure id="fig-leds">
-  <div align="center">
-    <img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
-    </div>
-  <figcaption style="text-align:center;"><em>Figura 3.2: Conexión de los LEDs.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/leds_circuit.png" width="55%" alt="Circuito de conexión de los LEDs">
+</p>
+<p align="center">
+  <em>Figura 3.2: Conexión de los LEDs.</em>
+</p>
 
 | Nucleo | LED           |
 | --------| ---------------|
@@ -651,22 +651,25 @@ observa en la [Figura 3.2](#fig-leds).
 
 ##  3.2: Firmware
 
-### 3.2.1 General; MEJORAR ESTE TITULO
+### 3.2.1: Arquitectura general del firmware
 
 
-<figure id="fig-software-modules">
-  <div align="center">
-    <img src="img/softwaremodules.jpeg" width="30%" alt="Software modules diagram">
-  </div> 
-  <figcaption style="text-align:center;"><em>Figura 3.3: Diagrama de módulos de software.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/softwaremodules.jpeg" width="30%" alt="Software modules diagram">
+</p>
+<p align="center">
+  <em>Figura 3.3: Diagrama de módulos de software.</em>
+</p>
 
-<figure id="fig-file-structure">
-  <div align="center">
-    <img src="img/diagramaarchivos.jpeg" width="30%" alt="Source files structure diagram">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.4: Diagrama de archivos .h y .c.</em></figcaption>
-</figure>
+
+<p align="center">
+  <img src="img/diagramaarchivos.jpeg" width="30%" alt="Source files structure diagram">
+</p>
+<p align="center">
+  <em>Figura 3.4: Diagrama de archivos .h y .c.</em>
+</p>
+
+
 
 | Módulo               | Funcionalidad                                              | Rol        |
 | ----------------------| ------------------------------------------------------------| ------------|
@@ -733,12 +736,12 @@ bluetooth, y se muestra por el display
 | ---------------------| ------| ---------------|
 <figcaption>Objetos y variables del módulo X.
 
-<figure id="fig-statechart-system">
-  <div align="center">
-    <img src="img/statechart_system.png" width="50%" alt="Máquina de estados del sistema">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.5: Máquina de estados del sistema.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/statechart_system.png" width="50%" alt="Máquina de estados del sistema">
+</p>
+<p align="center">
+  <em>Figura 3.5: Máquina de estados del sistema.</em>
+</p>
 
 Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
 Cuenta con dos modos de funcionamiento: KID y ADULT, los cuales se seleccionan mediante el evento AV_SYS_BTN_MODE_PRESSED, correspondiente a la presión del botón de modo. Por default el sistema se inicializa en modo KID. El cambio de modo viene acompañado por el encendido del led correspondiente (ID_LED_KID O ID_LED_ADULT según el caso) asi como también del seteo de los parámetros correspondientes a ese modo. 
@@ -746,23 +749,23 @@ Mediante el evento EV_SYS_SEN_READ se realiza la lectura de los sensores. Los da
 A partir de los datos medidos, el sistema evalúa distintas condiciones de riesgo. Si se detecta  una situación de apnea, se activa el buzzer y el led de alarma. Asimismo, si alguno de los parametros fisiologicos se encuantra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario. 
 Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento EV_SYS_BTN_ALARM_PRESSED, el cual apaga el LED de alarma y el Buzzer. 
 
-<figure id="fig-statechart-sensor">
-  <div align="center">
-    <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.6: Máquina de estados del sensor.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
+</p>
+<p align="center">
+  <em>Figura 3.6: Máquina de estados del sensor.</em>
+</p>
 
 Inicialmente el sistema comienza en el estado ST_SEN_IDLE, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento EV_SEN_FINGER_IN, esto provoca la transición al estado ST_SEN_DETECTING, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
 Mientras el sistema permanece en ST_SEN_DETECTING, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido DEL_SEN_XX_MIN, el sistema pasa al estado ST_SEN_ACTIVE. En este estado el sensor realiza el procesamiento de la señal PPG con la función ppg_compute(). 
 Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento EV_SEN_FINGER_OUT, provocando una transición al estado ST_SEN_LOSING. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a ST_SEN_IDLE, a la espera de una nueva medición. 
 
-<figure id="fig-statechart-button">
-  <div align="center">
-    <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.7: Máquina de estados de los botones.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
+</p>
+<p align="center">
+  <em>Figura 3.7: Máquina de estados de los botones.</em>
+</p>
 
 La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
 El sistema comienza en estado ST_BTN_XX_UP, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(EV_BTN_XX_DOWN), EL SISTEMA PASA AL ESTADO ST_BTN_XX_FALLING e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
@@ -770,36 +773,36 @@ Mientras el sistema permanece en ST_BTN-XX_FALLING, el temporizador se decrement
 Cuando el usuario libera el botón (EV_BTN_XX_UP), el sistema pasa al estado ST_BTN_XX_RISING, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
 Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado ST_BTN_XX_UP y se genera el evento EV_SYS_BTN_XX_RELEASED, indicando al sistema que el botón fue liberado correctamente.
 
-<figure id="fig-statechart-actuator">
-  <div align="center">
-    <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.8. Máquina de estados del actuador.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
+</p>
+<p align="center">
+  <em>Figura 3.8. Máquina de estados del actuador.</em>
+</p>
 
 ## 3.2.3 Diseño de la placa
 
 Se utilizó *KiCAD* durante la etapa de diseño, para preparar la pcb del
 dispositivo.
 
-<figure id="fig-pcb-design">
-  <div align="center">
-    <img src="img/tp3.png" width="25%" alt="Diseño de la PCB en KiCad">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.10: Diseño de la PCB en KiCad.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/tp3.png" width="25%" alt="Diseño de la PCB en KiCad">
+</p>
+<p align="center">
+  <em>Figura 3.10: Diseño de la PCB en KiCad.</em>
+</p>
 
 La disposición de la placa fue pensada para soldarse en una placa
 experimental. Se representaron los cables como pistas y se tuvo en
 cuenta el espaciado de los agujeros.
 
-<figure id="fig-pcb-render">
-  <div align="center">
-    <img src="img/render_side.png" width="13%" alt="Vista lateral 3D de la PCB">
-    <img src="img/render.png" width="25%" alt="Vista superior 3D de la PCB">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 3.11: Previsualización 3D de la placa.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/render_side.png" width="14%" alt="Vista lateral 3D de la PCB">
+  <img src="img/render.png" width="25%" alt="Vista superior 3D de la PCB">
+</p>
+<p align="center">
+  <em>Figura 3.11: Previsualización 3D de la placa.</em>
+</p>
 
 Se cuenta con espacio suficiente para agregar una batería para hacer al
 dispositivo portable. Considerando que solo se precisa el integrado y el
@@ -900,19 +903,19 @@ resume los resultados obtenidos en las pruebas realizadas.
 
 **Tabla 4.1: Pruebas funcionales de hardware.**
 
-<figure id="fig-led-actuator">
-  <div align="center">
-    <img src="img/Actuador.png" width="25%" alt="LED del actuador en funcionamiento">
-  </div>  
-  <figcaption style="text-align:center;">Figura 4.1: LED indicadores en funcionamiento.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/Actuador.png" width="25%" alt="LED del actuador en funcionamiento">
+</p>
+<p align="center">
+  <em>Figura 4.1: LED indicadores en funcionamiento.</em>
+</p>
 
-<figure id="fig-sensor-voltage">
-  <div align="center">
-    <img src="img/5,5V.jpeg" width="25%" alt="Medición de tensión del sensor MAX30102">
-  </div>
-  <figcaption style="text-align:center;">Figura 4.2: Tensión del sensor MAX30102.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/5,5V.jpeg" width="25%" alt="Medición de tensión del sensor MAX30102">
+</p>
+<p align="center">
+  <em>Figura 4.2: Tensión del sensor MAX30102.</em>
+</p>
 
 ### 4.1.3: Análisis de resultados
 
@@ -1017,19 +1020,19 @@ presenta un conjunto representativo de las mediciones obtenidas.
 
 **Tabla 4.2. Pruebas funcionales de firmware.**
 
-<figure id="figdebugger">
-  <div align="center">
-    <img src="img/parameters.jpeg" width="39%" alt="Parametros en debugger">
-</div>
-  <figcaption style="text-align:center;"><em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/parameters.jpeg" width="39%" alt="Parametros en debugger">
+</p>
+<p align="center">
+  <em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em>
+</p>
 
-<figure id="fig-deteccion">
-  <div align="center">
-    <img src="img/Zblutuconecting.png" width="30%" alt="Conexion bluetooth exitosa">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/Zblutuconecting.png" width="30%" alt="Conexion bluetooth exitosa">
+</p>
+<p align="center">
+  <em>Figura 4.4: Conexión exitosa con el módulo Bluetooth.</em>
+</p>
 
 ### 4.2.3: Análisis de resultados
 
@@ -1054,19 +1057,19 @@ funcionales definidos previamente.
 
 **Tabla 4.3. Pruebas de integración**
 
-<figure id="fig-datos-bluetooth">
-  <div align="center">
-    <img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 4.5: Datos fisiológicos enviados a través de Bluetooth.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/zdatosblutu.png" width="40%" alt="Datos fisiológicos transmitidos por Bluetooth">
+</p>
+<p align="center">
+  <em>Figura 4.5: Datos fisiológicos enviados a través de Bluetooth.</em>
+</p>
 
-<figure id="fig-datos-display">
-  <div align="center">
-    <img src="img/Datosdisplay.jpeg" width="40%" alt="Datos fisiológicos mostrados en el display">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 4.6:. Datos fisiológicos enviados a través del display.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/Datosdisplay.jpeg" width="40%" alt="Datos fisiológicos mostrados en el display">
+</p>
+<p align="center">
+  <em>Figura 4.6: Datos fisiológicos enviados a través del display.</em>
+</p>
 
 ## 4.4: Cumplimiento de requisitos 
 
@@ -1208,22 +1211,19 @@ Como se observa en la **Tabla 4.7**, para el análisis de la tarea `task_system`
 
 ## 4.7 Cálculo del Factor de Uso (U) de la CPU
 
+### 4.7.1 Metodo de cálculo
+
 Con el objetivo de analizar la carga computacional del sistema, se estimó el **factor de uso del procesador (U)** a partir de los tiempos de ejecución de las tareas y sus respectivos períodos de activación.
 
 El factor de uso se calcula mediante la expresión:
 
 U = Σ (WCET_i / Periodo_i)
 
-Dando como resultado U = 0.933 = 93% 
-
-
-Este valor permite estimar qué fracción del tiempo total de CPU es utilizada por el conjunto de tareas del sistema.
-
-U = 0.933 = 93 %
+Dando como resultado <b>U = 0.933 = 93%</b>
 
 ---
 
-### Interpretación del resultado
+### 4.7.2 Interpretación del resultado
 
 El valor total obtenido para **U** representa la fracción de tiempo en la cual el procesador se encuentra ejecutando tareas activas.
 
@@ -1241,19 +1241,19 @@ Como consecuencia directa de esta alta carga computacional, se descarta la imple
 Adjuntamos Captura de pantalla de **Console & Build Analyzer** luego de
 compilar la versión final
 
-<figure id="fig-memory-capture">
-  <div align="center">
-    <img src="img/zmemory.png" width="50%" alt="Captura de memoria del sistema">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 4.7: Captura de memoria.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/zmemory.png" width="50%" alt="Captura de memoria del sistema">
+</p>
+<p align="center">
+  <em>Figura 4.7: Captura de memoria.</em>
+</p>
 
-<figure id="fig-compile-capture">
-  <div align="center">
-    <img src="img/zcompile.png" width="50%" alt="Salida del compilador">
-  </div>
-  <figcaption style="text-align:center;"><em>Figura 4.8: Captura del compilador.</em></figcaption>
-</figure>
+<p align="center">
+  <img src="img/zcompile.png" width="50%" alt="Salida del compilador">
+</p>
+<p align="center">
+  <em>Figura 4.8: Captura del compilador.</em>
+</p>
 
 Como se observa en la [Figura 4.7](#fig-memory-capture), el uso de memoria RAM del 72,5 % podría considerarse elevado. Sin embargo, este valor se debe principalmente al tamaño de la ventana de muestras utilizada para procesar los datos crudos del sensor MAX30102.
 
@@ -1291,14 +1291,48 @@ obtenidos durante la etapa de implementación y evaluación.
 
 # 5: Conclusiones
 
-Se verificaron
+El desarrollo del trabajo "Sleep Centinel" ha permitido consolidar la integración de hardware y software en un sistema embebido orientado a la salud, logrando diseñar e implementar exitosamente un dispositivo portátil capaz de monitorizar señales vitales de forma continua.
 
 ## 5.1: Resultados
 
-## 5.2: Proximos pasos
+Las pruebas funcionales y de integración confirmaron que el dispositivo cumple satisfactoriamente con los requerimientos de adquisición, procesamiento y transmisión de datos. Se obtuvo una estimación aceptable y consistente de los parámetros fisiológicos (SpO₂, frecuencia cardíaca y respiratoria) a partir de la señal PPG obtenida por el sensor MAX30102, validando el correcto desempeño de los algoritmos de procesamiento digital implementados.
+
+Adicionalmente, se comprobó la robustez de la arquitectura de firmware basada en máquinas de estado. Esta estructura permitió gestionar de forma eficiente la interacción del sistema, asegurando una correcta transición entre los modos de operación (Adulto y Niño) y un manejo adecuado de las entradas físicas mediante el filtrado por software de los pulsadores. 
+
+Los enlaces de comunicación (I²C para el sensor y UART para el módulo Bluetooth) operaron de manera estable durante los ensayos. Esto garantizó la fluidez en la visualización de los parámetros en tiempo real, tanto en el display LCD como en el dispositivo móvil, asegurando a su vez la respuesta oportuna del sistema de alarmas locales ante la detección de anomalías o desaturaciones.
+
+Por último, cabe destacar cómo la asistencia de herramientas de Inteligencia Artificial (IA) ayudó en diversos aspectos del desarrollo:
+
+- Asistencia en la redacción y depuración de código.
+- Corrección de ortografía, gramática y estilo del documento.
+- Generación de recursos visuales (imágenes y videos).
+- Asistencia en el diseño y validación de la lógica de las máquinas de estado.
+- Asistencia en el uso de herramientas de control de versiones (Git y GitHub)
+
+## 5.2: Próximos pasos
+
+A partir de los resultados obtenidos y la arquitectura planteada, se identifican diversas oportunidades de mejora para futuras iteraciones del proyecto:
+
+- **Optimización del procesamiento:** Refinar los algoritmos de filtrado digital y cálculo de señales para reducir el factor de uso del procesador. Disminuir la carga computacional permitiría eventualmente habilitar modos de bajo consumo de forma segura.
+- **Autonomía y miniaturización:** Aprovechar el espacio disponible en el diseño actual de la PCB para desarrollar un modelo más compacto mediante componentes de montaje superficial (SMD) e integrar un circuito de gestión de batería (BMS) con una celda de litio, haciendo al dispositivo verdaderamente portátil.
+- **Almacenamiento local:** Incorporar un módulo para tarjeta micro SD o aprovechar la memoria flash interna para registrar un histórico local de las mediciones. Esto evitaría la pérdida de datos durante la noche frente a posibles desconexiones del módulo Bluetooth.
+- **Desarrollo de aplicación nativa:** Reemplazar el uso de terminales seriales genéricas por una aplicación móvil dedicada que reciba los paquetes de datos, genere reportes históricos de los episodios de apnea y ofrezca una interfaz gráfica más amigable para el usuario final.
+-**Diseño de pinza sensitiva** Incorporar el sensor óptico en una pinza o broche independiente del nucleo principal, para que el usuario pueda permanecer alejado del monitor y descansar de forma cómoda y natural.
+
+---
 
 # Referencias
 
-# "A" Video
+1. National Institutes of Health (NIH) – Sleep Apnea Fact Sheet. Disponible en: https://www.nhlbi.nih.gov/health/sleep-apnea
+2. Sally K. Longmore et al., “A Comparison of Reflective Photoplethysmography for Detection of Heart Rate, Blood Oxygen Saturation, and Respiration Rate at Various Anatomical Locations”, *Sensors*, vol. 19, no. 8, 1874, Apr. 2019. Disponible en: https://www.mdpi.com/1424-8220/19/8/1874
+3. Park J., Seok H. S., Kim S. S., & Shin H. (2022). *Photoplethysmogram Analysis and Applications: An Integrative Review*. Frontiers in Physiology, 12, Article 808451. doi:10.3389/fphys.2021.808451. Disponible en: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8920970/ 
+4. MAX30102 – Pulse Oximeter and Heart-Rate Sensor Datasheet. Maxim Integrated. Disponible en: https://datasheets.maximintegrated.com/en/ds/MAX30102.pdf
+5. Ariel Lutenberg, Pablo Gomez, & Eric Pernia. *A Beginner's Guide to Designing Embedded System Applications on Arm Cortex-M Microcontrollers*. Arm Education Media. Disponible en: https://armkeil.blob.core.windows.net/developer/Files/pdf/ebook/arm-designing-embedded-system-application-cortex-m.pdf
+6. Manual de usuario de la placa NUCLEO-F103RB. STMicroelectronics. Disponible en: https://www.st.com/en/evaluation-tools/nucleo-f103rb.html
+7. 
+---
+
+
+# Apéndice A. Video
 https://www.youtube.com/watch?v=pGM0ltA05JQ
 
