@@ -264,11 +264,7 @@ El dispositivo dispone de dos botones, uno de los cuales permite seleccionar el 
 
 Este sensor se utiliza para la medición de señales de fotopletismografía (PPG). El mismo integra dos fuentes de luz LED (una roja y una infrarroja), un fotodiodo y un sistema de conversión analógico-digital. Debido a que el volumen de sangre en los vasos varía con cada latido cardíaco, la cantidad de luz absorbida también cambia de forma periódica. Las variaciones de luz absorbida son captadas por el fotodiodo del sensor, el cual convierte la intensidad de la luz reflejada en una señal eléctrica. Los valores digitalizados corresponden a las mediciones de luz detectada por los LEDs rojo e infrarrojo, los cuales constituyen la señal PPG. Estos datos son transmitidos al microcontrolador mediante I²C. Posteriormente, las señales adquiridas son sometidas a una etapa de procesamiento digital, en la cual se aplican los algoritmos necesarios para calcular los valores de saturación de oxígeno en sangre, frecuencia cardíaca y frecuencia respiratoria.
 
-Para la estimación de la frecuencia cardíaca, se utiliza principalmente la señal PPG infrarroja. Se aplica un filtrado pasa-banda en el rango aproximado de 0,5 a 5 Hz, con el objetivo de eliminar ruidos para posteriormente detectar los máximos locales de la señal filtrada, que corresponden a latidos válidos. A partir del intervalo temporal entre picos consecutivos, se calcula la frecuencia cardíaca en latidos por minuto. En el caso de la saturación de oxígeno en sangre ($SpO_{2}$), se utilizan ambas señales PPG. Cada una de estas señales se descompone en dos componentes: una componente continua (DC) y una componente alterna (AC). A partir de estas componentes se calcula una relación entre las señales roja e infrarroja:
-
-$$R = \frac{\frac{AC_{RED}}{DC_{RED}}}{\frac{AC_{IR}}{DC_{IR}}}$$
-
-$$SpO_{2} \approx 110 - 25*R$$
+Para la estimación de la frecuencia cardíaca, se utiliza principalmente la señal PPG infrarroja. Se aplica un filtrado pasa-banda en el rango aproximado de 0,5 a 5 Hz, con el objetivo de eliminar ruidos para posteriormente detectar los máximos locales de la señal filtrada, que corresponden a latidos válidos. A partir del intervalo temporal entre picos consecutivos, se calcula la frecuencia cardíaca en latidos por minuto. En el caso de la saturación de oxígeno en sangre ($SpO_{2}$), se utilizan ambas señales PPG. Cada una de estas señales se descompone en dos componentes: una componente continua (DC) y una componente alterna (AC). A partir de estas componentes se calcula una relación entre las señales roja e infrarroja.
 
 Por último, la frecuencia respiratoria puede estimarse analizando las oscilaciones de baja frecuencia presentes en la señal infrarroja. Se aplica un filtro pasa-bajos con una frecuencia cercana a 0,4 Hz. Finalmente, mediante la detección de picos o el análisis de la frecuencia dominante de la señal filtrada, se obtiene el número de ciclos respiratorios por minuto. Luego de la etapa de procesamiento, y considerando los rangos previamente establecidos según el modo de funcionamiento seleccionado, el sistema transmite en tiempo real la información obtenida tanto al display como a un dispositivo móvil en caso de haberse establecido la conexión mediante Bluetooth. Los datos transmitidos incluyen:
 
@@ -579,7 +575,14 @@ pull-up y conectados a GND del otro extremo.
 
 Para polarizar los LEDs con una fuente de 3,3 V, las resistencias
 limitadoras se calculan mediante la siguiente fórmula:
-$$R = \frac{V_{CC}- V_f}{I_f}$$
+
+<div align="center">
+
+| | |
+|:---:|:---:|
+| $$R = \frac{V_{CC}- V_f}{I_f}$$ | (Ecuación 1) |
+
+</div>
 
 -   $V_{CC}$ la tensión de alimentación (en este caso 3,3 V).
 
@@ -873,12 +876,16 @@ A diferencia del ritmo cardíaco, la función `compute_rr` utiliza un algoritmo 
 
 #### Cálculo de Saturación de Oxígeno ($SpO_2$)
 El cálculo se basa en el método de "Ratio de Ratios" ($R$), comparando las componentes de corriente alterna ($AC$) y continua ($DC$) de ambas longitudes de onda:
-
-$$R = \frac{\frac{RMS(AC_{RED})}{DC_{RED}}}{\frac{RMS(AC_{IR})}{DC_{IR}}} \tag{1}$$
-
 Posteriormente, se utiliza la aproximación lineal para determinar la saturación final:
 
-$$SpO_{2} \approx 110 - 25 \cdot R \tag{2}$$
+<div align="center">
+
+| | |
+|:---:|:---:|
+| $$R = \frac{\frac{AC_{RED}}{DC_{RED}}}{\frac{AC_{IR}}{DC_{IR}}}$$ | (Ecuación 2) |
+| $$SpO_{2} \approx 110 - 25 \cdot R$$ | (Ecuación 3) |
+
+</div>
 
 #### Lógica de Detección de Apnea
 El sistema monitorea constantemente el valor de $SpO_2$ para identificar eventos respiratorios críticos:
@@ -1338,9 +1345,16 @@ Con el objetivo de analizar la carga computacional del sistema, se estimó el **
 
 El factor de uso se calcula mediante la expresión:
 
-U = Σ (WCET_i / Periodo_i)
+<div align="center">
 
-Dando como resultado <b>U = 0,933 = 93 %</b>
+|| |
+| :--- | ---: |
+| $$U = \sum_{i=1}^{n} \frac{WCET_i}{Periodo_i}$$ | (Ecuación 4) |
+
+
+</div>
+
+Dando como resultado <em>U = 0,933 = 93 %</em>
 
 ---
 
