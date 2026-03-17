@@ -39,7 +39,7 @@ Tomás Musso Carboni
 `tmusso@fi.uba.ar`
 
 Alan Romero
-`alan@fi.uba.ar`
+`alromero@fi.uba.ar`
 
 Santiago Archetti  
 `sarchetti@fi.uba.ar`
@@ -687,9 +687,7 @@ A nivel de implementación, la **Figura 3.4** ilustra la organización de los ar
 
 ### 3.2.2 Módulo Sensor
 
-Este módulo representa un sensor que se comunica con un oxímetro de
-pulso (*MAX30102*) y procesa la señal para obtener los datos en la
-siguiente estructura de datos.
+Este módulo representa un sensor que se comunica con un oxímetro de pulso (*MAX30102*), procesa la señal y guarda los valores obtenidos en la siguiente estructura de datos.
 
 ```C
         typedef struct {
@@ -701,12 +699,6 @@ siguiente estructura de datos.
         } task_sensor_results_dta_t;
 ```
 
-La comunicación se realiza via $I^2C$ y en cada iteración se acceden los
-datos al buffer FIFO del MAX30102 para reconstruir la señal. Una vez
-procesada, cada `DEL_SEN_MAX_TICKS` se accede a la interfaz del sistema
-y se actualiza la estructura de datos, además de activar una variable
-booleana indicando que el valor no ha sido leído.
-
 
 <p align="center">
   <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
@@ -715,21 +707,25 @@ booleana indicando que el valor no ha sido leído.
   <em>Figura 3.6: Máquina de estados del sensor.</em>
 </p>
 
-Inicialmente el sistema comienza en el estado `ST_SEN_IDLE`, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento `EV_SEN_FINGER_IN`, esto provoca la transición al estado `ST_SEN_DETECTING`, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
+El sistema comienza en el estado `ST_SEN_IDLE`.
+En éste, el sensor se encuentra leyendo datos, y hasta no superar un umbral, se interpreta como la ausencia del dedo en el sensor.
+Cuando el usuario coloca el dedo, la lectura supera el umbral y se genera el evento `EV_SEN_FINGER_IN`.
 
-Mientras el sistema permanece en `ST_SEN_DETECTING`, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido `DEL_SEN_XX_MIN`, el sistema pasa al estado `ST_SEN_ACTIVE`. En este estado el sensor realiza el procesamiento de la señal PPG con la función `ppg_compute()`. 
+De forma similar al debouncing de un pulsador mecánico, se asegura que el dedo haya estado al menos cierta cantidad de ticks para confirmar que todas las lecturas corresponden a un usuario y no a ruido.
+Para esto, se utilizan los estados intermedios `ST_SEN_DETECTING` y `ST_SEN_LOSING`.
+En estos estados se asigna `DEL_SEN_XX_MAX` a la variable `tick` al entrar.
+Mientras el sistema permanece en `ST_SEN_DETECTING`, el temporizador se va decrementando.
+Si el dedo permanece colocado el tiempo mínimo requerido `DEL_SEN_XX_MIN`, el sistema pasa al estado `ST_SEN_ACTIVE` o `ST_SEN_IDLE` según desde cual transicione.
 
-Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento `EV_SEN_FINGER_OUT`, provocando una transición al estado `ST_SEN_LOSING`. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a `ST_SEN_IDLE`, a la espera de una nueva medición.
+El estado `ST_SEN_ACTIVE` el sensor realiza las lecturas y ejecuta el procesamiento de la señal PPG con la función `ppg_compute()`.
+La comunicación se realiza via $I^2C$ y en cada iteración se acceden los datos al buffer FIFO del MAX30102 para reconstruir la señal.
+Una vez procesada, cada `DEL_SEN_MAX_TICKS` se accede a la interfaz del sistema y se actualiza la estructura de datos.
+Además, activa una variable booleana indicando que el valor no ha sido leído.
+De esta manera, _task_system_ puede hacer polling sin repetir el mismo dato.
 
 ---
 
 ### 3.2.3 Módulo Actuador
-
-Consiste en los indicadores al usuario. Consta de 4 estados. Pueden
-estar prendidos, apagados, parpadeando o emtiendo un pulso. Éstos
-últimos permiten ajustar la frecuencia con la que un led parpadea, o la
-frecuencia de un buzzer.
-
 
 <p align="center">
   <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
@@ -738,24 +734,45 @@ frecuencia de un buzzer.
   <em>Figura 3.8. Máquina de estados del actuador.</em>
 </p>
 
-La función principal de esta máquina de estados es controlar el comportamiento de los periféricos de salida del sistema (como los indicadores LED y el buzzer), permitiendo operarlos de forma estática (encendido/apagado) o dinámica (parpadeo/pulsos).
+Cada actuador cuenta con un identificador único representado con el siguiente enumerativo.
 
-El sistema comienza por defecto en el estado `ST_ACT_XX_OFF`, lo cual representa que el actuador se encuentra completamente desactivado. Desde este punto, si se recibe el evento `EV_ACT_XX_ON`, la máquina transiciona al estado `ST_ACT_XX_ON`, activando el hardware de forma continua. Para volver a apagarlo, basta con generar el evento `EV_ACT_XX_OFF`, retornando al estado inicial.
+```C
+/* Identifier of Task Actuator */
+typedef enum {
+    ID_LED_BLUETOOTH,
+    ID_LED_KID,
+    ID_LED_ADULT,
+    ID_LED_ALARM,
+    ID_BUZZER
+} task_actuator_id_t;
+```
 
-Además de los estados estáticos, el sistema puede ingresar a un modo intermitente a través del evento `EV_ACT_XX_BLINK`, el cual provoca la transición hacia el estado complejo `ST_ACT_XX_BLINK`. A este estado se puede ingresar tanto desde el actuador apagado como desde el actuador encendido.
+De esta forma _task_actuator_ gestiona todos los actuadores del sistema con salidas simples (prendido, apagado o parpadeando).
+En cada tick, éste itera sobre un arreglo de actuadores y actualiza el estado de cada uno según el evento que haya registrado cada uno.
+Con una interfaz que evita exponer la implementación del conjunto de actuadores, _task_system_ puede asignarle un evento _ON_, _OFF_, o _BLINK_ pasandole el evento y el ID a la función
 
-Dentro de `ST_ACT_XX_BLINK`, el sistema gestiona una sub-máquina con dos sub-estados internos (`ON` y `OFF`). El paso de un sub-estado a otro está regido por un temporizador interno (`tick`). En cada iteración, el temporizador se decrementa continuo (`tick--`). 
+```C
+void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identifier);
+```
 
-Cuando la variable alcanza su límite inferior (`[tick == DEL_BTN_XX_MIN]`), el actuador invierte su estado (pasando de `ON` a `OFF` o viceversa) y el temporizador se recarga automáticamente a su valor superior (`tick = DEL_BTN_XX_MAX`). Este ciclo se repite indefinidamente, generando la frecuencia de parpadeo deseada.
+La función principal de cada actuador individual es controlar el comportamiento de los periféricos de salida del sistema (como los indicadores LED y el buzzer).
 
+El sistema comienza por defecto en el estado `ST_ACT_XX_OFF`, lo cual representa que el actuador se encuentra completamente desactivado.
+Desde este punto, si se recibe el evento `EV_ACT_XX_ON`, la máquina transiciona al estado `ST_ACT_XX_ON`, activando el hardware de forma continua.
+Para volver a apagarlo, basta con generar el evento `EV_ACT_XX_OFF`, retornando al estado inicial.
+
+Además de los estados estáticos, el sistema puede ingresar a un modo intermitente desencadenada por el evento `EV_ACT_XX_BLINK`.
+Para modelar el parpadeo, se utilizan los estados `ST_ACT_BLINK_ON` y `ST_ACT_BLINK_OFF`.
+
+Aunque el diagrama lo representa como un estado compuesto, el código lo modela como estados independientes entre los que se va alternando.
+El paso de un sub-estado a otro está determinado por un temporizador interno (`tick`).
+En cada iteración, el temporizador se decrementa continuo (`tick--`).
+Cuando la variable alcanza su límite inferior (`[tick == DEL_BTN_XX_MIN]`), el actuador invierte su estado (pasando de `ON` a `OFF` o viceversa) y el temporizador se setea automáticamente a su cota superior (`tick = DEL_BTN_XX_MAX`).
+Este ciclo se repite indefinidamente, generando la frecuencia de parpadeo deseada.
 El actuador permanecerá en este ciclo de intermitencia hasta que reciba una orden explícita para detenerse: el evento `EV_ACT_XX_OFF` lo llevará nuevamente al estado de reposo, mientras que `EV_ACT_XX_ON` lo dejará encendido de manera permanente.
 
-### 3.2.4 Módulo de botones
 
-Modela el comportamiento de un pulsador mecanico. Permite filtrar por
-software el ruido durante los cambios de estado del botón
-(_debouncing_). Aunque el botón es mecánico, se puede modelar otras
-entradas digitales con ruido de la misma manera.
+### 3.2.4 Módulo Botones
 
 <p align="center">
   <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
@@ -764,31 +781,25 @@ entradas digitales con ruido de la misma manera.
   <em>Figura 3.7: Máquina de estados de los botones.</em>
 </p>
 
-La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
+La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos.
 
-El sistema comienza en estado `ST_BTN_XX_UP`, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(`EV_BTN_XX_DOWN`), EL SISTEMA PASA AL ESTADO `ST_BTN_XX_FALLING` e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
+El sistema comienza en estado `ST_BTN_XX_UP`, el cual representa la condición en la cual el botón se encuentra sin presionar.
+Cuando se detecta una transición del botón hacia el estado presionado(`EV_BTN_XX_DOWN`), EL SISTEMA PASA AL ESTADO `ST_BTN_XX_FALLING` e inicia un tick.
+Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote.
 
-Mientras el sistema permanece en `ST_BTN-XX_FALLING`, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a `ST_BTN-XX_DOWN`. En ese momento se genera el evento `EV_SYS_BTN_XX_PRESSED`, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
+Mientras el sistema permanece en `ST_BTN-XX_FALLING`, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a `ST_BTN-XX_DOWN`.
+En ese momento se genera el evento `EV_SYS_BTN_XX_PRESSED`, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
 
 Cuando el usuario libera el botón (`EV_BTN_XX_UP`), el sistema pasa al estado `ST_BTN_XX_RISING`, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
 
 Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado `ST_BTN_XX_UP` y se genera el evento `EV_SYS_BTN_XX_RELEASED`, indicando al sistema que el botón fue liberado correctamente.
 
+<!-- Esta forma de filtrar el ruido producido por el funcionamiento mecánico del pulsador, puede ser usado en otro tipo de entradas como el pin STATE del HM10, que indica si un dispositivo ya está conectado a bluetooth -->
+
 ---
 
 
-### 3.2.5 Módulo de sistema
-
-Es la tarea principal encargada de recibir las entradas desde los
-botones y sensores y producir los efectos correspondientes en los otros
-módulos. Como es relevante no perder ninguna entrada, cuenta con una
-interfaz que gestiona una cola de eventos. Ésta, además, es donde el
-sensor guarda los datos que toma cada cierta cantidad de ticks. En cada
-iteración, el sistema pregunta a la cola si hay algun evento disponible
-y si hay algun dato para enviar. En caso de haber un dato disponible del
-sensor, lo envía por UART al HM10, que se encarga de transmitirlo por
-bluetooth, y se muestra por el display
-
+### 3.2.5 Módulo Sistema
 
 <p align="center">
   <img src="img/statechart_system.png" width="50%" alt="Máquina de estados del sistema">
@@ -797,17 +808,43 @@ bluetooth, y se muestra por el display
   <em>Figura 3.5: Máquina de estados del sistema.</em>
 </p>
 
-Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
+Se observa en la figura 3.5, que _task_system_ se encarga de controlar el funcionamiento general del dispositivo.
+Gestiona el modo de funcionamiento, la lectura de sensores, la persentación de la información, y el encendido o apagado de la alarma.
 
-Cuenta con dos modos de funcionamiento: `KID` y `ADULT`, los cuales se seleccionan mediante el evento `AV_SYS_BTN_MODE_PRESSED`, correspondiente a la presión del botón de modo. Por default el sistema se inicializa en modo `KID`. El cambio de modo viene acompañado por el encendido del led correspondiente (`ID_LED_KID` O `ID_LED_ADULT` según el caso) asi como también del seteo de los parámetros correspondientes a ese modo. 
+Cuenta con dos modos de funcionamiento: `KID` y `ADULT`, entre los cuales se alterna mediante un pulsador que desencadena el evento `EV_SYS_BTN_MODE_PRESSED`.
+Por defecto el sistema se inicializa en modo `KID`.
+El cambio de modo viene acompañado por el encendido del led correspondiente (`ID_LED_KID` O `ID_LED_ADULT` según el caso) asi como también del seteo de los parámetros correspondientes a ese modo.
 
-Mediante el evento `EV_SYS_SEN_READ` se realiza la lectura de los sensores. Los datos obtenidos se muestran por display y además se envían a través de bluetoth.
+Para poder gestionar la entrada de los botones sin perderse ninguna, cuenta con una interfaz conformada por una cola de eventos.
+En cada iteración, _task_system_ pregunta si hay un evento.
+Si no lo hay entonces no hace nada.
+Por el contrario, si detecta un evento de botón presionado lo redirige al actuador.
 
-A partir de los datos medidos, el sistema evalúa distintas condiciones de riesgo. Si se detecta  una situación de apnea, se activa el buzzer y el led de alarma. Asimismo, si alguno de los parametros fisiologicos se encuantra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario. 
+Si el evento es `EV_SYS_SEN_READ` se realiza la lectura de los sensores.
+Los datos obtenidos se muestran por pantalla y se envían por _UART_ al módulo bluetooth.
+A partir de los parametros correspondientes al modo seleccionado, y los datos medidos, el sistema evalúa distintas condiciones de riesgo.
+Si se detecta que alguno de los parametros fisiologicos se encuentra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario.
+Además, si se determina que ocurre una situación de apnea, se activa el buzzer.
 
 Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento `EV_SYS_BTN_ALARM_PRESSED`, el cual apaga el LED de alarma y el Buzzer.
 
+### 3.2.6 Comm (Bluetooth)
 
+Modela el comportamiento de un dispositivo que mantiene una conexión bluetooth con una aplicación móvil.
+Se inicializa pasándole como parámetro la interfaz `UART` a utilizar.
+Este módulo abstrae del uso de la _HAL_, la transmisión y recepción de datos con un dispositivo móvil por medio del HM10.
+
+<!-- |Nombre | Tipo | Descripción | -->
+<!-- | --- | --- | ---| -->
+<!-- | hm10_init |   -->
+<!---->
+
+
+### 3.2.7 Display
+
+Modela el uso de un display LCD de 16x2 en la modalidad de 4 pines.
+Permite posicionar un cursor en cualquier parte de la pantalla y escribir una cadenas de texto.
+Una función permite formatear la estructura de datos del sensor obtenidos por el sistema al tamaño del LCD utilizado en el proyecto.
 
 ---
 
