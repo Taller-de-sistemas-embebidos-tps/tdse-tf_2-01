@@ -162,7 +162,7 @@ Tabla 3.8 Conexiones de los botones
 Tabla 3.9 Caídas de tensión típicas para LEDs  
 Tabla 3.10 Conexiones de los LEDs  
 Tabla 3.11 Costo de los componentes  
-Tabla 3.12 Función de cada componente de hardware  
+Tabla 3.12: Función de cada módulo de software
 
 Tabla 4.1 Pruebas funcionales de hardware  
 Tabla 4.2 Pruebas funcionales de firmware  
@@ -334,25 +334,27 @@ el descanso.
 ## 2.3: Requerimientos funcionales
 
 
-| Grupo         | ID  | Requerimiento Funcional | Descripción                                                     |
-| ---------------| -----| -------------------------| -----------------------------------------------------------------|
-| Adquisición   | 1.1 | Adquisición de señales  | Capturar señales ópticas ROJO/IR del MAX30102 via I2C.          |
-|               | 1.2 | Lectura periódica       | Obtener muestras desde la FIFO del sensor.                      |
-|               | 1.3 | Análisis de variación   | Detectar variaciones innecesarias para $SpO_{2}$ y respiración  |
-| Procesamiento | 2.1 | Filtrado digital        | Aplicar filtrado                                                |
-|               | 2.2 | Cálculo de $SpO_{2}$    | Calcular $SpO_{2}$ mediante el ratio R                          |
-|               | 2.3 | Cálculo de respiración  | Estimar frecuencia respiratoria mediante                        |
-|               | 2.3 | Cálculo de respiración  | análisis de envolvente o línea base.                            |
-|               | 2.4 | Empaquetado de datos    | Generar paquete con $SpO_{2}$ , respiración y estado.           |
-| Indicadores   | 3.1 | Alarma crítica          | Activar alarma sonora cuando se detecta apnea.                  |
-|               | 3.2 | Indicadores LED         | Mostrar estados (crítico, normal, error) mediante LEDs.         |
-| Comunicación  | 4.1 | Bluetooth               | Transmitir datos vía HM-10 por UART.                            |
-|               | 4.2 | Envío de parámetros     | Enviar $SpO_{2}$, respiraciones y estado del paciente a la app. |
-|               | 4.3 | Registro de eventos     | Informar alarmas, desconexiones o estados especiales.           |
-|               | 4.4 | Display                 | Mostrar parámetros de interes por pantalla.                     |
-| Alimentación  | 5.1 | Alimentación            | Alimentación vía USB                                            |
-|               | 5.2 | Bajo consumo            | Entrar en modo Sleep cuando no hay actividad.                   |
-|               | 5.3 | Reactivación            | Retomar actividad ante movimiento o comando.                    |
+| Grupo | ID | Requerimiento Funcional | Descripción |
+|---|---|---|---|
+| Adquisición | 1.1 | Adquisición de señales | Capturar señales ópticas ROJO/IR del MAX30102 vía I²C. |
+| Adquisición | 1.2 | Lectura periódica | Obtener muestras desde la FIFO del sensor. |
+| Adquisición | 1.3 | Análisis de variación | Detectar variaciones relevantes para el cálculo de SpO₂ y respiración. |
+| Procesamiento | 2.1 | Filtrado digital | Aplicar filtrado digital para reducir ruido en la señal PPG. |
+| Procesamiento | 2.2 | Cálculo de SpO₂ | Calcular SpO₂ mediante el método del ratio R. |
+| Procesamiento | 2.3 | Cálculo de respiración | Estimar la frecuencia respiratoria mediante análisis de envolvente o variaciones de línea base. |
+| Procesamiento | 2.4 | Empaquetado de datos | Generar paquetes de datos con SpO₂, respiración y estado del sistema. |
+| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando se detecta apnea. |
+| Indicadores | 3.2 | Indicadores LED | Mostrar estados (crítico, normal, error) mediante LEDs. |
+| Comunicación | 4.1 | Bluetooth | Transmitir datos vía HM-10 utilizando UART. |
+| Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. |
+| Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. |
+| Comunicación | 4.4 | Elección de umbrales | Recibir umbrales y parámetros desde la aplicación. |
+| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. |
+| Memoria | 5.1 | Guardar configuración | Almacenar umbrales y parámetros en EEPROM. |
+| Memoria | 5.2 | Restaurar valores | Recuperar valores predeterminados si hay error de memoria. |
+| Alimentación | 6.1 | Alimentación | Alimentación del sistema mediante conexión USB. |
+| Alimentación | 6.2 | Bajo consumo | Entrar en modo Sleep cuando no hay actividad. |
+| Alimentación | 6.3 | Reactivación | Retomar actividad ante interrupciones o comandos. |
 
 
 **Table 2.2: Requerimientos funcionales**
@@ -669,20 +671,26 @@ observa en la [Figura 3.2](#fig-leds).
   <em>Figura 3.4: Diagrama de archivos .h y .c.</em>
 </p>
 
+El diseño del firmware se basó en una arquitectura modular orientada a tareas, con el objetivo de desacoplar la lógica de control principal de la gestión específica de cada periférico de hardware, facilitando así el mantenimiento, la lectura y la escalabilidad del código.
+
+Como se observa en la **Figura 3.3**, a nivel lógico, el núcleo del programa recae sobre el módulo central (<b>System</b>). Este actúa como coordinador: recibe y procesa la información proveniente de los periféricos de entrada (como el sensor PPG y los botones) y, en base a su máquina de estados, gestiona los periféricos de salida (interfaz de usuario, LEDs, buzzer y display) y la transmisión inalámbrica mediante el módulo HM-10.
+
+A nivel de implementación, la **Figura 3.4** ilustra la organización de los archivos del proyecto. El código fuente se estructuró de manera jerárquica, separando claramente la aplicación principal, las rutinas de comunicación y las tareas dedicadas (`task_system`, `task_sensor`, `task_actuator`, `task_button`). Cada uno de estos módulos cuenta con su respectiva cabecera (`.h`) para la definición de las interfaces públicas y su archivo fuente (`.c`) para la implementación de la lógica privada, garantizando un correcto encapsulamiento.
+
+| Módulo | Funcionalidad | Rol |
+| :--- | :--- | :--- |
+| **Button** | Gestión de entradas físicas y filtrado de rebotes (*debouncing*). | Subsistema |
+| **Sensor** | Coordinación de la adquisición periódica de datos. | Subsistema |
+| **System** | Máquina de estados principal y coordinación general del equipo. | Sistema principal |
+| **Actuator** | Control de periféricos de salida (LEDs y Buzzer). | Subsistema |
+| **Comm** | Interfaz para el envío de datos al exterior (Bluetooth y Display). | Módulo de comunicación |
+| **PPG_processing** | Algoritmos de filtrado digital y cálculo de parámetros fisiológicos. | Procesamiento de señal |
+| **MAX30102** | Abstracción de hardware y manejo de registros vía I²C. | Driver |
 
 
-| Módulo               | Funcionalidad                                              | Rol        |
-| ----------------------| ------------------------------------------------------------| ------------|
-| Sleep Monitor System | Coordina de entradas y configuraciones de parametros       | Sistema    |
-| PPG Sensor           | Lee el sensor PPG y procesa las lecturas.                  | Subsistema |
-| Buttons              | Filtra ruido de los botones.                               | Subsistema |
-| Bluetooth            | Envío de datos por bluetooth.                              | Driver     |
-| Display              | Exhibe mediciones por pantalla.                            | Driver     |
-| Buzzer               | Advierte estado crítico del usuario.                       | Subsistema |
-| LEDs                 | Indican modo de uso y parámetros fuera de rangos normales. | Subsistema |
+**Tabla 3.12: Función de cada módulo de software.**
 
-**Tabla 3.12: Funcion de cada componente de hardware.**
-
+---
 
 ### 3.2.2: Módulo Sensor
 
@@ -706,6 +714,22 @@ procesada, cada `DEL_SEN_MAX_TICKS` se accede a la interfaz del sistema
 y se actualiza la estructura de datos, además de activar una variable
 booleana indicando que el valor no ha sido leído.
 
+
+<p align="center">
+  <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
+</p>
+<p align="center">
+  <em>Figura 3.6: Máquina de estados del sensor.</em>
+</p>
+
+Inicialmente el sistema comienza en el estado `ST_SEN_IDLE`, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento `EV_SEN_FINGER_IN`, esto provoca la transición al estado `ST_SEN_DETECTING`, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
+
+Mientras el sistema permanece en `ST_SEN_DETECTING`, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido `DEL_SEN_XX_MIN`, el sistema pasa al estado `ST_SEN_ACTIVE`. En este estado el sensor realiza el procesamiento de la señal PPG con la función `ppg_compute()`. 
+
+Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento `EV_SEN_FINGER_OUT`, provocando una transición al estado `ST_SEN_LOSING`. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a `ST_SEN_IDLE`, a la espera de una nueva medición.
+
+---
+
 ### 3.2.3: Módulo Actuador
 
 Consiste en los indicadores al usuario. Consta de 4 estados. Pueden
@@ -713,12 +737,52 @@ estar prendidos, apagados, parpadeando o emtiendo un pulso. Éstos
 últimos permiten ajustar la frecuencia con la que un led parpadea, o la
 frecuencia de un buzzer.
 
+
+<p align="center">
+  <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
+</p>
+<p align="center">
+  <em>Figura 3.8. Máquina de estados del actuador.</em>
+</p>
+
+La función principal de esta máquina de estados es controlar el comportamiento de los periféricos de salida del sistema (como los indicadores LED y el buzzer), permitiendo operarlos de forma estática (encendido/apagado) o dinámica (parpadeo/pulsos).
+
+El sistema comienza por defecto en el estado `ST_ACT_XX_OFF`, lo cual representa que el actuador se encuentra completamente desactivado. Desde este punto, si se recibe el evento `EV_ACT_XX_ON`, la máquina transiciona al estado `ST_ACT_XX_ON`, activando el hardware de forma continua. Para volver a apagarlo, basta con generar el evento `EV_ACT_XX_OFF`, retornando al estado inicial.
+
+Además de los estados estáticos, el sistema puede ingresar a un modo intermitente a través del evento `EV_ACT_XX_BLINK`, el cual provoca la transición hacia el estado complejo `ST_ACT_XX_BLINK`. A este estado se puede ingresar tanto desde el actuador apagado como desde el actuador encendido.
+
+Dentro de `ST_ACT_XX_BLINK`, el sistema gestiona una sub-máquina con dos sub-estados internos (`ON` y `OFF`). El paso de un sub-estado a otro está regido por un temporizador interno (`tick`). En cada iteración, el temporizador se decrementa continuo (`tick--`). 
+
+Cuando la variable alcanza su límite inferior (`[tick == DEL_BTN_XX_MIN]`), el actuador invierte su estado (pasando de `ON` a `OFF` o viceversa) y el temporizador se recarga automáticamente a su valor superior (`tick = DEL_BTN_XX_MAX`). Este ciclo se repite indefinidamente, generando la frecuencia de parpadeo deseada.
+
+El actuador permanecerá en este ciclo de intermitencia hasta que reciba una orden explícita para detenerse: el evento `EV_ACT_XX_OFF` lo llevará nuevamente al estado de reposo, mientras que `EV_ACT_XX_ON` lo dejará encendido de manera permanente.
+
 ### 3.2.4: Módulo de botones
 
-Modela el comportamiento de un pulsador mecanico. Permite filrar por
+Modela el comportamiento de un pulsador mecanico. Permite filtrar por
 software el ruido durante los cambios de estado del botón
 (_debouncing_). Aunque el botón es mecánico, se puede modelar otras
 entradas digitales con ruido de la misma manera.
+
+<p align="center">
+  <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
+</p>
+<p align="center">
+  <em>Figura 3.7: Máquina de estados de los botones.</em>
+</p>
+
+La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
+
+El sistema comienza en estado `ST_BTN_XX_UP`, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(`EV_BTN_XX_DOWN`), EL SISTEMA PASA AL ESTADO `ST_BTN_XX_FALLING` e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
+
+Mientras el sistema permanece en `ST_BTN-XX_FALLING`, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a `ST_BTN-XX_DOWN`. En ese momento se genera el evento `EV_SYS_BTN_XX_PRESSED`, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
+
+Cuando el usuario libera el botón (`EV_BTN_XX_UP`), el sistema pasa al estado `ST_BTN_XX_RISING`, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
+
+Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado `ST_BTN_XX_UP` y se genera el evento `EV_SYS_BTN_XX_RELEASED`, indicando al sistema que el botón fue liberado correctamente.
+
+---
+
 
 ### 3.2.5: Módulo de sistema
 
@@ -732,9 +796,6 @@ y si hay algun dato para enviar. En caso de haber un dato disponible del
 sensor, lo envía por UART al HM10, que se encarga de transmitirlo por
 bluetooth, y se muestra por el display
 
-| Nombre del elemento | Tipo | Funcionalidad |
-| ---------------------| ------| ---------------|
-<figcaption>Objetos y variables del módulo X.
 
 <p align="center">
   <img src="img/statechart_system.png" width="50%" alt="Máquina de estados del sistema">
@@ -744,41 +805,18 @@ bluetooth, y se muestra por el display
 </p>
 
 Como se puede observar en la maquina de estados del sistema, el mismo se encarga de controlar el funcionamiento general del dispositivo. Se gestionan el modo modo de funcionamiento como también la lectura de sensores y encendido o apagado de alarmas. 
-Cuenta con dos modos de funcionamiento: KID y ADULT, los cuales se seleccionan mediante el evento AV_SYS_BTN_MODE_PRESSED, correspondiente a la presión del botón de modo. Por default el sistema se inicializa en modo KID. El cambio de modo viene acompañado por el encendido del led correspondiente (ID_LED_KID O ID_LED_ADULT según el caso) asi como también del seteo de los parámetros correspondientes a ese modo. 
-Mediante el evento EV_SYS_SEN_READ se realiza la lectura de los sensores. Los datos obtenidos se muestran por display y además se envían a través de bluetoth.
+
+Cuenta con dos modos de funcionamiento: `KID` y `ADULT`, los cuales se seleccionan mediante el evento `AV_SYS_BTN_MODE_PRESSED`, correspondiente a la presión del botón de modo. Por default el sistema se inicializa en modo `KID`. El cambio de modo viene acompañado por el encendido del led correspondiente (`ID_LED_KID` O `ID_LED_ADULT` según el caso) asi como también del seteo de los parámetros correspondientes a ese modo. 
+
+Mediante el evento `EV_SYS_SEN_READ` se realiza la lectura de los sensores. Los datos obtenidos se muestran por display y además se envían a través de bluetoth.
+
 A partir de los datos medidos, el sistema evalúa distintas condiciones de riesgo. Si se detecta  una situación de apnea, se activa el buzzer y el led de alarma. Asimismo, si alguno de los parametros fisiologicos se encuantra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario. 
-Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento EV_SYS_BTN_ALARM_PRESSED, el cual apaga el LED de alarma y el Buzzer. 
 
-<p align="center">
-  <img src="img/statechart_sensor.png" width="50%" alt="Máquina de estados del sensor">
-</p>
-<p align="center">
-  <em>Figura 3.6: Máquina de estados del sensor.</em>
-</p>
+Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento `EV_SYS_BTN_ALARM_PRESSED`, el cual apaga el LED de alarma y el Buzzer.
 
-Inicialmente el sistema comienza en el estado ST_SEN_IDLE, en el cual el sensor se encuentra en resposo esperando que el usuario coloque el dedo sobbre el sensór. Cuando se detecta la presencia del dedo, se genera el evento EV_SEN_FINGER_IN, esto provoca la transición al estado ST_SEN_DETECTING, en este estado se inicia un tick que permite verificar que la señal del sensor sea estable antes de comenzar a medir. 
-Mientras el sistema permanece en ST_SEN_DETECTING, el temporizador se va decrementando. Si el dedo permanece colocado el tiempo mínimo requerido DEL_SEN_XX_MIN, el sistema pasa al estado ST_SEN_ACTIVE. En este estado el sensor realiza el procesamiento de la señal PPG con la función ppg_compute(). 
-Si durante el funcionamiento el usuario retira el dedo del sensor, se genera el evento EV_SEN_FINGER_OUT, provocando una transición al estado ST_SEN_LOSING. Si el dedo permanece fuera del sensor durante un tiempo establecido, el sistema vuelve a ST_SEN_IDLE, a la espera de una nueva medición. 
 
-<p align="center">
-  <img src="img/statechart_button.png" width="55%" alt="Máquina de estados de los botones">
-</p>
-<p align="center">
-  <em>Figura 3.7: Máquina de estados de los botones.</em>
-</p>
 
-La función principal de esta máquina de estados es detectar de forma segura la presión y liberación de los botones evitando lecturas incorrectas por rebotes mecánicos. 
-El sistema comienza en estado ST_BTN_XX_UP, el cual representa la condición en la cual el botón se encuentra sin presionar. Cuando se detecta una transición del botón hacia el estado presionado(EV_BTN_XX_DOWN), EL SISTEMA PASA AL ESTADO ST_BTN_XX_FALLING e inicia un tick. Dicho estado se utiliza para verificar que la presión del botón sea estable y no corresponda a un rebote. 
-Mientras el sistema permanece en ST_BTN-XX_FALLING, el temporizador se decrementa, si continua presionado durante un tiempo mínimo se considera que la presión fue válida y el sistema pasa a ST_BTN-XX_DOWN. En ese momento se genera el evento EV_SYS_BTN_XX_PRESSED, que es enviado al sistema principal para indicar que el botón fue efectivamente presionado.
-Cuando el usuario libera el botón (EV_BTN_XX_UP), el sistema pasa al estado ST_BTN_XX_RISING, donde nuevamente se utiliza el temporizador para confirmar que la liberación del botón sea estable.
-Si el botón permanece liberado durante el tiempo mínimo establecido, el sistema retorna al estado ST_BTN_XX_UP y se genera el evento EV_SYS_BTN_XX_RELEASED, indicando al sistema que el botón fue liberado correctamente.
-
-<p align="center">
-  <img src="img/statechart_actuator.png" width="45%" alt="Máquina de estados del actuador">
-</p>
-<p align="center">
-  <em>Figura 3.8. Máquina de estados del actuador.</em>
-</p>
+---
 
 ## 3.2.3 Diseño de la placa
 
@@ -804,10 +842,6 @@ cuenta el espaciado de los agujeros.
   <em>Figura 3.11: Previsualización 3D de la placa.</em>
 </p>
 
-Se cuenta con espacio suficiente para agregar una batería para hacer al
-dispositivo portable. Considerando que solo se precisa el integrado y el
-uso de una pantalla con menor tamaño y similar o mejor resolución queda
-margen para un modelo más compacto.
 
 
 # 4: Ensayos y resultados
@@ -1073,27 +1107,37 @@ funcionales definidos previamente.
 
 ## 4.4: Cumplimiento de requisitos 
 
+| Estado | Descripción |
+|---|---|
+| 🟢 | Ya implementado |
+| 🔴 | No implementado |
+
 
 | Grupo | ID | Requerimiento Funcional | Descripción | Cumplido |
 |------|----|------------------------|-------------|----------|
-| Adquisición | 1.1 | Adquisición de señales | Capturar señales ópticas ROJO/IR del MAX30102 vía I²C. | ✔ |
-| Adquisición | 1.2 | Lectura periódica | Obtener muestras desde la FIFO del sensor. | ✔ |
-| Adquisición | 1.3 | Análisis de variación | Detectar variaciones relevantes para el cálculo de SpO₂ y respiración. | ✔ |
-| Procesamiento | 2.1 | Filtrado digital | Aplicar filtrado digital para reducir ruido en la señal PPG. | ✔ |
-| Procesamiento | 2.2 | Cálculo de SpO₂ | Calcular SpO₂ mediante el método del ratio R. | ✔ |
-| Procesamiento | 2.3 | Cálculo de respiración | Estimar la frecuencia respiratoria mediante análisis de envolvente o variaciones de línea base. | ✔ |
-| Procesamiento | 2.4 | Empaquetado de datos | Generar paquetes de datos con SpO₂, respiración y estado del sistema. | ✔ |
-| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando se detecta apnea. | ✔ |
-| Indicadores | 3.2 | Indicadores LED | Mostrar estados (crítico, normal, error) mediante LEDs. | ✔ |
-| Comunicación | 4.1 | Bluetooth | Transmitir datos vía HM-10 utilizando UART. | ✔ |
-| Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. | ✔ |
-| Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. | ✔ |
-| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. | ✔ |
-| Alimentación | 5.1 | Alimentación | Alimentación del sistema mediante conexión USB. | ✔ |
-| Alimentación | 5.2 | Bajo consumo | Entrar en modo Sleep cuando no hay actividad. | ✔ |
-| Alimentación | 5.3 | Reactivación | Retomar actividad ante interrupciones o comandos. | ✔ |
+| Adquisición | 1.1 | Adquisición de señales | Capturar señales ópticas ROJO/IR del MAX30102 vía I²C. | 🟢 |
+| Adquisición | 1.2 | Lectura periódica | Obtener muestras desde la FIFO del sensor. | 🟢 |
+| Adquisición | 1.3 | Análisis de variación | Detectar variaciones relevantes para el cálculo de SpO₂ y respiración. | 🟢 |
+| Procesamiento | 2.1 | Filtrado digital | Aplicar filtrado digital para reducir ruido en la señal PPG. | 🟢 |
+| Procesamiento | 2.2 | Cálculo de SpO₂ | Calcular SpO₂ mediante el método del ratio R. | 🟢 |
+| Procesamiento | 2.3 | Cálculo de respiración | Estimar la frecuencia respiratoria mediante análisis de envolvente o variaciones de línea base. | 🟢 |
+| Procesamiento | 2.4 | Empaquetado de datos | Generar paquetes de datos con SpO₂, respiración y estado del sistema. | 🟢 |
+| Indicadores | 3.1 | Alarma crítica | Activar alarma sonora cuando se detecta apnea. | 🟢 |
+| Indicadores | 3.2 | Indicadores LED | Mostrar estados (crítico, normal, error) mediante LEDs. | 🟢 |
+| Comunicación | 4.1 | Bluetooth | Transmitir datos vía HM-10 utilizando UART. | 🟢 |
+| Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. | 🟢 |
+| Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. | 🟢 |
+| Comunicación | 4.4 | Elección de umbrales | Recibir umbrales y parámetros desde la aplicación. | 🔴 |
+| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. | 🟢 |
+| Memoria | 5.1 | Guardar configuración | Almacenar umbrales y parámetros en EEPROM. | 🔴 |
+| Memoria | 5.2 | 	Restaurar valores |Recuperar valores predeterminados si hay error de memoria. | 🔴 |
+| Alimentación | 6.1 | Alimentación | Alimentación del sistema mediante conexión USB. | 🟢 |
+| Alimentación | 6.2 | Bajo consumo | Entrar en modo Sleep cuando no hay actividad. | 🔴 |
+| Alimentación | 6.3 | Reactivación | Retomar actividad ante interrupciones o comandos. | 🟢 |
 
 **Tabla 4.4. Requerimientos funcionales del sistema.**
+
+Los items no implementados ya fueron justificados anteriorimente en nuestro informe de avance.
 
 ## 4.5 Medición y análisis de consumo
 
