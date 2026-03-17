@@ -1396,7 +1396,7 @@ A partir de los resultados obtenidos y la arquitectura planteada, se identifican
 - **Autonomía y miniaturización:** Aprovechar el espacio disponible en el diseño actual de la PCB para desarrollar un modelo más compacto mediante componentes de montaje superficial (SMD) e integrar un circuito de gestión de batería (BMS) con una celda de litio, haciendo al dispositivo verdaderamente portátil.
 - **Almacenamiento local:** Incorporar un módulo para tarjeta micro SD o aprovechar la memoria flash interna para registrar un histórico local de las mediciones. Esto evitaría la pérdida de datos durante la noche frente a posibles desconexiones del módulo Bluetooth.
 - **Desarrollo de aplicación nativa:** Reemplazar el uso de terminales seriales genéricas por una aplicación móvil dedicada que reciba los paquetes de datos, genere reportes históricos de los episodios de apnea y ofrezca una interfaz gráfica más amigable para el usuario final.
--**Diseño de pinza sensitiva** Incorporar el sensor óptico en una pinza o broche independiente del nucleo principal, para que el usuario pueda permanecer alejado del monitor y descansar de forma cómoda y natural.
+- **Diseño de pinza sensitiva** Incorporar el sensor óptico en una pinza o broche independiente del nucleo principal, para que el usuario pueda permanecer alejado del monitor y descansar de forma cómoda y natural.
 
 ---
 
