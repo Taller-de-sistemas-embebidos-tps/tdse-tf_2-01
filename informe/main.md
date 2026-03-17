@@ -337,7 +337,7 @@ el descanso.
 | Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. |
 | Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. |
 | Comunicación | 4.4 | Elección de umbrales | Recibir umbrales y parámetros desde la aplicación. |
-| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. |
+| Comunicación | 4.5 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. |
 | Memoria | 5.1 | Guardar configuración | Almacenar umbrales y parámetros en EEPROM. |
 | Memoria | 5.2 | Restaurar valores | Recuperar valores predeterminados si hay error de memoria. |
 | Alimentación | 6.1 | Alimentación | Alimentación del sistema mediante conexión USB. |
@@ -484,7 +484,7 @@ Con respecto al sensor **MAX30102**, fue elegido debido a la recomendación de e
 ### 3.1.3 Conexiones del sistema
 
 A continuación se muestra un diagrama de bloques del Hardware del equipo
-y se explicá las conexiones para cada uno de los componentes.
+y se explican las conexiones para cada uno de los componentes.
 
 
 <p align="center">
@@ -817,7 +817,7 @@ Si el botón permanece liberado durante el tiempo mínimo establecido, el sistem
 </p>
 
 Se observa en la figura 3.5, que _task_system_ se encarga de controlar el funcionamiento general del dispositivo.
-Gestiona el modo de funcionamiento, la lectura de sensores, la persentación de la información, y el encendido o apagado de la alarma.
+Gestiona el modo de funcionamiento, la lectura de sensores, la presentación de la información, y el encendido o apagado de la alarma.
 
 Cuenta con dos modos de funcionamiento: `KID` y `ADULT`, entre los cuales se alterna mediante un pulsador que desencadena el evento `EV_SYS_BTN_MODE_PRESSED`.
 Por defecto el sistema se inicializa en modo `KID`.
@@ -830,8 +830,8 @@ Por el contrario, si detecta un evento de botón presionado lo redirige al actua
 
 Si el evento es `EV_SYS_SEN_READ` se realiza la lectura de los sensores.
 Los datos obtenidos se muestran por pantalla y se envían por _UART_ al módulo bluetooth.
-A partir de los parametros correspondientes al modo seleccionado, y los datos medidos, el sistema evalúa distintas condiciones de riesgo.
-Si se detecta que alguno de los parametros fisiologicos se encuentra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario.
+A partir de los parámetros correspondientes al modo seleccionado, y los datos medidos, el sistema evalúa distintas condiciones de riesgo.
+Si se detecta que alguno de los parámetros fisiológicos se encuentra fuera de los valores normales el sistema también enciende el LED de alarma para advertir al usuario.
 Además, si se determina que ocurre una situación de apnea, se activa el buzzer.
 
 Finalmente, el usuario puede desactivar manualmente la alarma mediante el botón correspondiente, generando el evento `EV_SYS_BTN_ALARM_PRESSED`, el cual apaga el LED de alarma y el Buzzer.
@@ -897,7 +897,7 @@ El sistema monitorea constantemente el valor de $SpO_2$ para identificar eventos
 
 ---
 
-## 3.2.3 Diseño de la placa
+## 3.3 Diseño de la placa
 
 Se utilizó *KiCAD* durante la etapa de diseño, para preparar la pcb del
 dispositivo.
@@ -1064,7 +1064,7 @@ información.
 
 Las pruebas se realizaron colocando el sensor óptico en el dedo del
 usuario, permitiendo la adquisición de las señales infrarroja y roja
-necesarias para los distintos calculos. El firmware ejecutó de manera
+necesarias para los distintos cálculos. El firmware ejecutó de manera
 periódica las tareas de lectura del sensor, filtrado de la señal,
 cálculo de parámetros fisiológicos y transmisión de los datos obtenidos.
 
@@ -1075,7 +1075,7 @@ irregularidades en el patrón respiratorio y/o cardiaco.
 
 ### 4.2.2 Resultados obtenidos
 
-Durante los ensayos se registraron los valores de $SpO_{2}$ y demas parametros estimados por el sistema. La [Tabla 4.2](#tabla-resultados-prueba)
+Durante los ensayos se registraron los valores de $SpO_{2}$ y demas parámetros estimados por el sistema. La [Tabla 4.2](#tabla-resultados-prueba)
 presenta un conjunto representativo de las mediciones obtenidas.
 
 **Tabla 4.2. Pruebas funcionales de firmware.**
@@ -1137,7 +1137,7 @@ presenta un conjunto representativo de las mediciones obtenidas.
   <img src="img/parameters.jpeg" width="39%" alt="Parametros en debugger">
 </p>
 <p align="center">
-  <em>Figura 4.3: Parametros fisiológicos vistos desde el debugger.</em>
+  <em>Figura 4.3: Parámetros fisiológicos vistos desde el debugger.</em>
 </p>
 
 <p align="center">
@@ -1151,7 +1151,7 @@ presenta un conjunto representativo de las mediciones obtenidas.
 
 Los resultados obtenidos durante los ensayos muestran que el sistema es
 capaz de adquirir y procesar correctamente las señales provenientes del
-sensor óptico, permitiendo estimar los datos fisiologicos deseados.
+sensor óptico, permitiendo estimar los datos fisiológicos deseados.
 
 Además, se verificó el correcto funcionamiento del sistema de
 comunicación y de los mecanismos de alerta implementados. En general, el
@@ -1210,7 +1210,7 @@ funcionales definidos previamente.
 | Comunicación | 4.2 | Envío de parámetros | Enviar SpO₂, respiración y estado del paciente a la aplicación. | 🟢 |
 | Comunicación | 4.3 | Registro de eventos | Informar alarmas, desconexiones o estados especiales. | 🟢 |
 | Comunicación | 4.4 | Elección de umbrales | Recibir umbrales y parámetros desde la aplicación. | 🔴 |
-| Comunicación | 4.4 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. | 🟢 |
+| Comunicación | 4.5 | Display | Mostrar parámetros fisiológicos relevantes en pantalla. | 🟢 |
 | Memoria | 5.1 | Guardar configuración | Almacenar umbrales y parámetros en EEPROM. | 🔴 |
 | Memoria | 5.2 | 	Restaurar valores |Recuperar valores predeterminados si hay error de memoria. | 🔴 |
 | Alimentación | 6.1 | Alimentación | Alimentación del sistema mediante conexión USB. | 🟢 |
@@ -1218,7 +1218,7 @@ funcionales definidos previamente.
 | Alimentación | 6.3 | Reactivación | Retomar actividad ante interrupciones o comandos. | 🟢 |
 
 
-Los items no implementados ya fueron justificados anteriorimente en nuestro informe de avance.
+Los items no implementados ya fueron justificados anteriormente en nuestro informe de avance.
 
 ## 4.5 Medición y análisis de consumo
 
@@ -1261,7 +1261,7 @@ Se realizaron mediciones del consumo del sistema bajo diferentes condiciones de 
 | Modo de operación | I pico @5 V [mA] | P pico @5 V [mW] | Observaciones |
 |------------------|----------------|---------------|--------------|
 | Sistema esperando dedo | 10,8 | 54 | Menor consumo, no se procesan datos |
-| Sistema sensanso datos | 28,6 | 143 | |
+| Sistema sensando datos | 28,6 | 143 | |
 | Sistema transmitiendo datos via Bluetooth | 32,4| 162 | |
 | Sistema en estado de alarma (buzzer + LED) | 42,8| 214 | Mayor consumo, proceso de datos y actuadores |
 
