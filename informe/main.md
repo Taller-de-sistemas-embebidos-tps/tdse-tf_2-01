@@ -94,6 +94,11 @@ Throughout this report, the reader will find a detailed analysis of the requirem
     - [3.2.3 Módulo Actuador](#323-módulo-actuador)
     - [3.2.4 Módulo de botones](#324-módulo-botones)
     - [3.2.5 Módulo de sistema](#325-módulo-sistema)
+    - [3.2.6 Comm (Bluetooth)](#326-comm-bluetooth)
+    - [3.2.7 Display](#327-display)
+    - [3.2.8 Procesamiento de la señal](#327-procesamiento-de-la-señal)
+
+
   - [3.3 Diseño de la placa](#33-diseño-de-la-placa)
 
 - [4. Ensayos y resultados](#4-ensayos-y-resultados)
@@ -845,6 +850,43 @@ Este módulo abstrae del uso de la _HAL_, la transmisión y recepción de datos 
 Modela el uso de un display LCD de 16x2 en la modalidad de 4 pines.
 Permite posicionar un cursor en cualquier parte de la pantalla y escribir una cadenas de texto.
 Una función permite formatear la estructura de datos del sensor obtenidos por el sistema al tamaño del LCD utilizado en el proyecto.
+
+### 3.2.8 Procesamiento de la señal
+
+El objetivo principal de este módulo es procesar las señales de fotopletismografía (PPG) provenientes de leds rojos e infrarrojos para extraer constantes vitales ($HR$, $RR$, $SpO_2$) y detectar eventos de apnea mediante el análisis de la caída en la saturación de oxígeno.
+
+#### Filtrado y Acondicionamiento de Señal
+El sistema recibe muestras crudas de los sensores y las somete a dos etapas de filtrado digital en tiempo real:
+* **Filtro de Banda Pasante:** Utilizado para la señal de ritmo cardíaco. Elimina la componente continua ($DC$) mediante un filtro de media móvil exponencial y suaviza el ruido de alta frecuencia para resaltar los pulsos arteriales.
+* **Filtro Respiratorio:** Un filtro específico con coeficientes `RESP_HP_ALPHA` y `RESP_LP_ALPHA` diseñado para aislar la variación de baja frecuencia en la señal PPG causada por la modulación respiratoria.
+
+#### Estimación de Frecuencia Cardíaca ($HR$)
+La función `compute_hr` analiza el buffer de la señal infrarroja filtrada: 
+* Calcula un **umbral dinámico** basado en el valor cuadrático medio ($RMS$) de la ventana actual.
+* Detecta picos locales que superen dicho umbral y respeten un tiempo mínimo entre latidos (basado en `PPG_FS_HZ`).
+* Calcula el promedio de los periodos entre picos para devolver un valor estable en pulsaciones por minuto (BPM).
+
+#### Estimación de Frecuencia Respiratoria ($RR$)
+A diferencia del ritmo cardíaco, la función `compute_rr` utiliza un algoritmo de **histéresis**: 
+* Busca picos y valles de forma alternada, ignorando pequeñas fluctuaciones de ruido que no superen el valor de `histeresis`.
+* Mide el tiempo transcurrido entre picos globales para determinar la frecuencia respiratoria en respiraciones por minuto (RPM), aplicando un suavizado exponencial para evitar saltos bruscos en la lectura.
+
+#### Cálculo de Saturación de Oxígeno ($SpO_2$)
+El cálculo se basa en el método de "Ratio de Ratios" ($R$), comparando las componentes de corriente alterna ($AC$) y continua ($DC$) de ambas longitudes de onda:
+
+$$R = \frac{\frac{RMS(AC_{RED})}{DC_{RED}}}{\frac{RMS(AC_{IR})}{DC_{IR}}} \tag{1}$$
+
+Posteriormente, se utiliza la aproximación lineal para determinar la saturación final:
+
+$$SpO_{2} \approx 110 - 25 \cdot R \tag{2}$$
+
+#### Lógica de Detección de Apnea
+El sistema monitorea constantemente el valor de $SpO_2$ para identificar eventos respiratorios críticos:
+
+1.  **Establecimiento de Baseline:** Mientras el $SpO_2$ se mantiene en niveles normales (>94%), el sistema actualiza un promedio lento denominado `spo2_baseline`.
+2.  **Detección de Caída:** Si el valor actual cae por debajo del umbral de seguridad definido por `SPO2_DROP_THRESHOLD`, el sistema inicia un contador de muestras.
+3.  **Confirmación de Evento:** Si la saturación permanece por debajo del umbral durante un tiempo superior a `APNEA_TIME_SAMPLES`, la bandera `apnea_out` se activa para alertar sobre un posible episodio de apnea.
+
 
 ---
 
