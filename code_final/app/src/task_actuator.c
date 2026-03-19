@@ -217,6 +217,8 @@ void task_actuator_statechart(void)
 						// p_task_actuator_dta->tick = DEL_ACT_PUL;
 						break;
 
+					default:
+						break;
 				}
 				break;
 
@@ -239,6 +241,8 @@ void task_actuator_statechart(void)
 						// p_task_actuator_dta->tick = DEL_ACT_PUL;
 						break;
 
+					default:
+						break;
 				}
 				break;
 
@@ -263,6 +267,9 @@ void task_actuator_statechart(void)
 							(p_task_actuator_dta->tick)--;
 						}
 						break;
+
+					default:
+						break;
 				}
 				break;
 
@@ -286,6 +293,9 @@ void task_actuator_statechart(void)
 						} else {
 							(p_task_actuator_dta->tick)--;
 						}
+						break;
+
+					default:
 						break;
 				}
 				break;
