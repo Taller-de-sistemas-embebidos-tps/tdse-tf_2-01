@@ -54,32 +54,31 @@
 #define G_TASK_ACT_CNT_INIT			0ul
 #define G_TASK_ACT_TICK_CNT_INI		0ul
 
-#define DEL_ACT_PUL				250ul
 #define DEL_ACT_BLI				500ul
 #define DEL_ACT_MIN				0ul
 
 /********************** internal data declaration ****************************/
 const task_actuator_cfg_t task_actuator_cfg_list[] = {
 	{ID_LED_BLUETOOTH,  LED_BL_GPIO_Port,  LED_BL_Pin, GPIO_PIN_SET, 
-		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
+		GPIO_PIN_RESET,  DEL_ACT_BLI},
 	{ID_LED_KID,  LED_KID_GPIO_Port,  LED_KID_Pin, GPIO_PIN_SET, 
-		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
+		GPIO_PIN_RESET,  DEL_ACT_BLI},
 	{ID_LED_ADULT,  LED_ADULT_GPIO_Port,  LED_ADULT_Pin, GPIO_PIN_SET, 
-		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
+		GPIO_PIN_RESET,  DEL_ACT_BLI},
 	{ID_LED_ALARM,  LED_ALARM_GPIO_Port,  LED_ALARM_Pin, GPIO_PIN_SET, 
-		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
+		GPIO_PIN_RESET,  DEL_ACT_BLI},
 	{ID_BUZZER,  BUZZER_GPIO_Port,  BUZZER_Pin, GPIO_PIN_SET, 
-		GPIO_PIN_RESET,  DEL_ACT_BLI, DEL_ACT_PUL},
+		GPIO_PIN_RESET,  DEL_ACT_BLI},
 };
 
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_cfg_list)/sizeof(task_actuator_cfg_t))
 
 task_actuator_dta_t task_actuator_dta_list[] = {
-	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
-	{EV_ACT_OFF, ST_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, 0},
+	{EV_ACT_OFF, ST_ACT_OFF, 0},
 };
 
 #define ACTUATOR_DTA_QTY	(sizeof(task_actuator_dta_list)/sizeof(task_actuator_dta_t))
@@ -103,7 +102,6 @@ void task_actuator_init(void *parameters)
 	task_actuator_dta_t *p_task_actuator_dta;
 	task_actuator_st_t state;
 	task_actuator_ev_t event;
-	bool b_event;
 
 	/* Print out: Task Initialized */
 	LOGGER_INFO(" ");
@@ -127,15 +125,11 @@ void task_actuator_init(void *parameters)
 		event = EV_ACT_OFF;
 		p_task_actuator_dta->event = event;
 
-		b_event = false;
-		// p_task_actuator_dta->flag = b_event;
-
 		LOGGER_INFO(" ");
-		LOGGER_INFO("   %s = %lu   %s = %lu   %s = %lu   %s = %s",
+		LOGGER_INFO("   %s = %lu   %s = %lu   %s = %lu",
 					 GET_NAME(index), index,
 					 GET_NAME(state), (uint32_t)state,
-					 GET_NAME(event), (uint32_t)event,
-					 GET_NAME(b_event), (b_event ? "true" : "false"));
+					 GET_NAME(event), (uint32_t)event);
 
 		HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->off);
 	}
@@ -211,12 +205,6 @@ void task_actuator_statechart(void)
 						handle_led(p_task_actuator_cfg, false);
 						break;
 
-					case EV_ACT_PULSE:
-						// p_task_actuator_dta->state = ST_ACT_PULSE;
-						// handle_led(p_task_actuator_cfg, true);
-						// p_task_actuator_dta->tick = DEL_ACT_PUL;
-						break;
-
 					default:
 						break;
 				}
@@ -233,12 +221,6 @@ void task_actuator_statechart(void)
 						p_task_actuator_dta->tick = DEL_ACT_BLI;
 						p_task_actuator_dta->state = ST_ACT_BLINK_OFF;
 						handle_led(p_task_actuator_cfg, false);
-						break;
-
-					case EV_ACT_PULSE:
-						// p_task_actuator_dta->state = ST_ACT_PULSE;
-						// handle_led(p_task_actuator_cfg, true);
-						// p_task_actuator_dta->tick = DEL_ACT_PUL;
 						break;
 
 					default:
@@ -300,21 +282,11 @@ void task_actuator_statechart(void)
 				}
 				break;
 
-			case ST_ACT_PULSE:
-				if (p_task_actuator_dta->tick == 0) {
-					p_task_actuator_dta->state = ST_ACT_OFF;
-					p_task_actuator_dta->tick = DEL_ACT_PUL;
-				} else {
-					(p_task_actuator_dta->tick)--;
-				}
-				break;
-
 			default:
 
 				p_task_actuator_dta->tick  = DEL_ACT_MIN;
 				p_task_actuator_dta->state = ST_ACT_OFF;
 				p_task_actuator_dta->event = EV_ACT_OFF;
-				// p_task_actuator_dta->flag = false;
 
 				break;
 		}
