@@ -58,7 +58,6 @@ extern void put_event_task_system(task_system_ev_t event);
 extern task_system_ev_t get_event_task_system(void);
 extern bool any_event_task_system(void);
 extern void put_data_task_system(task_sensor_results_dta_t data);
-extern bool any_sensor_results(void);
 extern task_sensor_results_dta_t get_sensor_results();
 
 /********************** End of CPP guard *************************************/

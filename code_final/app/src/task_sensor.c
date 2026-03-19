@@ -270,6 +270,7 @@ void task_sensor_statechart(void)
 					data.timestamp = g_task_sensor_tick_cnt;
 					data.apnea = data2->apnea;
 					put_data_task_system(data);
+					put_event_task_system(EV_SYS_SEN_READ);
 
 				} else {
 					(p_task_sensor_dta->tick)--;

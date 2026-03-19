@@ -93,20 +93,19 @@ const parameters_t adult_parameters = {
 };
 
 task_system_dta_t task_system_dta =	{
-	ST_SYS_MAIN,
-	EV_SYS_BTN_PAIRING_PRESSED,
-	ID_KID,
-	false,
-	800,
-	kid_parameters,
+	.state = ST_SYS_MAIN,
+	.event = EV_SYS_BTN_PAIRING_PRESSED,
+	.mode = ID_KID,
+	.tick = DEL_SYS_MAX,
+	.parameters = kid_parameters
 };
-
-task_system_cfg_t task_system_cfg = { 100, 200 };
-
-#define SYSTEM_DTA_QTY	(sizeof(task_system_dta)/sizeof(task_system_dta_t))
 
 /********************** internal functions declaration ***********************/
 void task_system_statechart(void);
+
+void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data);
+
+void print_to_lcd(char formatted_data[2][17]);
 
 /********************** internal data definition *****************************/
 const char *p_task_system 		= "Task System (System Statechart)";
@@ -121,8 +120,6 @@ void task_system_init(void *parameters)
 {
 	task_system_dta_t 	*p_task_system_dta;
 	task_system_st_t	state;
-	task_system_ev_t	event;
-	bool b_event;
 
 	/* Print out: Task Initialized */
 	//LOGGER_INFO(" ");
@@ -142,12 +139,6 @@ void task_system_init(void *parameters)
 	state = ST_SYS_MAIN;
 	p_task_system_dta->state = state;
 
-	event = EV_SYS_BTN_PAIRING_PRESSED;
-	p_task_system_dta->event = event;
-
-	b_event = false;
-	// p_task_system_dta->flag = b_event;
-
 	//LOGGER_INFO(" ");
 	//LOGGER_INFO("   %s = %lu   %s = %lu   %s = %s",
 	//			 GET_NAME(state), (uint32_t)state,
@@ -160,13 +151,6 @@ void task_system_init(void *parameters)
 	displayStringWrite("Sleep Centinel");
 
 	hm10_init(&huart2);
-	/*uint8_t buffer[10] = {0};
-	if (hm10_receive_buffer(buffer, 2, 200) == HAL_OK) {
-	    LOGGER_INFO("HM10 responde: %s", buffer);
-	} else {
-	    LOGGER_INFO("HM10 no responde: %s", buffer);
-	}*/
-
 }
 
 void task_system_update(void *parameters)
@@ -206,51 +190,16 @@ void task_system_update(void *parameters)
 		__asm("CPSIE i");	/* enable interrupts */
     }
 }
-void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data);
 
 void task_system_statechart(void)
 {
 	task_system_dta_t *p_task_system_dta;
-	task_system_cfg_t *p_task_system_cfg;
 
-	/* Update Task System Data Pointer */
 	p_task_system_dta = &task_system_dta;
-	p_task_system_cfg = &task_system_cfg;
-
-
-	if (any_sensor_results()) {
-			static char lcd_text[2][17];
-
-			task_sensor_results_dta_t result = get_sensor_results();
-			format_to_lcd_string(lcd_text, result);
-
-			displayCharPositionWrite(0, 0);
-			displayStringWrite(lcd_text[0]);
-			displayCharPositionWrite(0, 1);
-			displayStringWrite(lcd_text[1]);
-
-			HAL_UART_Transmit_IT(&huart1, (uint8_t *)lcd_text, 17*2);
-
-			parameters_t params = p_task_system_dta->parameters;
-		if (result.spo2 < params.spo2)
-			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		if (result.heart_rate < params.min_hr || result.heart_rate > params.max_hr) {
-			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		}
-		if (result.respiratory_rate < params.min_rr || result.respiratory_rate > params.max_rr)
-		{
-			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-		}
-		if (result.apnea == true) {
-			put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
-			put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
-		}
-	}
 
 
 	if (true == any_event_task_system())
 	{
-		// p_task_system_dta->flag = true;
 		p_task_system_dta->event = get_event_task_system();
 
 
@@ -284,30 +233,45 @@ void task_system_statechart(void)
 					case EV_SYS_BTN_ALARM_PRESSED:
 						put_event_task_actuator(EV_ACT_OFF, ID_LED_ALARM);
 						put_event_task_actuator(EV_ACT_OFF, ID_BUZZER);
-						//LOGGER_INFO("PRENDIENDO_LA_ALARMA");
-						// displayCharPositionWrite(0, 1);
-						// displayStringWrite("ALARMA");
+						//LOGGER_INFO("Apagando la alarma");
 						break;
 
 					case EV_SYS_BTN_PAIRING_PRESSED:
 						put_event_task_actuator(EV_ACT_BLINK, ID_LED_BLUETOOTH);
-						// displayStringWrite("PAIR");
+						break;
+
+					case EV_SYS_SEN_READ:
+						static char lcd_text[2][17];
+
+						task_sensor_results_dta_t result = get_sensor_results();
+						format_to_lcd_string(lcd_text, result);
+						print_to_lcd(lcd_text);
+						hm10_send_data((uint8_t *)lcd_text, 17*2);
+
+						parameters_t params = p_task_system_dta->parameters;
+						if (
+							result.spo2 < params.spo2 ||
+							result.heart_rate < params.min_hr || result.heart_rate > params.max_hr ||
+							result.respiratory_rate < params.min_rr || result.respiratory_rate > params.max_rr
+						) {
+							put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+						}
+
+						if (result.apnea == true) {
+							put_event_task_actuator(EV_ACT_ON, ID_LED_ALARM);
+							put_event_task_actuator(EV_ACT_ON, ID_BUZZER);
+						}
 						break;
 
 					default:
-						//LOGGER_INFO("NO ESTOY EN NINGUN CASO DEL MAIN");
-						// displayStringWrite("NONE");
 						break;
 				}
 
 				break;
 
 			default:
-
-				// p_task_system_dta->tick  = DEL_SYS_MIN;
-				// p_task_system_dta->state = ST_SYS_IDLE;
+				p_task_system_dta->state = ST_SYS_MAIN;
 				// p_task_system_dta->event = EV_SYS_IDLE;
-				// p_task_system_dta->flag = false;
 				break;
 		}
 	}
@@ -365,6 +329,13 @@ void format_to_lcd_string(char out[2][17], task_sensor_results_dta_t data)
     out[1][15] = '0' + (data.respiratory_rate % 10);
 
     out[1][16] = '\0';
+}
+
+void print_to_lcd(char formatted_data[2][17]) {
+	displayCharPositionWrite(0, 0);
+	displayStringWrite(formatted_data[0]);
+	displayCharPositionWrite(0, 1);
+	displayStringWrite(formatted_data[1]);
 }
 
 /********************** end of file ******************************************/

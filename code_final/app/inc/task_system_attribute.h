@@ -52,6 +52,7 @@ extern "C" {
 /* Events to excite Task System */
 typedef enum task_system_ev {
 	EV_SYS_IDLE,
+	EV_SYS_SEN_READ,
     EV_SYS_BTN_MODE_PRESSED,
     EV_SYS_BTN_MODE_RELEASED,
     EV_SYS_BTN_PAIRING_PRESSED,
@@ -79,17 +80,10 @@ typedef struct {
     uint8_t min_rr;
 } parameters_t;
 
-
-typedef struct {
-    uint32_t kid_parameter;
-    uint32_t adult_parameter;
-} task_system_cfg_t;
-
 typedef struct task_system_dta {
     task_system_st_t state;
     task_system_ev_t event;
     task_system_mode_id_t mode;
-    bool bluetooth_connected;
     uint32_t tick;
     parameters_t parameters;
 } task_system_dta_t;
