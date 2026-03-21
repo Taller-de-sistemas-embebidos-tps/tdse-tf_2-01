@@ -90,9 +90,6 @@ La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
 
 # Índice
 
-
-# Índice
-
 - [Sección 1. Introducción general](#sección-1-introducción-general)
   - [1.1 Planteamiento y justificación](#11-planteamiento-y-justificación)
   - [1.2 Objetivo y proposito](#12-objetivo-y-proposito)
