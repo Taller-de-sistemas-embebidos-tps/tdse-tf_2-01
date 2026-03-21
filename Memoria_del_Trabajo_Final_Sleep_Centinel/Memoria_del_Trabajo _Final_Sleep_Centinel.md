@@ -81,6 +81,7 @@ La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
 | 1.1 | Entrega N°1 | 17/03/2026 |
 | 1.2 | Correcciones según devolución de primer entrega| 19/03/2026 |
 | 1.3 | Entrega N°2 | 19/03/2026 |
+| 1.4 | Correcciones según devolución de segunda entrega | 21/03/2026 |
 
 
 
@@ -157,6 +158,8 @@ La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
 - [Sección 5. Conclusiones](#sección-5-conclusiones)
   - [5.1 Resultados](#51-resultados)
   - [5.2 Próximos pasos](#52-próximos-pasos)
+
+- [Sección 6: Uso de herramientas de IA](#sección-6-uso-de-herramientas-de-ia)
 
 - [Referencias](#referencias)
 - [Apéndice A. Video](#apéndice-a-video)
@@ -544,9 +547,9 @@ Las conexiones entre el microcontrolador y el display se detallan en la **Tabla 
 | PB14   | D7      |
 | GND    | K       |
 
-El pin A se conecta a 5 V a través de una resistencia de $1 k\Omega$
+El pin A se conecta a 5 V a través de una resistencia de $1k$ $\Omega$
 mientras que el pin _Vo_ se conecta a _5V_ y _GND_ a través de un
-potenciometro de $100k\Omega$.
+potenciometro de $100k$ $\Omega$.
 
 ### Sensor MAX30102
 
@@ -671,13 +674,13 @@ El presupuesto estimado del hardware se resume en la **Tabla 3.10**.
 
 | Componente   | Costo [ARS] |
 | --------------| -------|
-| MAX30102     |   6239    |
-| HM10         |    6630   |
-| Display      |     7200  |
-| Resistencias |     70  |
-| LEDs         |     150  |
-| Buzzer       |      1500 |
-| Botones      |       1100 |
+| MAX30102     | 6239 |
+| HM10         | 6630 |
+| Display      | 7200 |
+| Resistencias | 70 |
+| LEDs         | 150 |
+| Buzzer       | 1500 |
+| Botones      | 1100 |
 
 <sub>*Valores aproximados.</sub>
 
@@ -1456,14 +1459,6 @@ Adicionalmente, se comprobó la robustez de la arquitectura de firmware basada e
 
 Los enlaces de comunicación (I²C para el sensor y UART para el módulo BLE) operaron de manera estable durante los ensayos. Esto garantizó la fluidez en la visualización de los parámetros en tiempo real, tanto en el display LCD como en el dispositivo móvil, asegurando a su vez la respuesta oportuna del sistema de alarmas locales ante la detección de anomalías o desaturaciones.
 
-Por último, cabe destacar cómo la asistencia de herramientas de Inteligencia Artificial (IA) ayudó en diversos aspectos del desarrollo:
-
-- Asistencia en la redacción y depuración de código.
-- Corrección de ortografía, gramática y estilo del documento.
-- Generación de recursos visuales (imágenes y videos).
-- Asistencia en el diseño y validación de la lógica de las máquinas de estado.
-- Asistencia en el uso de herramientas de control de versiones (Git y GitHub)
-
 ## 5.2 Próximos pasos
 
 A partir de los resultados obtenidos y la arquitectura planteada, se identifican diversas oportunidades de mejora para futuras iteraciones del proyecto:
@@ -1473,6 +1468,18 @@ A partir de los resultados obtenidos y la arquitectura planteada, se identifican
 - **Almacenamiento local:** Incorporar un módulo para tarjeta micro SD o aprovechar la memoria flash interna para registrar un histórico local de las mediciones. Esto evitaría la pérdida de datos durante la noche frente a posibles desconexiones del módulo Bluetooth.
 - **Desarrollo de aplicación nativa:** Reemplazar el uso de terminales seriales genéricas por una aplicación móvil dedicada que reciba los paquetes de datos, genere reportes históricos de los episodios de apnea y ofrezca una interfaz gráfica más amigable para el usuario final.
 - **Diseño de pinza sensitiva:** Incorporar el sensor óptico en una pinza o broche independiente del nucleo principal, para que el usuario pueda permanecer alejado del monitor y descansar de forma cómoda y natural.
+
+---
+
+# Sección 6: Uso de herramientas de IA
+
+Por último, cabe destacar cómo la asistencia de herramientas de Inteligencia Artificial (IA) ayudó en diversos aspectos del desarrollo:
+
+- Asistencia en la redacción y depuración de código.
+- Corrección de ortografía, gramática y estilo del documento.
+- Generación de recursos visuales (imágenes y videos).
+- Asistencia en el diseño y validación de la lógica de las máquinas de estado.
+- Asistencia en el uso de herramientas de control de versiones (Git y GitHub)
 
 ---
 
